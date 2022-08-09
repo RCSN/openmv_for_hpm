@@ -42,7 +42,7 @@
 #endif
 #include "shared/readline/readline.h"
 #include "shared/runtime/pyexec.h"
-#include "genhdr/mpversion.h"
+#include "mpversion.h"
 
 extern uint32_t HAL_GetHalVersion();
 pyexec_mode_kind_t pyexec_mode_kind = PYEXEC_MODE_FRIENDLY_REPL;

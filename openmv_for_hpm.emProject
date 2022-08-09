@@ -7,7 +7,7 @@
       Target="HPM6750XXXX"
       arm_compiler_variant="SEGGER"
       arm_linker_variant="SEGGER"
-      c_preprocessor_definitions="FLASH_XIP=1;BOARD_SHOW_CLOCK=1;CONFIG_USB_HS"
+      c_preprocessor_definitions="FLASH_XIP=1;BOARD_SHOW_CLOCK=1;CONFIG_USB_HS;__ICRISCV__"
       c_user_include_directories="hpm_sdk/arch/.;hpm_sdk/drivers/inc;hpm_sdk/boards/hpm6750evkmini/.;hpm_sdk/soc/HPM6750;hpm_sdk/soc/HPM6750/boot;hpm_sdk/soc/HPM6750/toolchains;hpm_sdk/soc/ip;hpm_sdk/utils/.;hpm_sdk/components/debug_console/.;hpm_sdk/components/usb/device;hpm_sdk/components/usb/host;hpm_sdk/middleware/cherryusb/common;hpm_sdk/middleware/cherryusb/core;hpm_sdk/middleware/cherryusb/class/cdc;hpm_sdk/middleware/cherryusb/class/hid;hpm_sdk/middleware/cherryusb/class/msc;hpm_sdk/middleware/hpm_math/;hpm_sdk/middleware/hpm_math/nds_dsp;openmv/src/micropython/.;openmv/src/micropython/ports/hpm/."
       debug_register_definition_file=""
       debug_stack_pointer_start=""
@@ -18,8 +18,7 @@
       gdb_server_port="3333"
       gdb_server_reset_command="reset halt"
       gdb_server_type="Custom"
-      heap_size="20480"
-      heap_size ="1024"
+      heap_size="1024"
       link_linker_script_file="$(ProjectDir)/hpm_sdk/soc/HPM6750/toolchains/segger/flash_sdram_xip.icf"
       link_symbol_definitions="_flash_size=8M;_extram_size=16M"
       linker_memory_map_file="FLASH1 RX 0x80000000 0x00800000;RAM1 RWX 0x00000000 0x00008000"
@@ -241,6 +240,7 @@
           <file file_name="openmv/src/micropython/py/vm.c" />
           <file file_name="openmv/src/micropython/py/vstr.c" />
           <file file_name="openmv/src/micropython/py/warning.c" />
+          <file file_name="openmv/src/micropython/ports/hpm/mphalport.c" />
         </folder>
         <file file_name="openmv/src/micropython/ports/hpm/mpconfigport.h" />
         <folder Name="lib">
@@ -261,12 +261,18 @@
             <file file_name="openmv/src/micropython/shared/readline/readline.c" />
           </folder>
           <folder Name="runtime">
-            <file file_name="openmv/src/micropython/shared/runtime/gchelper_generic.c" />
-            <file file_name="openmv/src/micropython/shared/runtime/gchelper_native.c" />
+            <file file_name="openmv/src/micropython/shared/runtime/gchelper_generic.c">
+              <configuration Name="Debug" build_exclude_from_build="Yes" />
+            </file>
+            <file file_name="openmv/src/micropython/shared/runtime/gchelper_native.c">
+              <configuration Name="Debug" build_exclude_from_build="Yes" />
+            </file>
             <file file_name="openmv/src/micropython/shared/runtime/interrupt_char.c" />
             <file file_name="openmv/src/micropython/shared/runtime/mpirq.c" />
             <file file_name="openmv/src/micropython/shared/runtime/pyexec.c" />
-            <file file_name="openmv/src/micropython/shared/runtime/semihosting.c" />
+            <file file_name="openmv/src/micropython/shared/runtime/semihosting.c">
+              <configuration Name="Debug" build_exclude_from_build="Yes" />
+            </file>
             <file file_name="openmv/src/micropython/shared/runtime/stdout_helpers.c" />
             <file file_name="openmv/src/micropython/shared/runtime/sys_stdio_mphal.c" />
           </folder>

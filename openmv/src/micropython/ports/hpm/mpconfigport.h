@@ -6,17 +6,18 @@
 #define MICROPY_FLOAT_IMPL                      (MICROPY_FLOAT_IMPL_FLOAT)
 
 // Fine control over Python builtins, classes, modules, etc.
+#define MICROPY_USE_INTERNAL_ERRNO              (1)
 #define MICROPY_PY_ASYNC_AWAIT                  (0)
 #define MICROPY_PY_BUILTINS_SET                 (0)
 #define MICROPY_PY_ATTRTUPLE                    (0)
 #define MICROPY_PY_COLLECTIONS                  (0)
 #define MICROPY_PY_MATH                         (0)
 #define MICROPY_PY_IO                           (0)
-#define MICROPY_PY_STRUCT                       (0)
-#define MICROPY_PY_BUILTINS_EVAL_EXEC           (0)
+#define MICROPY_PY_STRUCT                       (1)
+#define MICROPY_PY_BUILTINS_EVAL_EXEC           (1)
 
 // Type definitions for the specific machine.
-
+typedef int ssize_t;
 typedef intptr_t mp_int_t; // must be pointer size
 typedef uintptr_t mp_uint_t; // must be pointer size
 typedef long mp_off_t;

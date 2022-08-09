@@ -1,0 +1,73 @@
+<!DOCTYPE CrossStudio_Session_File>
+<session>
+ <Bookmarks/>
+ <Breakpoints groups="" active_group="Breakpoints"/>
+ <ExecutionProfileWindow/>
+ <FrameBufferWindow>
+  <FrameBufferWindow bufferHeight="-1" addressSpace="" addressText="" bufferWidth="-1"/>
+ </FrameBufferWindow>
+ <Memory1>
+  <MemoryWindow addressSpace="" dataSize="1" autoEvaluate="0" viewMode="0" viewType="4" addressOrder="0" columnsText="" refreshPeriod="0" name="hom6750evkmini_demo" sizeText="" addressText=""/>
+ </Memory1>
+ <Memory2>
+  <MemoryWindow addressSpace="" dataSize="1" autoEvaluate="0" viewMode="0" viewType="4" addressOrder="0" columnsText="" refreshPeriod="0" name="hom6750evkmini_demo" sizeText="" addressText=""/>
+ </Memory2>
+ <Memory3>
+  <MemoryWindow addressSpace="" dataSize="1" autoEvaluate="0" viewMode="0" viewType="4" addressOrder="0" columnsText="" refreshPeriod="0" name="hom6750evkmini_demo" sizeText="" addressText=""/>
+ </Memory3>
+ <Memory4>
+  <MemoryWindow addressSpace="" dataSize="1" autoEvaluate="0" viewMode="0" viewType="4" addressOrder="0" columnsText="" refreshPeriod="0" name="hom6750evkmini_demo" sizeText="" addressText=""/>
+ </Memory4>
+ <Project>
+  <ProjectSessionItem path="openmv_for_hpm"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython;lib"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython;py"/>
+ </Project>
+ <Register1>
+  <RegisterWindow visibleNodes="ABI, RV32I/pc;ABI, RV32I/ra;ABI, RV32I/sp;ABI, RV32I/gp;ABI, RV32I/tp;ABI, RV32I/a0;ABI, RV32I/a1;ABI, RV32I/a2;ABI, RV32I/a3;ABI, RV32I/a4;ABI, RV32I/a5;ABI, RV32I/a6;ABI, RV32I/a7;ABI, RV32I/t0;ABI, RV32I/t1;ABI, RV32I/t2;ABI, RV32I/t3;ABI, RV32I/t4;ABI, RV32I/t5;ABI, RV32I/t6;ABI, RV32I/s0;ABI, RV32I/s1;ABI, RV32I/s2;ABI, RV32I/s3;ABI, RV32I/s4;ABI, RV32I/s5;ABI, RV32I/s6;ABI, RV32I/s7;ABI, RV32I/s8;ABI, RV32I/s9;ABI, RV32I/s10;ABI, RV32I/s11;CPU, RV32I/pc;CPU, RV32I/x1;CPU, RV32I/x2;CPU, RV32I/x3;CPU, RV32I/x4;CPU, RV32I/x5;CPU, RV32I/x6;CPU, RV32I/x7;CPU, RV32I/x8;CPU, RV32I/x9;CPU, RV32I/x10;CPU, RV32I/x11;CPU, RV32I/x12;CPU, RV32I/x13;CPU, RV32I/x14;CPU, RV32I/x15;CPU, RV32I/x16;CPU, RV32I/x17;CPU, RV32I/x18;CPU, RV32I/x19;CPU, RV32I/x20;CPU, RV32I/x21;CPU, RV32I/x22;CPU, RV32I/x23;CPU, RV32I/x24;CPU, RV32I/x25;CPU, RV32I/x26;CPU, RV32I/x27;CPU, RV32I/x28;CPU, RV32I/x29;CPU, RV32I/x30;CPU, RV32I/x31" binaryNodes="" asciiNodes="" openNodes="ABI, RV32I" name="hom6750evkmini_demo" decimalNodes="" octalNodes="" unsignedNodes=""/>
+ </Register1>
+ <Register2>
+  <RegisterWindow visibleNodes="ABI, RV32I/pc;ABI, RV32I/ra;ABI, RV32I/sp;ABI, RV32I/gp;ABI, RV32I/tp;ABI, RV32I/a0;ABI, RV32I/a1;ABI, RV32I/a2;ABI, RV32I/a3;ABI, RV32I/a4;ABI, RV32I/a5;ABI, RV32I/a6;ABI, RV32I/a7;ABI, RV32I/t0;ABI, RV32I/t1;ABI, RV32I/t2;ABI, RV32I/t3;ABI, RV32I/t4;ABI, RV32I/t5;ABI, RV32I/t6;ABI, RV32I/s0;ABI, RV32I/s1;ABI, RV32I/s2;ABI, RV32I/s3;ABI, RV32I/s4;ABI, RV32I/s5;ABI, RV32I/s6;ABI, RV32I/s7;ABI, RV32I/s8;ABI, RV32I/s9;ABI, RV32I/s10;ABI, RV32I/s11;CPU, RV32I/pc;CPU, RV32I/x1;CPU, RV32I/x2;CPU, RV32I/x3;CPU, RV32I/x4;CPU, RV32I/x5;CPU, RV32I/x6;CPU, RV32I/x7;CPU, RV32I/x8;CPU, RV32I/x9;CPU, RV32I/x10;CPU, RV32I/x11;CPU, RV32I/x12;CPU, RV32I/x13;CPU, RV32I/x14;CPU, RV32I/x15;CPU, RV32I/x16;CPU, RV32I/x17;CPU, RV32I/x18;CPU, RV32I/x19;CPU, RV32I/x20;CPU, RV32I/x21;CPU, RV32I/x22;CPU, RV32I/x23;CPU, RV32I/x24;CPU, RV32I/x25;CPU, RV32I/x26;CPU, RV32I/x27;CPU, RV32I/x28;CPU, RV32I/x29;CPU, RV32I/x30;CPU, RV32I/x31" binaryNodes="" asciiNodes="" openNodes="CPU, RV32I" name="hom6750evkmini_demo" decimalNodes="" octalNodes="" unsignedNodes=""/>
+ </Register2>
+ <Register3>
+  <RegisterWindow visibleNodes="ABI, RV32I/pc;ABI, RV32I/ra;ABI, RV32I/sp;ABI, RV32I/gp;ABI, RV32I/tp;ABI, RV32I/a0;ABI, RV32I/a1;ABI, RV32I/a2;ABI, RV32I/a3;ABI, RV32I/a4;ABI, RV32I/a5;ABI, RV32I/a6;ABI, RV32I/a7;ABI, RV32I/t0;ABI, RV32I/t1;ABI, RV32I/t2;ABI, RV32I/t3;ABI, RV32I/t4;ABI, RV32I/t5;ABI, RV32I/t6;ABI, RV32I/s0;ABI, RV32I/s1;ABI, RV32I/s2;ABI, RV32I/s3;ABI, RV32I/s4;ABI, RV32I/s5;ABI, RV32I/s6;ABI, RV32I/s7;ABI, RV32I/s8;ABI, RV32I/s9;ABI, RV32I/s10;ABI, RV32I/s11;CPU, RV32I/pc;CPU, RV32I/x1;CPU, RV32I/x2;CPU, RV32I/x3;CPU, RV32I/x4;CPU, RV32I/x5;CPU, RV32I/x6;CPU, RV32I/x7;CPU, RV32I/x8;CPU, RV32I/x9;CPU, RV32I/x10;CPU, RV32I/x11;CPU, RV32I/x12;CPU, RV32I/x13;CPU, RV32I/x14;CPU, RV32I/x15;CPU, RV32I/x16;CPU, RV32I/x17;CPU, RV32I/x18;CPU, RV32I/x19;CPU, RV32I/x20;CPU, RV32I/x21;CPU, RV32I/x22;CPU, RV32I/x23;CPU, RV32I/x24;CPU, RV32I/x25;CPU, RV32I/x26;CPU, RV32I/x27;CPU, RV32I/x28;CPU, RV32I/x29;CPU, RV32I/x30;CPU, RV32I/x31" binaryNodes="" asciiNodes="" openNodes="CPU, RV32I" name="hom6750evkmini_demo" decimalNodes="" octalNodes="" unsignedNodes=""/>
+ </Register3>
+ <Register4>
+  <RegisterWindow visibleNodes="ABI, RV32I/pc;ABI, RV32I/ra;ABI, RV32I/sp;ABI, RV32I/gp;ABI, RV32I/tp;ABI, RV32I/a0;ABI, RV32I/a1;ABI, RV32I/a2;ABI, RV32I/a3;ABI, RV32I/a4;ABI, RV32I/a5;ABI, RV32I/a6;ABI, RV32I/a7;ABI, RV32I/t0;ABI, RV32I/t1;ABI, RV32I/t2;ABI, RV32I/t3;ABI, RV32I/t4;ABI, RV32I/t5;ABI, RV32I/t6;ABI, RV32I/s0;ABI, RV32I/s1;ABI, RV32I/s2;ABI, RV32I/s3;ABI, RV32I/s4;ABI, RV32I/s5;ABI, RV32I/s6;ABI, RV32I/s7;ABI, RV32I/s8;ABI, RV32I/s9;ABI, RV32I/s10;ABI, RV32I/s11;CPU, RV32I/pc;CPU, RV32I/x1;CPU, RV32I/x2;CPU, RV32I/x3;CPU, RV32I/x4;CPU, RV32I/x5;CPU, RV32I/x6;CPU, RV32I/x7;CPU, RV32I/x8;CPU, RV32I/x9;CPU, RV32I/x10;CPU, RV32I/x11;CPU, RV32I/x12;CPU, RV32I/x13;CPU, RV32I/x14;CPU, RV32I/x15;CPU, RV32I/x16;CPU, RV32I/x17;CPU, RV32I/x18;CPU, RV32I/x19;CPU, RV32I/x20;CPU, RV32I/x21;CPU, RV32I/x22;CPU, RV32I/x23;CPU, RV32I/x24;CPU, RV32I/x25;CPU, RV32I/x26;CPU, RV32I/x27;CPU, RV32I/x28;CPU, RV32I/x29;CPU, RV32I/x30;CPU, RV32I/x31" binaryNodes="" asciiNodes="" openNodes="CPU, RV32I" name="hom6750evkmini_demo" decimalNodes="" octalNodes="" unsignedNodes=""/>
+ </Register4>
+ <Threads>
+  <ThreadsWindow showLists=""/>
+ </Threads>
+ <TraceWindow>
+  <Trace enabled="Yes"/>
+ </TraceWindow>
+ <Watch1>
+  <Watches active="1" update="Never"/>
+ </Watch1>
+ <Watch2>
+  <Watches active="0" update="Never"/>
+ </Watch2>
+ <Watch3>
+  <Watches active="0" update="Never"/>
+ </Watch3>
+ <Watch4>
+  <Watches active="0" update="Never"/>
+ </Watch4>
+ <Files>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" path="openmv/src/omv/ports/hpm/main.c" left="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="32" y="77" useTextEdit="1" path="openmv/src/micropython/py/pystack.h" left="0" top="39" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="29" y="66" useTextEdit="1" path="openmv/src/micropython/py/builtinimport.c" left="0" top="48" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="6" y="35" useTextEdit="1" path="openmv/src/micropython/py/mphal.h" left="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="62" y="54" useTextEdit="1" path="openmv/src/micropython/py/objmodule.c" left="0" top="37" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" path="openmv/src/micropython/ports/hpm/mpconfigport.h" left="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="45" y="40" useTextEdit="1" path="openmv/src/micropython/py/objexcept.c" left="0" top="26" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="33" y="110" useTextEdit="1" path="openmv/src/micropython/py/qstr.c" left="0" top="82" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="41" y="41" useTextEdit="1" path="openmv/src/micropython/py/qstr.h" left="0" top="18" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" openedFrom="D:/vmware/share-dir/openmv_for_hpmo/openmv/src/micropython/py/qstr.c" path="openmv/src/micropython/ports/hpm/genhdr/qstrdefs.generated.h" left="0" selected="1" top="0" codecName="Default"/>
+ </Files>
+ <EMStudioWindow activeProject="openmv_for_hpm" fileDialogDefaultFilter="*.c" autoConnectTarget="J-Link" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="D:/vmware/share-dir/openmv_for_hpmo/openmv/src/micropython/shared/timeutils" debugSearchPath="" autoConnectCapabilities="3199"/>
+</session>

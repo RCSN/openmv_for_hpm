@@ -1,4 +1,12 @@
 /*
+ * @Descripttion: 
+ * @version: 
+ * @Author: RCSN
+ * @Date: 2022-08-09 09:43:28
+ * @LastEditors: fy-tech
+ * @LastEditTime: 2022-08-09 11:35:11
+ */
+/*
  * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)

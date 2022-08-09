@@ -1,0 +1,293 @@
+<!DOCTYPE CrossStudio_Project_File>
+<solution Name="openmv_for_hpm" target="20" version="2">
+  <project Name="openmv_for_hpm">
+    <configuration
+      LIBRARY_IO_TYPE="SEMIHOST (host-formatted)"
+      Name="Common"
+      Target="HPM6750XXXX"
+      arm_compiler_variant="SEGGER"
+      arm_linker_variant="SEGGER"
+      c_preprocessor_definitions="FLASH_XIP=1;BOARD_SHOW_CLOCK=1;CONFIG_USB_HS"
+      c_user_include_directories="hpm_sdk/arch/.;hpm_sdk/drivers/inc;hpm_sdk/boards/hpm6750evkmini/.;hpm_sdk/soc/HPM6750;hpm_sdk/soc/HPM6750/boot;hpm_sdk/soc/HPM6750/toolchains;hpm_sdk/soc/ip;hpm_sdk/utils/.;hpm_sdk/components/debug_console/.;hpm_sdk/components/usb/device;hpm_sdk/components/usb/host;hpm_sdk/middleware/cherryusb/common;hpm_sdk/middleware/cherryusb/core;hpm_sdk/middleware/cherryusb/class/cdc;hpm_sdk/middleware/cherryusb/class/hid;hpm_sdk/middleware/cherryusb/class/msc;hpm_sdk/middleware/hpm_math/;hpm_sdk/middleware/hpm_math/nds_dsp;openmv/src/micropython/.;openmv/src/micropython/ports/hpm/."
+      debug_register_definition_file=""
+      debug_stack_pointer_start=""
+      debug_start_from_entry_point_symbol="Yes"
+      debug_target_connection="J-Link"
+      gcc_entry_point="_start"
+      gdb_server_command_line="$(ProjectDir)/hpm_sdk//tools/openocd/openocd.exe -f $(ProjectDir)/boards/openocd/probes/ft2232.cfg -f $(ProjectDir)/boards/openocd/soc/hpm6750-dual-core.cfg -f $(ProjectDir)/boards/openocd/boards/hpm6750evkmini.cfg"
+      gdb_server_port="3333"
+      gdb_server_reset_command="reset halt"
+      gdb_server_type="Custom"
+      heap_size="20480"
+      heap_size ="1024"
+      link_linker_script_file="$(ProjectDir)/hpm_sdk/soc/HPM6750/toolchains/segger/flash_sdram_xip.icf"
+      link_symbol_definitions="_flash_size=8M;_extram_size=16M"
+      linker_memory_map_file="FLASH1 RX 0x80000000 0x00800000;RAM1 RWX 0x00000000 0x00008000"
+      linker_output_format="hex"
+      linker_printf_fp_enabled="Float"
+      linker_printf_width_precision_supported="Yes"
+      linker_section_placements_segments="FLASH1 RX 0x80000000 0x00800000;RAM1 RWX 0x00000000 0x00008000"
+      macros="HPM_PRO_BASE=D:/vmware/share-dir/openmv_for_hpmo"
+      project_directory=""
+      project_type="Executable"
+      rv_abi="ilp32"
+      rv_arch_ext="xv5"
+      rv_architecture="rv32i"
+      rv_debug_extensions="Andes"
+      stack_size="20480"
+      target_device_name="HPM6750XXXX"
+      target_interface_type="JTAG"
+      target_reset_script="Reset();"
+      target_trace_initialize_script="EnableTrace(&quot;$(TraceInterfaceType)&quot;)" />
+    <folder Name="hpm_sdk">
+      <folder Name="boards">
+        <file file_name="hpm_sdk/boards/hpm6750evkmini/board.c" />
+        <file file_name="hpm_sdk/boards/hpm6750evkmini/pinmux.c" />
+      </folder>
+      <folder Name="components">
+        <file file_name="hpm_sdk/components/debug_console/hpm_debug_console.c" />
+        <file file_name="hpm_sdk/components/usb/device/hpm_usb_device.c" />
+      </folder>
+      <folder Name="drivers">
+        <file file_name="hpm_sdk/drivers/src/hpm_acmp_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_adc12_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_adc16_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_cam_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_can_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_dao_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_dma_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_dram_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_enet_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_ffa_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_gpio_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_gptmr_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_i2c_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_i2s_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_jpeg_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_lcdc_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_mchtmr_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_pcfg_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_pdm_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_pdma_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_pllctl_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_pllctlv2_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_pmp_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_ptpc_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_pwm_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_rng_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_rtc_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_sdp_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_sdxc_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_spi_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_tsns_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_uart_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_usb_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_vad_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_wdg_drv.c" />
+      </folder>
+      <folder Name="middleware">
+        <folder Name="cherry_usb">
+          <folder Name="class">
+            <file file_name="hpm_sdk/middleware/cherryusb/class/cdc/usbd_cdc.c" />
+            <file file_name="hpm_sdk/middleware/cherryusb/class/hid/usbd_hid.c" />
+            <file file_name="hpm_sdk/middleware/cherryusb/class/msc/usbd_msc.c" />
+          </folder>
+          <folder Name="core">
+            <file file_name="hpm_sdk/middleware/cherryusb/core/usbd_core.c" />
+          </folder>
+          <folder Name="port">
+            <file file_name="hpm_sdk/middleware/cherryusb/port/hpm/usb_dc_hpm.c" />
+          </folder>
+        </folder>
+      </folder>
+      <folder Name="soc">
+        <file file_name="hpm_sdk/soc/HPM6750/boot/hpm_bootheader.c" />
+        <file file_name="hpm_sdk/soc/HPM6750/hpm_clock_drv.c" />
+        <file file_name="hpm_sdk/soc/HPM6750/hpm_l1c_drv.c" />
+        <file file_name="hpm_sdk/soc/HPM6750/hpm_otp_drv.c" />
+        <file file_name="hpm_sdk/soc/HPM6750/hpm_sysctl_drv.c" />
+        <file file_name="hpm_sdk/soc/HPM6750/system.c" />
+      </folder>
+      <folder Name="toolchains">
+        <file file_name="hpm_sdk/soc/HPM6750/toolchains/segger/startup.s" />
+        <file file_name="hpm_sdk/soc/HPM6750/toolchains/reset.c" />
+        <file file_name="hpm_sdk/soc/HPM6750/toolchains/trap.c" />
+      </folder>
+      <folder Name="utlis">
+        <file file_name="hpm_sdk/utils/hpm_ffssi.c" />
+        <file file_name="hpm_sdk/utils/hpm_swap.c" />
+      </folder>
+    </folder>
+    <folder Name="openmv">
+      <folder Name="micropython">
+        <folder Name="py">
+          <file file_name="openmv/src/micropython/py/argcheck.c" />
+          <file file_name="openmv/src/micropython/py/asmarm.c" />
+          <file file_name="openmv/src/micropython/py/asmbase.c" />
+          <file file_name="openmv/src/micropython/py/asmthumb.c" />
+          <file file_name="openmv/src/micropython/py/asmx64.c" />
+          <file file_name="openmv/src/micropython/py/asmx86.c" />
+          <file file_name="openmv/src/micropython/py/asmxtensa.c" />
+          <file file_name="openmv/src/micropython/py/bc.c" />
+          <file file_name="openmv/src/micropython/py/binary.c" />
+          <file file_name="openmv/src/micropython/py/builtinevex.c" />
+          <file file_name="openmv/src/micropython/py/builtinhelp.c" />
+          <file file_name="openmv/src/micropython/py/builtinimport.c" />
+          <file file_name="openmv/src/micropython/py/compile.c" />
+          <file file_name="openmv/src/micropython/py/emitbc.c" />
+          <file file_name="openmv/src/micropython/py/emitcommon.c" />
+          <file file_name="openmv/src/micropython/py/emitglue.c" />
+          <file file_name="openmv/src/micropython/py/emitinlinethumb.c" />
+          <file file_name="openmv/src/micropython/py/emitinlinextensa.c" />
+          <file file_name="openmv/src/micropython/py/emitnarm.c" />
+          <file file_name="openmv/src/micropython/py/emitnative.c" />
+          <file file_name="openmv/src/micropython/py/emitnthumb.c" />
+          <file file_name="openmv/src/micropython/py/emitnx64.c" />
+          <file file_name="openmv/src/micropython/py/emitnx86.c" />
+          <file file_name="openmv/src/micropython/py/emitnxtensa.c" />
+          <file file_name="openmv/src/micropython/py/emitnxtensawin.c" />
+          <file file_name="openmv/src/micropython/py/formatfloat.c" />
+          <file file_name="openmv/src/micropython/py/frozenmod.c" />
+          <file file_name="openmv/src/micropython/py/gc.c" />
+          <file file_name="openmv/src/micropython/py/lexer.c" />
+          <file file_name="openmv/src/micropython/py/malloc.c" />
+          <file file_name="openmv/src/micropython/py/map.c" />
+          <file file_name="openmv/src/micropython/py/modarray.c" />
+          <file file_name="openmv/src/micropython/py/modbuiltins.c" />
+          <file file_name="openmv/src/micropython/py/modcmath.c" />
+          <file file_name="openmv/src/micropython/py/modcollections.c" />
+          <file file_name="openmv/src/micropython/py/modgc.c" />
+          <file file_name="openmv/src/micropython/py/modio.c" />
+          <file file_name="openmv/src/micropython/py/modmath.c" />
+          <file file_name="openmv/src/micropython/py/modmicropython.c" />
+          <file file_name="openmv/src/micropython/py/modstruct.c" />
+          <file file_name="openmv/src/micropython/py/modsys.c" />
+          <file file_name="openmv/src/micropython/py/modthread.c" />
+          <file file_name="openmv/src/micropython/py/moduerrno.c" />
+          <file file_name="openmv/src/micropython/py/mpprint.c" />
+          <file file_name="openmv/src/micropython/py/mpstate.c" />
+          <file file_name="openmv/src/micropython/py/mpz.c" />
+          <file file_name="openmv/src/micropython/py/nativeglue.c" />
+          <file file_name="openmv/src/micropython/py/nlr.c" />
+          <file file_name="openmv/src/micropython/py/nlraarch64.c" />
+          <file file_name="openmv/src/micropython/py/nlrpowerpc.c" />
+          <file file_name="openmv/src/micropython/py/nlrsetjmp.c" />
+          <file file_name="openmv/src/micropython/py/nlrthumb.c" />
+          <file file_name="openmv/src/micropython/py/nlrx64.c" />
+          <file file_name="openmv/src/micropython/py/nlrx86.c" />
+          <file file_name="openmv/src/micropython/py/nlrxtensa.c" />
+          <file file_name="openmv/src/micropython/py/obj.c" />
+          <file file_name="openmv/src/micropython/py/objarray.c" />
+          <file file_name="openmv/src/micropython/py/objattrtuple.c" />
+          <file file_name="openmv/src/micropython/py/objbool.c" />
+          <file file_name="openmv/src/micropython/py/objboundmeth.c" />
+          <file file_name="openmv/src/micropython/py/objcell.c" />
+          <file file_name="openmv/src/micropython/py/objclosure.c" />
+          <file file_name="openmv/src/micropython/py/objcomplex.c" />
+          <file file_name="openmv/src/micropython/py/objdeque.c" />
+          <file file_name="openmv/src/micropython/py/objdict.c" />
+          <file file_name="openmv/src/micropython/py/objenumerate.c" />
+          <file file_name="openmv/src/micropython/py/objexcept.c" />
+          <file file_name="openmv/src/micropython/py/objfilter.c" />
+          <file file_name="openmv/src/micropython/py/objfloat.c" />
+          <file file_name="openmv/src/micropython/py/objfun.c" />
+          <file file_name="openmv/src/micropython/py/objgenerator.c" />
+          <file file_name="openmv/src/micropython/py/objgetitemiter.c" />
+          <file file_name="openmv/src/micropython/py/objint.c" />
+          <file file_name="openmv/src/micropython/py/objint_longlong.c" />
+          <file file_name="openmv/src/micropython/py/objint_mpz.c" />
+          <file file_name="openmv/src/micropython/py/objlist.c" />
+          <file file_name="openmv/src/micropython/py/objmap.c" />
+          <file file_name="openmv/src/micropython/py/objmodule.c" />
+          <file file_name="openmv/src/micropython/py/objnamedtuple.c" />
+          <file file_name="openmv/src/micropython/py/objnone.c" />
+          <file file_name="openmv/src/micropython/py/objobject.c" />
+          <file file_name="openmv/src/micropython/py/objpolyiter.c" />
+          <file file_name="openmv/src/micropython/py/objproperty.c" />
+          <file file_name="openmv/src/micropython/py/objrange.c" />
+          <file file_name="openmv/src/micropython/py/objreversed.c" />
+          <file file_name="openmv/src/micropython/py/objset.c" />
+          <file file_name="openmv/src/micropython/py/objsingleton.c" />
+          <file file_name="openmv/src/micropython/py/objslice.c" />
+          <file file_name="openmv/src/micropython/py/objstr.c" />
+          <file file_name="openmv/src/micropython/py/objstringio.c" />
+          <file file_name="openmv/src/micropython/py/objstrunicode.c" />
+          <file file_name="openmv/src/micropython/py/objtuple.c" />
+          <file file_name="openmv/src/micropython/py/objtype.c" />
+          <file file_name="openmv/src/micropython/py/objzip.c" />
+          <file file_name="openmv/src/micropython/py/omvdummy.c" />
+          <file file_name="openmv/src/micropython/py/opmethods.c" />
+          <file file_name="openmv/src/micropython/py/pairheap.c" />
+          <file file_name="openmv/src/micropython/py/parse.c" />
+          <file file_name="openmv/src/micropython/py/parsenum.c" />
+          <file file_name="openmv/src/micropython/py/parsenumbase.c" />
+          <file file_name="openmv/src/micropython/py/persistentcode.c" />
+          <file file_name="openmv/src/micropython/py/profile.c" />
+          <file file_name="openmv/src/micropython/py/pystack.c" />
+          <file file_name="openmv/src/micropython/py/qstr.c" />
+          <file file_name="openmv/src/micropython/py/reader.c" />
+          <file file_name="openmv/src/micropython/py/repl.c" />
+          <file file_name="openmv/src/micropython/py/ringbuf.c" />
+          <file file_name="openmv/src/micropython/py/runtime.c" />
+          <file file_name="openmv/src/micropython/py/runtime_utils.c" />
+          <file file_name="openmv/src/micropython/py/scheduler.c" />
+          <file file_name="openmv/src/micropython/py/scope.c" />
+          <file file_name="openmv/src/micropython/py/sequence.c" />
+          <file file_name="openmv/src/micropython/py/showbc.c" />
+          <file file_name="openmv/src/micropython/py/smallint.c" />
+          <file file_name="openmv/src/micropython/py/stackctrl.c" />
+          <file file_name="openmv/src/micropython/py/stream.c" />
+          <file file_name="openmv/src/micropython/py/unicode.c" />
+          <file file_name="openmv/src/micropython/py/vm.c" />
+          <file file_name="openmv/src/micropython/py/vstr.c" />
+          <file file_name="openmv/src/micropython/py/warning.c" />
+        </folder>
+        <file file_name="openmv/src/micropython/ports/hpm/mpconfigport.h" />
+        <folder Name="lib">
+          <folder Name="littlefs">
+            <file file_name="openmv/src/micropython/lib/littlefs/lfs1.c" />
+            <file file_name="openmv/src/micropython/lib/littlefs/lfs1_util.c" />
+            <file file_name="openmv/src/micropython/lib/littlefs/lfs2.c" />
+            <file file_name="openmv/src/micropython/lib/littlefs/lfs2_util.c" />
+          </folder>
+          <folder Name="oofatfs">
+            <file file_name="openmv/src/micropython/lib/oofatfs/ff.c" />
+            <file file_name="openmv/src/micropython/lib/oofatfs/ffunicode.c" />
+          </folder>
+        </folder>
+        <folder Name="shared">
+          <folder Name="netutils" />
+          <folder Name="readline">
+            <file file_name="openmv/src/micropython/shared/readline/readline.c" />
+          </folder>
+          <folder Name="runtime">
+            <file file_name="openmv/src/micropython/shared/runtime/gchelper_generic.c" />
+            <file file_name="openmv/src/micropython/shared/runtime/gchelper_native.c" />
+            <file file_name="openmv/src/micropython/shared/runtime/interrupt_char.c" />
+            <file file_name="openmv/src/micropython/shared/runtime/mpirq.c" />
+            <file file_name="openmv/src/micropython/shared/runtime/pyexec.c" />
+            <file file_name="openmv/src/micropython/shared/runtime/semihosting.c" />
+            <file file_name="openmv/src/micropython/shared/runtime/stdout_helpers.c" />
+            <file file_name="openmv/src/micropython/shared/runtime/sys_stdio_mphal.c" />
+          </folder>
+          <folder Name="timeutils">
+            <file file_name="openmv/src/micropython/shared/timeutils/timeutils.c" />
+          </folder>
+        </folder>
+      </folder>
+    </folder>
+    <file file_name="openmv/src/omv/ports/hpm/main.c" />
+    <configuration Name="Debug" arm_compiler_variant="SEGGER" />
+  </project>
+  <configuration
+    Name="Debug"
+    c_preprocessor_definitions="DEBUG"
+    gcc_debugging_level="Level 3"
+    gcc_optimization_level="None" />
+  <configuration
+    Name="Release"
+    c_preprocessor_definitions="NDEBUG"
+    gcc_debugging_level="Level 2"
+    gcc_omit_frame_pointer="Yes"
+    gcc_optimization_level="Level 2 balanced" />
+</solution>

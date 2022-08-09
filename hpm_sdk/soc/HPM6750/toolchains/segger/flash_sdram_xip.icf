@@ -10,10 +10,13 @@ define memory with size = 4G;
 define region NOR_CFG_OPTION = [ from 0x80000400 size 0x1000 ];
 define region BOOT_HEADER = [ from 0x80001000 size 0x3000 ];
 define region XPI0 = [from 0x80003000 size _flash_size - 0x3000 ];   /* XPI0 */
-define region AXI_SRAM  = [from 0x1000000 size 2M];
+//define region AXI_SRAM  = [from 0x1000000 size 2M];
+define region ILM_SLV   = [from 0x1000000 size 256k];        /* ILM slave */
+define region DLM   = [from 0x80000 size 256k];    /* DLM */
+define region AXI_SRAM  = [from 0x1080000 size 768k];
 define region SDRAM  = [from 0x40000000 size _extram_size - 4M];
 define region NONCACHEABLE_RAM = [from 0x40000000 + _extram_size - 4M size 4M];
-
+//define region NONCACHEABLE_RAM =  [from 0x1140000 size 256K];
 /* Blocks */
 define block vectors                        { section .isr_vector, section .vector_table };
 define block ctors                          { section .ctors,     section .ctors.*, block with         alphabetical order { init_array } };
@@ -83,14 +86,28 @@ define access readonly { section .gcc_except_table, section .gcc_except_table.* 
 define access readonly { section .eh_frame, section .eh_frame.* };
 define access readonly { section .sdata.DW.* };
 
-place in AXI_SRAM with auto order           { section .fast, section .fast.*,                       // "ramfunc" section
-                                              block tls,                                            // Thread-local-storage block
-                                              readwrite,                                            // Catch-all for initialized/uninitialized data sections (e.g. .data, .noinit)
-                                              zeroinit                                              // Catch-all for zero-initialized data sections (e.g. .bss)
-                                            };
+//place in AXI_SRAM with auto order           { section .fast, section .fast.*,                       // "ramfunc" section
+//                                              block tls,                                            // Thread-local-storage block
+//                                              readwrite,                                            // Catch-all for initialized/uninitialized data sections (e.g. .data, .noinit)
+//                                              zeroinit                                              // Catch-all for zero-initialized data sections (e.g. .bss)
+//                                           };
 
+//place in AXI_SRAM                         {
+//                                             section .fast, section .fast.*                      // "ramfunc" section
+//                                          };
+
+place in ILM_SLV                          {
+                                             section .fast, section .fast.*,                       // "ramfunc" section
+                                          };
+
+place in AXI_SRAM with auto order              {
+                                            block tls,                                            // Thread-local-storage block
+                                            readwrite,                                            // Catch-all for initialized/uninitialized data sections (e.g. .data, .noinit)
+                                            zeroinit                                              // Catch-all for zero-initialized data sections (e.g. .bss)
+                                          };
+										  
 place in SDRAM                              { block framebuffer };
 place in NONCACHEABLE_RAM                   { section .noncacheable, section .noncacheable.init, section .noncacheable.bss };
 place in AXI_SRAM                              { block heap };                                         // Heap reserved block
-//place at end of SDRAM                       { block stack };                                        // Stack reserved block at the end
-place at end of AXI_SRAM                         {block stack,block safe_stack };                                   // Safe stack reserved block at the end
+place at end of AXI_SRAM                       { block stack };                                        // Stack reserved block at the end
+place at end of DLM                         { block safe_stack };                                   // Safe stack reserved block at the end

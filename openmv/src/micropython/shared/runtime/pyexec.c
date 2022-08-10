@@ -566,7 +566,7 @@ int pyexec_friendly_repl(void) {
     snprintf(buf_ver, sizeof(buf_ver), "%ld.%ld.%ld", hal_ver >> 24, (hal_ver >> 16) & 0xFF, (hal_ver >> 8) & 0xFF);
 
 friendly_repl_reset:
-    mp_hal_stdout_tx_str("MicroPython: " MICROPY_GIT_TAG " OpenMV: " OPENMV_GIT_TAG " HAL: v");
+    mp_hal_stdout_tx_str("MicroPython: " MICROPY_GIT_TAG " hpm_sdk: " OPENMV_GIT_TAG " HAL: v");
     mp_hal_stdout_tx_str(buf_ver);
     mp_hal_stdout_tx_str(" BOARD: " MICROPY_HW_BOARD_NAME "-" MICROPY_HW_MCU_NAME "\r\n");
 

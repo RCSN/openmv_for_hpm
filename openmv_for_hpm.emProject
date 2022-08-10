@@ -2,31 +2,33 @@
 <solution Name="openmv_for_hpm" target="20" version="2">
   <project Name="openmv_for_hpm">
     <configuration
-      LIBRARY_IO_TYPE="SEMIHOST (host-formatted)"
+      LIBRARY_IO_TYPE="RTT"
       Name="Common"
       Target="HPM6750XXXX"
       arm_compiler_variant="SEGGER"
       arm_linker_variant="SEGGER"
-      c_preprocessor_definitions="FLASH_XIP=1;BOARD_SHOW_CLOCK=1;CONFIG_USB_HS;__ICRISCV__"
+      c_preprocessor_definitions="FLASH_XIP=1;BOARD_SHOW_CLOCK=1;CONFIG_USB_HS;INIT_EXT_RAM_FOR_DATA=1;CFG_TUSB_MCU=OPT_MCU_HPM;USB_HOST_MCU_CORE=HPM_CORE0;__ICRISCV__"
       c_user_include_directories="hpm_sdk/arch/.;hpm_sdk/drivers/inc;hpm_sdk/boards/hpm6750evkmini/.;hpm_sdk/soc/HPM6750;hpm_sdk/soc/HPM6750/boot;hpm_sdk/soc/HPM6750/toolchains;hpm_sdk/soc/ip;hpm_sdk/utils/.;hpm_sdk/components/debug_console/.;hpm_sdk/components/usb/device;hpm_sdk/components/usb/host;hpm_sdk/middleware/cherryusb/common;hpm_sdk/middleware/cherryusb/core;hpm_sdk/middleware/cherryusb/class/cdc;hpm_sdk/middleware/cherryusb/class/hid;hpm_sdk/middleware/cherryusb/class/msc;hpm_sdk/middleware/hpm_math/;hpm_sdk/middleware/hpm_math/nds_dsp;openmv/src/micropython/.;openmv/src/micropython/ports/hpm/."
       debug_register_definition_file=""
       debug_stack_pointer_start=""
       debug_start_from_entry_point_symbol="Yes"
-      debug_target_connection="J-Link"
+      debug_target_connection="GDB Server"
+      debug_type_file="$(StudioDir)/bin/libc++.xml"
       gcc_entry_point="_start"
-      gdb_server_command_line="$(ProjectDir)/hpm_sdk//tools/openocd/openocd.exe -f $(ProjectDir)/boards/openocd/probes/ft2232.cfg -f $(ProjectDir)/boards/openocd/soc/hpm6750-dual-core.cfg -f $(ProjectDir)/boards/openocd/boards/hpm6750evkmini.cfg"
+      gdb_server_command_line="$(HPM_PRO_BASE)/tools/openocd/openocd.exe -f $(HPM_PRO_BASE)/boards/openocd/probes/ft2232.cfg -f $(HPM_PRO_BASE)/boards/openocd/soc/hpm6750-dual-core.cfg -f $(HPM_PRO_BASE)/boards/openocd/boards/hpm6750evkmini.cfg"
       gdb_server_port="3333"
       gdb_server_reset_command="reset halt"
       gdb_server_type="Custom"
-      heap_size="1024"
+      heap_size="20480"
+      libcxx="No"
       link_linker_script_file="$(ProjectDir)/hpm_sdk/soc/HPM6750/toolchains/segger/flash_sdram_xip.icf"
       link_symbol_definitions="_flash_size=8M;_extram_size=16M"
       linker_memory_map_file="FLASH1 RX 0x80000000 0x00800000;RAM1 RWX 0x00000000 0x00008000"
       linker_output_format="hex"
       linker_printf_fp_enabled="Float"
       linker_printf_width_precision_supported="Yes"
-      linker_section_placements_segments="FLASH1 RX 0x80000000 0x00800000;RAM1 RWX 0x00000000 0x00008000"
-      macros="HPM_PRO_BASE=D:/vmware/share-dir/openmv_for_hpmo"
+      linker_section_placements_segments=""
+      macros="HPM_PRO_BASE=D:/vmware/share-dir/openmv_for_hpmo/hpm_sdk"
       project_directory=""
       project_type="Executable"
       rv_abi="ilp32"
@@ -240,7 +242,6 @@
           <file file_name="openmv/src/micropython/py/vm.c" />
           <file file_name="openmv/src/micropython/py/vstr.c" />
           <file file_name="openmv/src/micropython/py/warning.c" />
-          <file file_name="openmv/src/micropython/ports/hpm/mphalport.c" />
         </folder>
         <file file_name="openmv/src/micropython/ports/hpm/mpconfigport.h" />
         <folder Name="lib">
@@ -262,7 +263,7 @@
           </folder>
           <folder Name="runtime">
             <file file_name="openmv/src/micropython/shared/runtime/gchelper_generic.c">
-              <configuration Name="Debug" build_exclude_from_build="Yes" />
+              <configuration Name="Debug" build_exclude_from_build="No" />
             </file>
             <file file_name="openmv/src/micropython/shared/runtime/gchelper_native.c">
               <configuration Name="Debug" build_exclude_from_build="Yes" />
@@ -273,7 +274,9 @@
             <file file_name="openmv/src/micropython/shared/runtime/semihosting.c">
               <configuration Name="Debug" build_exclude_from_build="Yes" />
             </file>
-            <file file_name="openmv/src/micropython/shared/runtime/stdout_helpers.c" />
+            <file file_name="openmv/src/micropython/shared/runtime/stdout_helpers.c">
+              <configuration Name="Debug" build_exclude_from_build="Yes" />
+            </file>
             <file file_name="openmv/src/micropython/shared/runtime/sys_stdio_mphal.c" />
           </folder>
           <folder Name="timeutils">
@@ -283,7 +286,14 @@
       </folder>
     </folder>
     <file file_name="openmv/src/omv/ports/hpm/main.c" />
-    <configuration Name="Debug" arm_compiler_variant="SEGGER" />
+    <configuration
+      Name="Debug"
+      arm_compiler_variant="SEGGER"
+      debug_target_connection="GDB Server"
+      gcc_optimization_level="Level 3 for more speed"
+      target_reset_script="TargetInterface.resetAndStop()" />
+    <file file_name="openmv/src/omv/ports/hpm/usbd_cdc_msc_descriptors.c" />
+    <file file_name="openmv/src/micropython/ports/hpm/mphalport.c" />
   </project>
   <configuration
     Name="Debug"

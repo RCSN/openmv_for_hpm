@@ -9,6 +9,8 @@ extern void send_cdc_data(uint8_t *data,uint32_t len);
 extern uint32_t recv_cdc_data(uint8_t *data);
 extern bool usb_vcp_is_enabled(void);
 
+//HPM_PRO_BASE=D:/vmware/share-dir/openmv_for_hpmo/hpm_sdk
+//HPM_PRO_BASE=C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/hpm_sdk
 static ATTR_PLACE_AT_NONCACHEABLE  uint8_t heap[4096];
 int main(void)
 {

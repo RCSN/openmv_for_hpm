@@ -18,7 +18,7 @@
 #define MICROPY_PY_IO                           (0)
 #define MICROPY_PY_STRUCT                       (1)
 #define MICROPY_PY_BUILTINS_EVAL_EXEC           (1)
-
+#define MICROPY_PY_SYS                          (1)
 // Type definitions for the specific machine.
 typedef int ssize_t;
 typedef intptr_t mp_int_t; // must be pointer size

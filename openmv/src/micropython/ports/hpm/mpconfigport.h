@@ -1,4 +1,8 @@
 #include <stdint.h>
+
+extern const struct _mp_obj_module_t pyb_module;
+extern const struct _mp_obj_module_t mp_module_utime;
+
 // Python internal features.
 #define MICROPY_ENABLE_GC                       (1)
 #define MICROPY_HELPER_REPL                     (1)
@@ -19,6 +23,25 @@
 #define MICROPY_PY_STRUCT                       (1)
 #define MICROPY_PY_BUILTINS_EVAL_EXEC           (1)
 #define MICROPY_PY_SYS                          (1)
+
+#define MICROPY_PY_UTIME_MP_HAL                 (1)
+ 
+#define MICROPY_MODULE_WEAK_LINKS               (1)
+
+#define MICROPY_PY_PYB                          (1)
+
+
+#if MICROPY_PY_PYB
+#define PYB_BUILTIN_MODULE                  { MP_ROM_QSTR(MP_QSTR_pyb), MP_ROM_PTR(&pyb_module) },
+#else
+#define PYB_BUILTIN_MODULE
+#endif
+
+#define MICROPY_PORT_BUILTIN_MODULES \
+            {MP_OBJ_NEW_QSTR(MP_QSTR_utime), MP_ROM_PTR(&mp_module_utime)},\
+            PYB_BUILTIN_MODULE
+
+
 // Type definitions for the specific machine.
 typedef int ssize_t;
 typedef intptr_t mp_int_t; // must be pointer size

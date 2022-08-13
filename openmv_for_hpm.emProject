@@ -283,6 +283,15 @@
             <file file_name="openmv/src/micropython/shared/timeutils/timeutils.c" />
           </folder>
         </folder>
+        <folder Name="extmod">
+          <file file_name="openmv/src/micropython/extmod/utime_mphal.c" />
+        </folder>
+        <folder Name="port">
+          <file file_name="openmv/src/micropython/ports/hpm/modutime.c" />
+          <file file_name="openmv/src/micropython/ports/hpm/led.c" />
+          <file file_name="openmv/src/micropython/ports/hpm/modpyb.c" />
+          <file file_name="openmv/src/micropython/ports/hpm/hpm_led_pin.h" />
+        </folder>
       </folder>
     </folder>
     <file file_name="openmv/src/omv/ports/hpm/main.c" />

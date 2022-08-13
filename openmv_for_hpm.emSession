@@ -8,7 +8,7 @@
  </FrameBufferWindow>
  <Memory1>
   <MemoryWindow addressSpace="" dataSize="1" autoEvaluate="0" viewMode="0" viewType="4" addressOrder="0" columnsText="" refreshPeriod="0" name="hom6750evkmini_demo" sizeText="" addressText=""/>
-  <MemoryWindow addressSpace="" dataSize="1" autoEvaluate="0" viewMode="0" viewType="4" addressOrder="0" columnsText="" refreshPeriod="0" name="openmv_for_hpm" sizeText="" addressText=""/>
+  <MemoryWindow addressSpace="" dataSize="1" autoEvaluate="0" viewMode="0" viewType="4" addressOrder="0" columnsText="" refreshPeriod="0" name="openmv_for_hpm" sizeText="100" addressText="0x0113fda5"/>
  </Memory1>
  <Memory2>
   <MemoryWindow addressSpace="" dataSize="1" autoEvaluate="0" viewMode="0" viewType="4" addressOrder="0" columnsText="" refreshPeriod="0" name="hom6750evkmini_demo" sizeText="" addressText=""/>
@@ -25,9 +25,18 @@
  <Project>
   <ProjectSessionItem path="openmv_for_hpm"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;boards"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;drivers"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;soc"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;toolchains"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython;extmod"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython;port"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython;py"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython;shared"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython;shared;readline"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython;shared;runtime"/>
  </Project>
  <Register1>
@@ -65,11 +74,43 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="67" useTextEdit="1" path="openmv/src/micropython/py/modsys.c" left="0" top="163" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="18" y="144" useTextEdit="1" path="openmv/src/micropython/py/objmodule.c" left="0" top="106" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="16" y="33" useTextEdit="1" path="openmv/src/omv/ports/hpm/main.c" left="0" top="15" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="564" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/omv/ports/hpm/main.c" path="openmv/src/micropython/shared/runtime/pyexec.c" left="0" selected="1" top="651" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="1" y="110" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/micropython/shared/runtime/pyexec.c" path="openmv/src/micropython/ports/hpm/mphalport.c" left="0" top="88" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="2" y="111" useTextEdit="1" path="hpm_sdk/soc/HPM6750/toolchains/segger/flash_sdram_xip.icf" left="0" top="86" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="51" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/micropython/py/mphal.h" path="openmv/src/micropython/ports/hpm/mphalport.c" left="0" top="33" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="418" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/omv/ports/hpm/main.c" path="hpm_sdk/boards/hpm6750evkmini/board.c" left="0" top="399" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="481" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/micropython/ports/hpm/mphalport.c" path="hpm_sdk/soc/HPM6750/hpm_clock_drv.c" left="0" top="478" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="47" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/micropython/ports/hpm/led.c" path="openmv/src/micropython/ports/hpm/mpconfigport.h" left="0" top="19" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="32" y="67" useTextEdit="1" path="openmv/src/micropython/extmod/utime_mphal.c" left="0" top="61" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="65" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/micropython/extmod/utime_mphal.c" path="openmv/src/micropython/py/mphal.h" left="0" top="48" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="37" y="151" useTextEdit="1" path="openmv/src/micropython/ports/hpm/modutime.c" left="0" top="132" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="353" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/micropython/ports/hpm/modutime.c" path="openmv/src/micropython/py/objint.c" left="0" top="335" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="15" y="24" useTextEdit="1" path="openmv/src/omv/ports/hpm/main.c" left="0" selected="1" top="21" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="8" y="804" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/omv/ports/hpm/main.c" path="hpm_sdk/soc/HPM6750/hpm_soc.h" left="0" top="774" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="13" y="67" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/micropython/ports/hpm/modutime.c" path="F:/developsoft/SEGGER/SEGGER Embedded Studio for RISC-V 6.30/include/time.h" left="0" top="37" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="27" y="245" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/micropython/ports/hpm/mpconfigport.h" path="F:/developsoft/SEGGER/SEGGER Embedded Studio for RISC-V 6.30/include/stdint.h" left="0" top="221" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="19" y="241" useTextEdit="1" path="openmv/src/micropython/py/objmodule.c" left="0" top="220" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="8" y="10" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/micropython/py/objmodule.c" path="openmv/src/micropython/ports/hpm/genhdr/moduledefs.h" left="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="392" useTextEdit="1" path="openmv/src/micropython/py/builtinimport.c" left="0" top="349" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="326" useTextEdit="1" path="openmv/src/micropython/py/map.c" left="0" top="332" codecName=""/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="30" y="56" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/micropython/ports/hpm/led.c" path="openmv/src/micropython/py/obj.h" left="0" top="39" codecName=""/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="776" useTextEdit="1" path="openmv/src/micropython/py/modbuiltins.c" left="0" top="752" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="3" y="842" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/micropython/shared/runtime/pyexec.c" path="openmv/src/micropython/py/mpconfig.h" left="0" top="827" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="63" y="87" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/omv/ports/hpm/main.c" path="openmv/src/micropython/shared/runtime/pyexec.c" left="0" top="79" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="307" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/micropython/py/objmodule.c" path="openmv/src/micropython/py/mpstate.h" left="0" top="307" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/micropython/ports/hpm/modpyb.c" path="openmv/src/micropython/extmod/vfs.h" left="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="206" useTextEdit="1" path="openmv/src/micropython/ports/hpm/led.c" left="0" top="189" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="24" y="36" useTextEdit="1" path="openmv/src/micropython/ports/hpm/modpyb.c" left="0" top="211" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="2" y="40" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/micropython/ports/hpm/led.c" path="openmv/src/micropython/ports/hpm/led.h" left="0" top="19" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="47" y="11" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/micropython/ports/hpm/led.c" path="openmv/src/micropython/ports/hpm/hpm_led_pin.h" left="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="1" y="76" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/micropython/ports/hpm/hpm_led_pin.h" path="hpm_sdk/drivers/inc/hpm_gpio_drv.h" left="0" top="61" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="1" y="489" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/hpm_sdk/boards/hpm6750evkmini/board.c" path="hpm_sdk/boards/hpm6750evkmini/pinmux.c" left="0" top="462" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="4" y="59" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/hpm_sdk/boards/hpm6750evkmini/board.c" path="hpm_sdk/drivers/src/hpm_gpio_drv.c" left="0" top="32" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="141" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/micropython/ports/hpm/hpm_led_pin.h" path="hpm_sdk/boards/hpm6750evkmini/board.h" left="0" top="122" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="177" useTextEdit="1" path="hpm_sdk/soc/HPM6750/toolchains/trap.c" left="0" top="85" codecName=""/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="318" useTextEdit="1" path="openmv/src/omv/ports/hpm/usbd_cdc_msc_descriptors.c" left="0" top="294" codecName=""/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="46" y="171" useTextEdit="1" path="hpm_sdk/soc/HPM6750/toolchains/segger/startup.s" left="0" top="152" codecName=""/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="1007" useTextEdit="1" path="openmv/src/micropython/py/vm.c" left="0" top="990" codecName=""/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="8" y="487" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/hpm_sdk/boards/hpm6750evkmini/board.h" path="hpm_sdk/soc/ip/hpm_gpio_regs.h" left="0" top="470" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="517" useTextEdit="1" path="openmv/src/micropython/shared/readline/readline.c" left="0" top="495" codecName=""/>
  </Files>
- <EMStudioWindow activeProject="openmv_for_hpm" fileDialogDefaultFilter="*.c" autoConnectTarget="GDB Server" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="D:/vmware/share-dir/openmv_for_hpmo/openmv/src/micropython/ports/hpm" debugSearchPath="" autoConnectCapabilities="1343"/>
+ <EMStudioWindow activeProject="openmv_for_hpm" fileDialogDefaultFilter="*.c" autoConnectTarget="GDB Server" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/micropython/ports/hpm" debugSearchPath="" autoConnectCapabilities="1343"/>
 </session>

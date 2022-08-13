@@ -5,11 +5,8 @@
 #include "py/mperrno.h"
 #include "py/mphal.h"
 #include "hpm_common.h"
-//#include "usb_app.h"
-//#include "uart.h"
-//#include "fsl_gpio.h"
-//#include "fsl_iomuxc.h"
-//#include "fsl_debug_console.h"
+#include "hpm_clock_drv.h"
+
 bool mp_hal_ticks_cpu_enabled = false;
 
 // this table converts from HAL_StatusTypeDef to POSIX errno
@@ -111,6 +108,35 @@ uint32_t HAL_GetHalVersion(void)
  return 1;
 }
 
+
+void mp_hal_delay_ms(mp_uint_t ms)
+{
+  clock_cpu_delay_ms(ms);
+}
+
+void mp_hal_delay_us(mp_uint_t us)
+{
+  clock_cpu_delay_us(us);
+}
+
+
+mp_uint_t mp_hal_ticks_ms(void)
+{
+    return  0;
+}
+
+mp_uint_t mp_hal_ticks_us(void)
+{
+    return  0;
+}
+
+// Nanoseconds since the Epoch.
+uint64_t mp_hal_time_ns(void)
+{
+    return  0;
+}
+
+
 void mp_hal_ticks_cpu_enable(void) {
     if (!mp_hal_ticks_cpu_enabled) {
         //CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
@@ -123,55 +149,4 @@ void mp_hal_ticks_cpu_enable(void) {
         //mp_hal_ticks_cpu_enabled = true;
     }
 }
-
-//void mp_hal_gpio_clock_enable(uint32_t portNum) {
-//	 // i.MX RT's GPIO port starts from 1, and clock gate is not ordered in GPIO order
-//	//const static clock_ip_name_t tab[] = {(clock_ip_name_t)0, kCLOCK_Gpio1, kCLOCK_Gpio2, kCLOCK_Gpio3, kCLOCK_Gpio4, kCLOCK_Gpio5};
-//	//CLOCK_EnableClock(tab[portNum]); 
-
-//}
-
-//void mp_hal_pin_config(const pin_obj_t *p, const pin_af_obj_t *af, uint32_t alt, uint32_t padCfgVal ) {
-//	uint32_t isInputPathForcedOn = 0;
-//	padCfgVal &= ~(1UL<<31);	// clear MSb, as it is used to mark input/output for GPIO
-//	CLOCK_EnableClock(kCLOCK_Iomuxc);
-	
-//	if (alt == PIN_ALT_NC) 
-//		alt = REG_READ32(p->afReg) & 7;
-//	isInputPathForcedOn =  (alt == 5 || (padCfgVal | 1<<11) );	// Alt 5 is GPIO or OD mode is selected
-//	IOMUXC_SetPinMux(p->afReg, alt, af->inSelReg, af->inSelVal, p->cfgReg, isInputPathForcedOn);
-//	IOMUXC_SetPinConfig(p->afReg,alt,af->inSelReg, af->inSelVal, p->cfgReg, padCfgVal);
-//}
-
-//bool mp_hal_pin_config_alt(mp_hal_pin_obj_t pin, uint32_t padCfg,  uint8_t fn) {
-//    const pin_af_obj_t *af = pin_find_af(pin, fn);
-//    if (af == NULL) {
-//        return false;
-//    }
-//	mp_hal_pin_config(pin, af, af->idx, padCfg);
-//    return true;
-//}
-
-//void mp_hal_ConfigGPIO(const pin_obj_t *p, 
-//    uint32_t gpioModeAndPadCfg, uint32_t isInitialHighForOutput)
-//{
-//	GPIO_Type *pGPIO = p->gpio;
-//	uint32_t pinMask = 1 << p->pin;
-//	mp_hal_gpio_clock_enable(p->port);
-//	pGPIO->IMR &= ~pinMask;	 // disable pin IRQ
-//	if (gpioModeAndPadCfg & (GPIO_PAD_OUTPUT_MASK)) {
-//		// output
-//		if (isInitialHighForOutput)
-//			pGPIO->DR |= pinMask;
-//		else
-//			pGPIO->DR &= ~pinMask;
-//		pGPIO->GDIR |= pinMask;
-		
-//	} else {
-//		// input
-//		pGPIO->GDIR &= ~pinMask;
-//	}
-//	mp_hal_pin_config_alt(p, gpioModeAndPadCfg, AF_FN_GPIO);
-//}
-
 

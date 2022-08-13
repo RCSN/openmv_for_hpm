@@ -13,7 +13,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
-
+#include "hpm_csr_regs.h"
 /**
  *
  * @brief COMMON driver APIs

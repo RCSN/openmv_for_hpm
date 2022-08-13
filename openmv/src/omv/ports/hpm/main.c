@@ -4,6 +4,9 @@
 #include "py/mperrno.h"
 #include "py/stackctrl.h"
 #include "shared/runtime/pyexec.h" 
+#include "hpm_gpio_drv.h"
+#include "hpm_rtc_drv.h"
+
 //#include "lib/utils/pyexec.h"
 extern void send_cdc_data(uint8_t *data,uint32_t len);
 extern uint32_t recv_cdc_data(uint8_t *data);
@@ -12,13 +15,18 @@ extern bool usb_vcp_is_enabled(void);
 //HPM_PRO_BASE=D:/vmware/share-dir/openmv_for_hpmo/hpm_sdk
 //HPM_PRO_BASE=C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/hpm_sdk
 static ATTR_PLACE_AT_NONCACHEABLE  uint8_t heap[4096];
+
+static void rtc_init(void);
+
 int main(void)
 {
   uint32_t recv_len = 0;
   
   board_init();
-  l1c_dc_disable();
+  rtc_init();
+ // l1c_dc_disable();
   board_init_led_pins();
+  //gpio_write_pin(BOARD_R_GPIO_CTRL,BOARD_R_GPIO_INDEX,BOARD_R_GPIO_PIN,1);
   board_init_usb_pins();
   extern void cdc_acm_msc_init(void);  
   cdc_acm_msc_init();
@@ -77,7 +85,7 @@ mp_lexer_t *mp_lexer_new_from_file(const char *filename) {
 }
 
 #define ALLOCA_BUF_SIZE	2048
-uint32_t s_allocaBuf[ALLOCA_BUF_SIZE / 4];
+static ATTR_PLACE_AT_NONCACHEABLE uint32_t s_allocaBuf[ALLOCA_BUF_SIZE / 4];
 uint32_t s_allocaNdx;
 void* rollback_alloca(uint32_t cb) 
 {
@@ -87,4 +95,19 @@ void* rollback_alloca(uint32_t cb)
 	pRet = (void*)(s_allocaBuf + s_allocaNdx);
 	s_allocaNdx += (cb + 3) >> 2;
 	return pRet;
+}
+
+
+static void rtc_init(void)
+{
+    // Configure RTC time
+    struct tm cfg_date_time;
+    cfg_date_time.tm_year = 121; // Year: 2021 (started from 1900)
+    cfg_date_time.tm_mon = 6;    // Month: July (Started from 0)
+    cfg_date_time.tm_mday = 12;  // Day in Month: 12
+    cfg_date_time.tm_hour = 16;  // Hour: 16
+    cfg_date_time.tm_min = 45;   // Minute: 45
+    cfg_date_time.tm_sec = 41;   // Second: 41
+    time_t cfg_time = mktime(&cfg_date_time); // Convert date time to tick
+    rtc_config_time(HPM_RTC, cfg_time);
 }

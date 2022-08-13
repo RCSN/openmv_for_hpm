@@ -2,6 +2,7 @@
 #include "usbd_cdc.h"
 #include "usbd_msc.h"
 #include "hpm_common.h"
+#include "hpm_l1c_drv.h"
 /*!< endpoint address */
 #define CDC_IN_EP  0x81
 #define CDC_OUT_EP 0x02
@@ -282,8 +283,21 @@ bool usb_vcp_is_enabled(void)
 
 void send_cdc_data(uint8_t *data,uint32_t len)
 {
+    uint8_t _data[512];
     ep_tx_busy_flag = true;
-    usbd_ep_start_write(CDC_IN_EP, data, len);
+ //   l1c_dc_invalidate((uint32_t)data, len);
+    if(((data[len - 1] == 0x0a) && (len > 1) && (data[len - 2] != 0x0d)) ||
+      ((data[len - 1] == 0x0a) && (len == 1)))
+    {
+      memcpy(_data,data,len - 1);
+      _data[len - 1] = 0x0d;
+      _data[len] = 0x0a;
+      usbd_ep_start_write(CDC_IN_EP,_data, len + 1);
+    }
+    else
+    {
+      usbd_ep_start_write(CDC_IN_EP, data, len);
+    }  
     while (ep_tx_busy_flag)
     {
       

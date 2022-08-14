@@ -46,23 +46,58 @@ int main(void)
 
   usbdbg_init();
   mp_hal_init();
+    // If there's no script ready, just re-exec REPL
+    while (!usbdbg_script_ready()) {
+        nlr_buf_t nlr;
+
+        if (nlr_push(&nlr) == 0) {
+            // enable IDE interrupt
+            usbdbg_set_irq_enabled(true);
+
+            // run REPL
+            if (pyexec_mode_kind == PYEXEC_MODE_RAW_REPL) {
+                if (pyexec_raw_repl() != 0) {
+                    break;
+                }
+            } else {
+                if (pyexec_friendly_repl() != 0) {
+                    break;
+                }
+            }
+
+            nlr_pop();
+        }
+    }
+
+    if (usbdbg_script_ready()) {
+        nlr_buf_t nlr;
+        if (nlr_push(&nlr) == 0) {
+            // Enable IDE interrupt
+            usbdbg_set_irq_enabled(true);
+            // Execute the script.
+            pyexec_str(usbdbg_get_script(), true);
+            nlr_pop();
+        } else {
+            mp_obj_print_exception(&mp_plat_print, (mp_obj_t)nlr.ret_val);
+        }
+    }
 
 
   ////// Start a normal REPL; will exit when ctrl-D is entered on a blank line.
-again_repl:
-  if(usb_vcp_is_enabled())
-  {
-    board_delay_ms(2000);
-    pyexec_friendly_repl();
-  }
-  else
-  {
-    goto again_repl;
-  }
+//again_repl:
+//  if(usb_vcp_is_enabled())
+//  {
+//    board_delay_ms(2000);
+//    pyexec_friendly_repl();
+//  }
+//  else
+//  {
+//    goto again_repl;
+//  }
  
-  ////// Deinitialise the runtime.
-  gc_sweep_all();
-  mp_deinit();
+//  ////// Deinitialise the runtime.
+  //gc_sweep_all();
+  //mp_deinit();
   while(1)
   {
     

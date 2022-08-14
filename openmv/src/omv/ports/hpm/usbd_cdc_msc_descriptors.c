@@ -206,6 +206,7 @@ uint32_t read_buffer_len = 0;
 volatile bool ep_tx_busy_flag = false;
 volatile bool ep_open_flag = 0;
 volatile uint32_t host2dev_lenth = 0;
+volatile uint32_t dev2host_lenth = 0;
 
 typedef struct __attribute__((packed)) {
     uint8_t cmd;
@@ -223,12 +224,12 @@ extern void __fatal_error();
 
 static void openmv_send_data(uint8_t *data,uint32_t len)
 {
-    ep_tx_busy_flag = true;
+    //ep_tx_busy_flag = true;
     usbd_ep_start_write(CDC_IN_EP, data, len);
-    while (ep_tx_busy_flag)
-    {
+    //while (ep_tx_busy_flag)
+    //{
       
-    }
+    //}
 }
 
 void usbd_cdc_acm_setup(void)
@@ -240,12 +241,11 @@ void usbd_cdc_acm_setup(void)
 void usbd_cdc_acm_bulk_out(uint8_t ep, uint32_t nbytes)
 {
     uint8_t request  = 0;
-    uint32_t xfer_length = 0;
-    USB_LOG_RAW("actual out len:%d\r\n", nbytes);
+    uint32_t xfer_length = 0;   
     read_buffer_len = nbytes;
     /* setup next out ep read transfer */
     usbd_ep_start_read(CDC_OUT_EP, read_buffer, 2048);
-
+   USB_LOG_RAW("actual out len:%d 0x%02x 0x%02x\r\n", nbytes,read_buffer[0],read_buffer[1]);
     if(nbytes < 6 || read_buffer[0] != 0x30)
     {
       __fatal_error();
@@ -272,35 +272,46 @@ void usbd_cdc_acm_bulk_out(uint8_t ep, uint32_t nbytes)
         usbdbg_data_out(read_buffer, nbytes);
     }
 
-    while (xfer_length) 
+    if(request & 0x80)
     {
-      if(request & 0x80)
-      {
-        // Device-to-host data phase
-          int bytes = MIN(xfer_length, DBG_MAX_PACKET);
-          usbdbg_data_in(read_buffer, bytes);
-          openmv_send_data(read_buffer, bytes);
-          xfer_length -= bytes;
-      }
-      else
-      // Host-to-device data phase
-      {
-          host2dev_lenth = xfer_length;
-          break;
-      }
+      // Device-to-host data phase     
+        int bytes = MIN(xfer_length, DBG_MAX_PACKET);
+        usbdbg_data_in(read_buffer, bytes);
+        dev2host_lenth = xfer_length;
+        openmv_send_data(read_buffer, bytes);
     }
-
+    else
+    // Host-to-device data phase
+    {
+        host2dev_lenth = xfer_length;
+    }
 }
 
 void usbd_cdc_acm_bulk_in(uint8_t ep, uint32_t nbytes)
 {
-//   USB_LOG_RAW("actual in len:%d\r\n", nbytes);
-
+ //  USB_LOG_RAW("actual in len:%d\r\n", nbytes);
+   if(dev2host_lenth)
+   {
+      if(dev2host_lenth < nbytes)
+      {
+          dev2host_lenth = 0;
+      }
+      else
+      {
+          dev2host_lenth -= nbytes;
+      }
+   }
     if ((nbytes % CDC_MAX_MPS) == 0 && nbytes) {
         /* send zlp */
         usbd_ep_start_write(CDC_IN_EP, NULL, 0);
-    } else {
+    } else {      
+        if(nbytes == 0)
+          return;
+        USB_LOG_RAW("actual in len:%d\r\n", nbytes);
         ep_tx_busy_flag = false;
+        int bytes = MIN(dev2host_lenth, DBG_MAX_PACKET);
+        usbdbg_data_in(read_buffer, bytes);
+        openmv_send_data(read_buffer, bytes);
     }
 }
 

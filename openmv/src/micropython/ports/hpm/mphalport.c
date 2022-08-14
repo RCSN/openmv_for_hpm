@@ -119,7 +119,7 @@ void mp_hal_stdout_tx_strn(const char *str, size_t len) {
             for (int i=0; i<len; i++) {
                 ringbuf_put((ringbuf_t*)&tx_ringbuf, str[i]);
             }
-            //send_cdc_data(str,len);
+            send_cdc_data(str,len);
 	}
 #if MICROPY_HW_WIFIDBG_EN
 	wifidbg_send_strn(str, len);

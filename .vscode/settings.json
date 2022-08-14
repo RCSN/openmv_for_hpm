@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "pin.h": "c",
-        "led.h": "c"
+        "led.h": "c",
+        "usbdbg.h": "c"
     }
 }

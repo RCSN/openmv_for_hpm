@@ -4,6 +4,7 @@
 #include "py/mperrno.h"
 #include "py/stackctrl.h"
 #include "shared/runtime/pyexec.h" 
+#include "common/usbdbg.h"
 #include "hpm_gpio_drv.h"
 #include "hpm_rtc_drv.h"
 
@@ -11,12 +12,14 @@
 extern void send_cdc_data(uint8_t *data,uint32_t len);
 extern uint32_t recv_cdc_data(uint8_t *data);
 extern bool usb_vcp_is_enabled(void);
-
+extern int mp_hal_init(void);
 //HPM_PRO_BASE=D:/vmware/share-dir/openmv_for_hpmo/hpm_sdk
 //HPM_PRO_BASE=C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/hpm_sdk
 static ATTR_PLACE_AT_NONCACHEABLE  uint8_t heap[4096];
 
 static void rtc_init(void);
+
+unsigned char OMV_UNIQUE_ID_ADDR[4];
 
 int main(void)
 {
@@ -24,17 +27,26 @@ int main(void)
   
   board_init();
   rtc_init();
+  OMV_UNIQUE_ID_ADDR[0] = 1;
+  OMV_UNIQUE_ID_ADDR[1] = 2;
+  OMV_UNIQUE_ID_ADDR[2] = 3;
+  OMV_UNIQUE_ID_ADDR[4] = 4;
  // l1c_dc_disable();
   board_init_led_pins();
   //gpio_write_pin(BOARD_R_GPIO_CTRL,BOARD_R_GPIO_INDEX,BOARD_R_GPIO_PIN,1);
   board_init_usb_pins();
   extern void cdc_acm_msc_init(void);  
   cdc_acm_msc_init();
+
   mp_stack_ctrl_init();
   gc_init(heap, heap + sizeof(heap));
   mp_init();
   mp_obj_list_init(MP_OBJ_TO_PTR(mp_sys_path), 0);
   mp_obj_list_init(MP_OBJ_TO_PTR(mp_sys_argv), 0);
+
+  usbdbg_init();
+  mp_hal_init();
+
 
   ////// Start a normal REPL; will exit when ctrl-D is entered on a blank line.
 again_repl:
@@ -97,6 +109,15 @@ void* rollback_alloca(uint32_t cb)
 	return pRet;
 }
 
+void __fatal_error()
+{
+    while (true) {
+        gpio_write_pin(BOARD_R_GPIO_CTRL,BOARD_R_GPIO_INDEX,BOARD_R_GPIO_PIN,1);
+        board_delay_ms(100);
+        gpio_write_pin(BOARD_R_GPIO_CTRL,BOARD_R_GPIO_INDEX,BOARD_R_GPIO_PIN,0);
+        board_delay_ms(100);
+    }
+}
 
 static void rtc_init(void)
 {

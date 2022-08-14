@@ -14,19 +14,20 @@
 #include "py/gc.h"
 #include "py/mphal.h"
 #include "py/obj.h"
-#include "py/runtime.h"
-#include "pendsv.h"
 
-#include "imlib.h"
+//#include "pendsv.h"
+
+//#include "imlib.h"
 #if MICROPY_PY_SENSOR
 #include "cambus.h"
 #include "sensor.h"
 #endif
-#include "framebuffer.h"
-#include "ff.h"
+//#include "framebuffer.h"
+//#include "ff.h"
 #include "usbdbg.h"
-#include "omv_boardconfig.h"
-#include "py_image.h"
+#include "ports/hpm/dev_port_config.h"
+#include "boards/HPM6750EVKMINI/omv_boardconfig.h"
+//#include "py_image.h"
 
 static int xfer_bytes;
 static int xfer_length;
@@ -75,11 +76,11 @@ void usbdbg_set_script_running(bool running)
 inline void usbdbg_set_irq_enabled(bool enabled)
 {
     if (enabled) {
-        NVIC_EnableIRQ(OMV_USB_IRQN);
+        intc_m_enable_irq(IRQn_USB0);
     } else {
-        NVIC_DisableIRQ(OMV_USB_IRQN);
+        intc_m_disable_irq(IRQn_USB0);
     }
-    __DSB(); __ISB();
+    // __DSB(); __ISB();
     irq_enabled = enabled;
 }
 
@@ -131,31 +132,31 @@ void usbdbg_data_in(void *buffer, int length)
             // Return 0 if FB is locked or not ready.
             ((uint32_t*)buffer)[0] = 0;
             // Try to lock FB. If header size == 0 frame is not ready
-            if (mutex_try_lock_alternate(&JPEG_FB()->lock, MUTEX_TID_IDE)) {
-                // If header size == 0 frame is not ready
-                if (JPEG_FB()->size == 0) {
-                    // unlock FB
-                    mutex_unlock(&JPEG_FB()->lock, MUTEX_TID_IDE);
-                } else {
-                    // Return header w, h and size/bpp
-                    ((uint32_t*)buffer)[0] = JPEG_FB()->w;
-                    ((uint32_t*)buffer)[1] = JPEG_FB()->h;
-                    ((uint32_t*)buffer)[2] = JPEG_FB()->size;
-                }
-            }
+            //if (mutex_try_lock_alternate(&JPEG_FB()->lock, MUTEX_TID_IDE)) {
+            //    // If header size == 0 frame is not ready
+            //    if (JPEG_FB()->size == 0) {
+            //        // unlock FB
+            //        mutex_unlock(&JPEG_FB()->lock, MUTEX_TID_IDE);
+            //    } else {
+            //        // Return header w, h and size/bpp
+            //        ((uint32_t*)buffer)[0] = JPEG_FB()->w;
+            //        ((uint32_t*)buffer)[1] = JPEG_FB()->h;
+            //        ((uint32_t*)buffer)[2] = JPEG_FB()->size;
+            //    }
+            //}
             cmd = USBDBG_NONE;
             break;
 
         case USBDBG_FRAME_DUMP:
-            if (xfer_bytes < xfer_length) {
-                memcpy(buffer, JPEG_FB()->pixels+xfer_bytes, length);
-                xfer_bytes += length;
-                if (xfer_bytes == xfer_length) {
-                    cmd = USBDBG_NONE;
-                    JPEG_FB()->w = 0; JPEG_FB()->h = 0; JPEG_FB()->size = 0;
-                    mutex_unlock(&JPEG_FB()->lock, MUTEX_TID_IDE);
-                }
-            }
+            //if (xfer_bytes < xfer_length) {
+            //    memcpy(buffer, JPEG_FB()->pixels+xfer_bytes, length);
+            //    xfer_bytes += length;
+            //    if (xfer_bytes == xfer_length) {
+            //        cmd = USBDBG_NONE;
+            //        JPEG_FB()->w = 0; JPEG_FB()->h = 0; JPEG_FB()->size = 0;
+            //        mutex_unlock(&JPEG_FB()->lock, MUTEX_TID_IDE);
+            //    }
+            //}
             break;
 
         case USBDBG_ARCH_STR: {
@@ -190,11 +191,11 @@ void usbdbg_data_out(void *buffer, int length)
     switch (cmd) {
         case USBDBG_FB_ENABLE: {
             uint32_t enable = *((int32_t*)buffer);
-            JPEG_FB()->enabled = enable;
+            //JPEG_FB()->enabled = enable;
             if (enable == 0) {
                 // When disabling framebuffer, the IDE might still be holding FB lock.
                 // If the IDE is not the current lock owner, this operation is ignored.
-                mutex_unlock(&JPEG_FB()->lock, MUTEX_TID_IDE);
+                //mutex_unlock(&JPEG_FB()->lock, MUTEX_TID_IDE);
             }
             cmd = USBDBG_NONE;
             break;
@@ -221,12 +222,13 @@ void usbdbg_data_out(void *buffer, int length)
                     mp_obj_exception_clear_traceback(mp_const_ide_interrupt);
 
                     // Remove the BASEPRI masking (if any)
-                    __set_BASEPRI(0);
+                    //__set_BASEPRI(0);
 
                     // Interrupt running REPL
                     // Note: setting pendsv explicitly here because the VM is probably
                     // waiting in REPL and the soft interrupt flag will not be checked.
-                    pendsv_nlr_jump(mp_const_ide_interrupt);
+
+                    //pendsv_nlr_jump(mp_const_ide_interrupt);
                 }
             }
             break;
@@ -343,9 +345,9 @@ void usbdbg_control(void *buffer, uint8_t request, uint32_t length)
                 mp_obj_exception_clear_traceback(mp_const_ide_interrupt);
 
                 // Remove the BASEPRI masking (if any)
-                __set_BASEPRI(0);
+                //__set_BASEPRI(0);
 
-                pendsv_nlr_jump(mp_const_ide_interrupt);
+                //pendsv_nlr_jump(mp_const_ide_interrupt);
             }
             cmd = USBDBG_NONE;
             break;
@@ -373,14 +375,14 @@ void usbdbg_control(void *buffer, uint8_t request, uint32_t length)
             break;
 
         case USBDBG_SYS_RESET:
-            NVIC_SystemReset();
+            nvic_system_reset();
             break;
 
         case USBDBG_SYS_RESET_TO_BL:{
             #if defined(MICROPY_RESET_TO_BOOTLOADER)
             MICROPY_RESET_TO_BOOTLOADER();
             #else
-            NVIC_SystemReset();
+            nvic_system_reset();
             #endif
             break;
         }

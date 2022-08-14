@@ -3,6 +3,8 @@
 #include "usbd_msc.h"
 #include "hpm_common.h"
 #include "hpm_l1c_drv.h"
+#include "common/usbdbg.h"
+
 /*!< endpoint address */
 #define CDC_IN_EP  0x81
 #define CDC_OUT_EP 0x02
@@ -11,10 +13,14 @@
 #define MSC_IN_EP  0x84
 #define MSC_OUT_EP 0x05
 
-#define USBD_VID           0xFFFF
-#define USBD_PID           0xFFFF
+//#define USBD_VID           0x1209
+//#define USBD_PID           0xabd1
+#define USBD_VID           0x1209
+#define USBD_PID           0xabd1
 #define USBD_MAX_POWER     100
 #define USBD_LANGID_STRING 1033
+
+#define DBG_MAX_PACKET      (2048)
 
 /*!< config descriptor size */
 //#define USB_CONFIG_SIZE (9 + CDC_ACM_DESCRIPTOR_LEN)
@@ -199,12 +205,31 @@ static ATTR_PLACE_AT_NONCACHEABLE uint8_t write_buffer[2048] = { 0x31, 0x32, 0x3
 uint32_t read_buffer_len = 0;
 volatile bool ep_tx_busy_flag = false;
 volatile bool ep_open_flag = 0;
+volatile uint32_t host2dev_lenth = 0;
+
+typedef struct __attribute__((packed)) {
+    uint8_t cmd;
+    uint8_t request;
+    uint32_t xfer_length;
+} usbdbg_cmd_t;
 
 #ifdef CONFIG_USB_HS
 #define CDC_MAX_MPS 512
 #else
 #define CDC_MAX_MPS 64
 #endif
+
+extern void __fatal_error();
+
+static void openmv_send_data(uint8_t *data,uint32_t len)
+{
+    ep_tx_busy_flag = true;
+    usbd_ep_start_write(CDC_IN_EP, data, len);
+    while (ep_tx_busy_flag)
+    {
+      
+    }
+}
 
 void usbd_cdc_acm_setup(void)
 {
@@ -214,10 +239,57 @@ void usbd_cdc_acm_setup(void)
 
 void usbd_cdc_acm_bulk_out(uint8_t ep, uint32_t nbytes)
 {
-//    USB_LOG_RAW("actual out len:%d\r\n", nbytes);
+    uint8_t request  = 0;
+    uint32_t xfer_length = 0;
+    USB_LOG_RAW("actual out len:%d\r\n", nbytes);
     read_buffer_len = nbytes;
     /* setup next out ep read transfer */
     usbd_ep_start_read(CDC_OUT_EP, read_buffer, 2048);
+
+    if(nbytes < 6 || read_buffer[0] != 0x30)
+    {
+      __fatal_error();
+      usbdbg_control(NULL,USBDBG_NONE,0);
+    }
+
+    if(host2dev_lenth == 0)
+    {
+        usbdbg_cmd_t *cmd = (usbdbg_cmd_t *) read_buffer;
+        request = cmd->request;
+        xfer_length = cmd->xfer_length;
+        usbdbg_control(NULL, request, xfer_length);
+    }
+    else
+    {
+        if(host2dev_lenth < nbytes)
+        {
+            host2dev_lenth = 0;
+        }
+        else
+        {
+            host2dev_lenth -= nbytes;
+        }   
+        usbdbg_data_out(read_buffer, nbytes);
+    }
+
+    while (xfer_length) 
+    {
+      if(request & 0x80)
+      {
+        // Device-to-host data phase
+          int bytes = MIN(xfer_length, DBG_MAX_PACKET);
+          usbdbg_data_in(read_buffer, bytes);
+          openmv_send_data(read_buffer, bytes);
+          xfer_length -= bytes;
+      }
+      else
+      // Host-to-device data phase
+      {
+          host2dev_lenth = xfer_length;
+          break;
+      }
+    }
+
 }
 
 void usbd_cdc_acm_bulk_in(uint8_t ep, uint32_t nbytes)
@@ -276,6 +348,7 @@ void usbd_cdc_acm_set_rts(uint8_t intf, bool rts)
   ep_open_flag = 1;
 }
 
+
 bool usb_vcp_is_enabled(void)
 {
   return ep_open_flag;
@@ -318,6 +391,10 @@ uint32_t recv_cdc_data(uint8_t *data)
     return  len;
 }
 
+
+
+
+
 volatile uint8_t dtr_enable = 0;
 
 void usbd_cdc_acm_set_dtr(uint8_t intf, bool dtr)
@@ -339,7 +416,6 @@ void cdc_acm_data_send_with_dtr_test(void)
         }
     }
 }
-
 
 
 #define BLOCK_SIZE  512

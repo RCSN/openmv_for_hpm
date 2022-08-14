@@ -10,7 +10,7 @@
  */
 #ifndef __USBDBG_H__
 #define __USBDBG_H__
-
+#include "py/runtime.h"
 /**
   * Firmware version (major, minor and patch numbers).
   *

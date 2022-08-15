@@ -28,7 +28,7 @@
       linker_printf_fp_enabled="Float"
       linker_printf_width_precision_supported="Yes"
       linker_section_placements_segments=""
-      macros="HPM_PRO_BASE=C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/hpm_sdk"
+      macros="HPM_PRO_BASE=D:/vmware/share-dir/openmv_for_hpmo/hpm_sdk"
       project_directory=""
       project_type="Executable"
       rv_abi="ilp32"
@@ -307,7 +307,7 @@
       Name="Debug"
       arm_compiler_variant="SEGGER"
       debug_target_connection="GDB Server"
-      gcc_optimization_level="Level 2 for speed"
+      gcc_optimization_level="None"
       rv_architecture="rv32imac"
       target_reset_script="TargetInterface.resetAndStop()" />
     <file file_name="openmv/src/omv/ports/hpm/usbd_cdc_msc_descriptors.c" />

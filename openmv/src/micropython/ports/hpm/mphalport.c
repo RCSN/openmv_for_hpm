@@ -116,11 +116,11 @@ void mp_hal_stdout_tx_strn(const char *str, size_t len) {
 	lcd_print_strn(str, len);
 #endif    
 	if (usb_vcp_is_enabled()) {
-            for (int i=0; i<len; i++) {
-                ringbuf_put((ringbuf_t*)&tx_ringbuf, str[i]);
-            }
-            send_cdc_data(str,len);
+//    send_cdc_data(str,len);
 	}
+    for (int i=0; i<len; i++) {
+        ringbuf_put((ringbuf_t*)&tx_ringbuf, str[i]);
+    }
 #if MICROPY_HW_WIFIDBG_EN
 	wifidbg_send_strn(str, len);
 #endif	
@@ -129,13 +129,13 @@ void mp_hal_stdout_tx_strn(const char *str, size_t len) {
 
 void mp_hal_stdout_tx_strn_cooked(const char *str, size_t len) {
     // send stdout to UART and USB CDC VCP
-    if (usb_vcp_is_enabled()) {	
-       for (int i=0; i<len; i++) {
-          ringbuf_put((ringbuf_t*)&tx_ringbuf, str[i]);
-          }
-        //send_cdc_data(str,len);
+    if (usb_vcp_is_enabled()) {	    
+        send_cdc_data(str,len);
     } else {
 
+    }
+     for (int i=0; i<len; i++) {
+    ringbuf_put((ringbuf_t*)&tx_ringbuf, str[i]);
     }
     #if MICROPY_HW_WIFIDBG_EN
     wifidbg_send_strn(str, len);

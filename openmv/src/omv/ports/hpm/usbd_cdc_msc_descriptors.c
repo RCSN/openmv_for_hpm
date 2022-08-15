@@ -200,13 +200,14 @@ usbd_interface_t cdc_cmd_intf;
 usbd_interface_t cdc_data_intf;
 
 static ATTR_PLACE_AT_NONCACHEABLE uint8_t read_buffer[2048];
+static ATTR_PLACE_AT_NONCACHEABLE uint8_t send_buffer[2048];
 static ATTR_PLACE_AT_NONCACHEABLE uint8_t write_buffer[2048] = { 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x30 };
 
 uint32_t read_buffer_len = 0;
 volatile bool ep_tx_busy_flag = false;
 volatile bool ep_open_flag = 0;
-volatile uint32_t host2dev_lenth = 0;
-volatile uint32_t dev2host_lenth = 0;
+volatile static uint32_t host2dev_lenth = 0;
+volatile static uint32_t dev2host_lenth = 0;
 
 typedef struct __attribute__((packed)) {
     uint8_t cmd;
@@ -245,33 +246,24 @@ void usbd_cdc_acm_bulk_out(uint8_t ep, uint32_t nbytes)
     read_buffer_len = nbytes;
     /* setup next out ep read transfer */
     usbd_ep_start_read(CDC_OUT_EP, read_buffer, 2048);
-   USB_LOG_RAW("actual out len:%d 0x%02x 0x%02x\r\n", nbytes,read_buffer[0],read_buffer[1]);
-    if(nbytes < 6 || read_buffer[0] != 0x30)
+//    USB_LOG_RAW("actual out len:%d 0x%02x 0x%02x\r\n", nbytes,read_buffer[0],read_buffer[1]);
+    if(host2dev_lenth) //host send device msg 
     {
-      __fatal_error();
-      usbdbg_control(NULL,USBDBG_NONE,0);
+        if(host2dev_lenth < nbytes)
+          host2dev_lenth = 0;
+        else
+          host2dev_lenth -= nbytes;
+        usbdbg_data_out(read_buffer, nbytes);
+        return;
     }
-
-    if(host2dev_lenth == 0)
+    else
     {
         usbdbg_cmd_t *cmd = (usbdbg_cmd_t *) read_buffer;
         request = cmd->request;
         xfer_length = cmd->xfer_length;
         usbdbg_control(NULL, request, xfer_length);
     }
-    else
-    {
-        if(host2dev_lenth < nbytes)
-        {
-            host2dev_lenth = 0;
-        }
-        else
-        {
-            host2dev_lenth -= nbytes;
-        }   
-        usbdbg_data_out(read_buffer, nbytes);
-    }
-
+    USB_LOG_RAW("actual out len:%d 0x%02x 0x%02x\r\n", nbytes,read_buffer[0],read_buffer[1]);
     if(request & 0x80)
     {
       // Device-to-host data phase     
@@ -283,35 +275,37 @@ void usbd_cdc_acm_bulk_out(uint8_t ep, uint32_t nbytes)
     else
     // Host-to-device data phase
     {
-        host2dev_lenth = xfer_length;
+        host2dev_lenth = xfer_length;       
     }
 }
 
 void usbd_cdc_acm_bulk_in(uint8_t ep, uint32_t nbytes)
 {
  //  USB_LOG_RAW("actual in len:%d\r\n", nbytes);
-   if(dev2host_lenth)
-   {
-      if(dev2host_lenth < nbytes)
-      {
-          dev2host_lenth = 0;
-      }
-      else
-      {
-          dev2host_lenth -= nbytes;
-      }
-   }
     if ((nbytes % CDC_MAX_MPS) == 0 && nbytes) {
         /* send zlp */
         usbd_ep_start_write(CDC_IN_EP, NULL, 0);
-    } else {      
-        if(nbytes == 0)
-          return;
-        USB_LOG_RAW("actual in len:%d\r\n", nbytes);
-        ep_tx_busy_flag = false;
+    } 
+    else 
+    {    
+      ep_tx_busy_flag = false;  
+      if(nbytes == 0)
+        return;
+      if(dev2host_lenth)
+      {
+        if(dev2host_lenth < nbytes)    
+            dev2host_lenth = 0;      
+        else     
+            dev2host_lenth -= nbytes;
+      }
+      else
+      {
+         return;
+      }
+  //        USB_LOG_RAW("actual in len:%d\r\n", nbytes);      
         int bytes = MIN(dev2host_lenth, DBG_MAX_PACKET);
-        usbdbg_data_in(read_buffer, bytes);
-        openmv_send_data(read_buffer, bytes);
+        usbdbg_data_in(send_buffer, bytes);
+        openmv_send_data(send_buffer, bytes);
     }
 }
 

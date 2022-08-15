@@ -12,7 +12,7 @@
 #define __OMV_BOARDCONFIG_H__
 
 // Architecture info
-#define OMV_ARCH_STR            "hpmicro_riscv" // 33 chars max
+#define OMV_ARCH_STR            "riscv" // 33 chars max
 #define OMV_BOARD_TYPE          "HPM6750EVKMINI"
 
 #ifndef LINKER_SCRIPT

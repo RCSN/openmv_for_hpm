@@ -3,6 +3,9 @@
 extern const struct _mp_obj_module_t pyb_module;
 extern const struct _mp_obj_module_t mp_module_utime;
 
+//#ifndef MICROPY_CONFIG_ROM_LEVEL
+//#define MICROPY_CONFIG_ROM_LEVEL            (30)
+//#endif
 // Python internal features.
 #define MICROPY_ENABLE_GC                       (1)
 #define MICROPY_HELPER_REPL                     (1)
@@ -23,6 +26,9 @@ extern const struct _mp_obj_module_t mp_module_utime;
 #define MICROPY_PY_STRUCT                       (1)
 #define MICROPY_PY_BUILTINS_EVAL_EXEC           (1)
 #define MICROPY_PY_SYS                          (1)
+#define MICROPY_PY_BUILTINS_HELP                (1)
+#define MICROPY_PY_BUILTINS_NOTIMPLEMENTED      (0)
+#define MICROPY_ENABLE_SCHEDULER                (0)
 
 #define MICROPY_PY_UTIME_MP_HAL                 (1)
  
@@ -30,6 +36,11 @@ extern const struct _mp_obj_module_t mp_module_utime;
 
 #define MICROPY_PY_PYB                          (1)
 
+#define MICROPY_EVENT_POLL_HOOK \
+    do { \
+        extern void mp_handle_pending(bool); \
+        mp_handle_pending(true); \
+    } while (0);
 
 #if MICROPY_PY_PYB
 #define PYB_BUILTIN_MODULE                  { MP_ROM_QSTR(MP_QSTR_pyb), MP_ROM_PTR(&pyb_module) },

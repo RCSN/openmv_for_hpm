@@ -15,7 +15,7 @@ extern bool usb_vcp_is_enabled(void);
 extern int mp_hal_init(void);
 //HPM_PRO_BASE=D:/vmware/share-dir/openmv_for_hpmo/hpm_sdk
 //HPM_PRO_BASE=C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/hpm_sdk
-static ATTR_PLACE_AT_NONCACHEABLE  uint8_t heap[4096];
+static ATTR_PLACE_AT_NONCACHEABLE  uint8_t heap[10240];
 
 static void rtc_init(void);
 
@@ -38,6 +38,7 @@ int main(void)
   extern void cdc_acm_msc_init(void);  
   cdc_acm_msc_init();
 
+soft_reset:
   mp_stack_ctrl_init();
   gc_init(heap, heap + sizeof(heap));
   mp_init();
@@ -82,7 +83,10 @@ int main(void)
         }
     }
 
-
+  gc_sweep_all();
+  mp_deinit();
+  goto soft_reset;
+  return 0;
   ////// Start a normal REPL; will exit when ctrl-D is entered on a blank line.
 //again_repl:
 //  if(usb_vcp_is_enabled())
@@ -96,8 +100,6 @@ int main(void)
 //  }
  
 //  ////// Deinitialise the runtime.
-  //gc_sweep_all();
-  //mp_deinit();
   while(1)
   {
     

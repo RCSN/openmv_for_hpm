@@ -14,7 +14,10 @@
 #include "py/gc.h"
 #include "py/mphal.h"
 #include "py/obj.h"
-
+#include "py/lexer.h"
+#include "py/parse.h"
+#include "py/compile.h"
+#include "py/runtime.h"
 //#include "pendsv.h"
 
 //#include "imlib.h"
@@ -220,7 +223,7 @@ void usbdbg_data_out(void *buffer, int length)
 
                     // Clear interrupt traceback
                     mp_obj_exception_clear_traceback(mp_const_ide_interrupt);
-
+                    mp_sched_exception(mp_const_ide_interrupt);
                     // Remove the BASEPRI masking (if any)
                     //__set_BASEPRI(0);
 
@@ -343,6 +346,7 @@ void usbdbg_control(void *buffer, uint8_t request, uint32_t length)
 
                 // interrupt running code by raising an exception
                 mp_obj_exception_clear_traceback(mp_const_ide_interrupt);
+                mp_sched_exception(mp_const_ide_interrupt);
 
                 // Remove the BASEPRI masking (if any)
                 //__set_BASEPRI(0);

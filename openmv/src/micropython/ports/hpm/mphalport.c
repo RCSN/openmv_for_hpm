@@ -64,33 +64,42 @@ void EventPollHook(void) {
 
 int mp_hal_stdin_rx_chr(void) {
 	int c;
-	for (;;) {
-	#ifdef USE_HOST_MODE
-		pyb_usb_host_process();
-		int c = pyb_usb_host_get_keyboard();
-		if (c != 0) {
-			return c;
-		}
-	#endif
-       if (recv_cdc_data((uint8_t*)&c) != 0) {
-           return (uint8_t)(c & 0xFF);
-       }
-//       MICROPY_EVENT_POLL_HOOK
-   }
+    if (dbg_mode_enabled) {
+        for (;;) {
+            MICROPY_EVENT_POLL_HOOK
+        }
+    }
+	//for (;;) {
+	//#ifdef USE_HOST_MODE
+	//	pyb_usb_host_process();
+	//	int c = pyb_usb_host_get_keyboard();
+	//	if (c != 0) {
+	//		return c;
+	//	}
+	//#endif
+ //      if (recv_cdc_data((uint8_t*)&c) != 0) {
+ //         if (dbg_mode_enabled == 0)
+ //         {
+ //            return (uint8_t)(c & 0xFF);
+ //         }        
+ //      }
+ //      MICROPY_EVENT_POLL_HOOK
+ //  }
  return 0;
 }
 
-//void usbd_cdc_acm_set_line_coding(uint8_t intf, uint32_t baudrate, uint8_t databits, uint8_t parity, uint8_t stopbits)
-//{
-//    if(baudrate == IDE_BAUDRATE_SLOW || baudrate == IDE_BAUDRATE_FAST)
-//    {
-//        dbg_mode_enabled = true;
-//    }
-//    else
-//    {
-//        dbg_mode_enabled = false;
-//    }
-//}
+void usbd_cdc_acm_set_line_coding(uint8_t intf, uint32_t baudrate, uint8_t databits, uint8_t parity, uint8_t stopbits)
+{
+    dbg_mode_enabled = true;
+    //if(baudrate == IDE_BAUDRATE_SLOW || baudrate == IDE_BAUDRATE_FAST)
+    //{
+    //    dbg_mode_enabled = true;
+    //}
+    //else
+    //{
+    //    dbg_mode_enabled = false;
+    //}
+}
 
 int mp_hal_init(void)
 {
@@ -130,7 +139,7 @@ void mp_hal_stdout_tx_strn(const char *str, size_t len) {
 void mp_hal_stdout_tx_strn_cooked(const char *str, size_t len) {
     // send stdout to UART and USB CDC VCP
     if (usb_vcp_is_enabled()) {	    
-        send_cdc_data(str,len);
+ //       send_cdc_data(str,len);
     } else {
 
     }
@@ -145,7 +154,7 @@ void mp_hal_stdout_tx_strn_cooked(const char *str, size_t len) {
 
 uint32_t HAL_GetHalVersion(void)
 {
- return 1;
+    return (0x00010300);
 }
 
 

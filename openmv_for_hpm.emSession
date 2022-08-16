@@ -25,17 +25,12 @@
  <Project>
   <ProjectSessionItem path="openmv_for_hpm"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;boards"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;components"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;middleware"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;toolchains"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython;extmod"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython;port"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv;module"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv;module;ulab"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv;module;ulab;code"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv;module;ulab;code;numpy"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv;common"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv;port"/>
  </Project>
  <Register1>
@@ -73,8 +68,16 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="29" useTextEdit="1" path="openmv/src/omv/ports/hpm/main.c" left="0" selected="1" top="32" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="28" y="37" useTextEdit="1" path="openmv/src/omv/modules/ulab/code/numpy/approx.c" left="0" top="30" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="9" y="34" useTextEdit="1" path="openmv/src/omv/common/sensor_utils.c" left="0" top="249" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="27" y="369" useTextEdit="1" path="openmv/src/micropython/py/asmthumb.c" left="0" top="13" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="87" y="172" useTextEdit="1" path="openmv/src/omv/imlib/jpeg.c" left="0" top="152" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/omv/imlib/jpeg.c" path="openmv/src/omv/boards/HPM6750EVKMINI/omv_boardconfig.h" left="0" top="3" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="29" y="30" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/omv/imlib/jpeg.c" path="openmv/src/omv/imlib/imlib.h" left="0" top="12" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="15" y="34" useTextEdit="1" path="openmv/src/omv/sensors/hm01b0.c" left="0" top="51" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="12" y="12" useTextEdit="1" path="openmv/src/omv/ports/hpm/hpm_riscv_segger.h" left="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="35" y="256" useTextEdit="1" path="openmv/src/micropython/lib/oofatfs/ff.c" left="0" top="250" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="7" useTextEdit="1" path="openmv/src/micropython/ports/hpm/fatfs_port.c" left="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="993" useTextEdit="1" path="openmv/src/omv/ports/stm32/sensor.c" left="0" selected="1" top="955" codecName="Default"/>
  </Files>
- <EMStudioWindow activeProject="openmv_for_hpm" fileDialogDefaultFilter="*.c" autoConnectTarget="GDB Server" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="D:/vmware/share-dir/openmv_for_hpmo/openmv/src/omv/ports/hpm" debugSearchPath="" autoConnectCapabilities="1343"/>
+ <EMStudioWindow activeProject="openmv_for_hpm" fileDialogDefaultFilter="*.c" autoConnectTarget="GDB Server" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/omv/ports/stm32" debugSearchPath="" autoConnectCapabilities="1343"/>
 </session>

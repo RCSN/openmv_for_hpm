@@ -29,20 +29,13 @@
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;boards"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;components"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;middleware"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;middleware;cherry_usb"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;middleware;cherry_usb;class"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;middleware;cherry_usb;core"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;middleware;cherry_usb;port"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;soc"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;toolchains"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython;extmod"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython;shared"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython;shared;readline"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython;shared;runtime"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv;common"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv;module"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv;module;ulab"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv;module;ulab;code"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv;module;ulab;code;numpy"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv;port"/>
  </Project>
  <Register1>
@@ -80,11 +73,8 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="24" useTextEdit="1" path="openmv/src/omv/ports/hpm/main.c" left="0" selected="1" top="8" codecName=""/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="27" y="333" useTextEdit="1" path="openmv/src/omv/common/usbdbg.c" left="0" top="101" codecName=""/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="98" useTextEdit="1" path="hpm_sdk/soc/HPM6750/toolchains/trap.c" left="0" top="75" codecName=""/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" path="openmv/src/micropython/ports/hpm/mphalport.c" left="0" top="63" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="18" y="361" useTextEdit="1" path="openmv/src/omv/ports/hpm/usbd_cdc_msc_descriptors.c" left="0" top="356" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="29" useTextEdit="1" path="openmv/src/omv/ports/hpm/main.c" left="0" selected="1" top="32" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="28" y="37" useTextEdit="1" path="openmv/src/omv/modules/ulab/code/numpy/approx.c" left="0" top="30" codecName="Default"/>
  </Files>
- <EMStudioWindow activeProject="openmv_for_hpm" fileDialogDefaultFilter="*.c" autoConnectTarget="GDB Server" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/omv/common" debugSearchPath="" autoConnectCapabilities="1343"/>
+ <EMStudioWindow activeProject="openmv_for_hpm" fileDialogDefaultFilter="*.c" autoConnectTarget="GDB Server" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="D:/vmware/share-dir/openmv_for_hpmo/openmv/src/omv/ports/hpm" debugSearchPath="" autoConnectCapabilities="1343"/>
 </session>

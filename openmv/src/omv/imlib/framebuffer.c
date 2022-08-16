@@ -9,7 +9,7 @@
  * Framebuffer functions.
  */
 #include <stdio.h>
-#include "mpprint.h"
+#include "py/mpprint.h"
 #include "framebuffer.h"
 #include "omv_boardconfig.h"
 

@@ -7,8 +7,8 @@
       Target="HPM6750XXXX"
       arm_compiler_variant="SEGGER"
       arm_linker_variant="SEGGER"
-      c_preprocessor_definitions="FLASH_XIP=1;BOARD_SHOW_CLOCK=1;CONFIG_USB_HS;INIT_EXT_RAM_FOR_DATA=1;CFG_TUSB_MCU=OPT_MCU_HPM;USB_HOST_MCU_CORE=HPM_CORE0;__ICRISCV__"
-      c_user_include_directories="hpm_sdk/arch/.;hpm_sdk/drivers/inc;hpm_sdk/boards/hpm6750evkmini/.;hpm_sdk/soc/HPM6750;hpm_sdk/soc/HPM6750/boot;hpm_sdk/soc/HPM6750/toolchains;hpm_sdk/soc/ip;hpm_sdk/utils/.;hpm_sdk/components/debug_console/.;hpm_sdk/components/usb/device;hpm_sdk/components/usb/host;hpm_sdk/middleware/cherryusb/common;hpm_sdk/middleware/cherryusb/core;hpm_sdk/middleware/cherryusb/class/cdc;hpm_sdk/middleware/cherryusb/class/hid;hpm_sdk/middleware/cherryusb/class/msc;hpm_sdk/middleware/hpm_math/;hpm_sdk/middleware/hpm_math/nds_dsp;openmv/src/micropython/.;openmv/src/micropython/ports/hpm/.;openmv/src/omv/."
+      c_preprocessor_definitions="FLASH_XIP=1;BOARD_SHOW_CLOCK=1;CONFIG_USB_HS;INIT_EXT_RAM_FOR_DATA=1;CFG_TUSB_MCU=OPT_MCU_HPM;USB_HOST_MCU_CORE=HPM_CORE0;__ICRISCV__;MICROPY_PY_ULAB;OPENMV"
+      c_user_include_directories="hpm_sdk/arch/.;hpm_sdk/drivers/inc;hpm_sdk/boards/hpm6750evkmini/.;hpm_sdk/soc/HPM6750;hpm_sdk/soc/HPM6750/boot;hpm_sdk/soc/HPM6750/toolchains;hpm_sdk/soc/ip;hpm_sdk/utils/.;hpm_sdk/components/debug_console/.;hpm_sdk/components/usb/device;hpm_sdk/components/usb/host;hpm_sdk/middleware/cherryusb/common;hpm_sdk/middleware/cherryusb/core;hpm_sdk/middleware/cherryusb/class/cdc;hpm_sdk/middleware/cherryusb/class/hid;hpm_sdk/middleware/cherryusb/class/msc;hpm_sdk/middleware/hpm_math/;hpm_sdk/middleware/hpm_math/nds_dsp;openmv/src/micropython/py;openmv/src/micropython/.;openmv/src/micropython/ports/hpm/.;openmv/src/micropython/lib/oofatfs;openmv/src/omv/.;openmv/src/omv/imlib;openmv/src/omv/ports/hpm;openmv/src/omv/alloc;openmv/src/omv/common;openmv/src/omv/boards/HPM6750EVKMINI"
       debug_register_definition_file=""
       debug_stack_pointer_start=""
       debug_start_from_entry_point_symbol="Yes"
@@ -19,10 +19,10 @@
       gdb_server_port="3333"
       gdb_server_reset_command="reset halt"
       gdb_server_type="Custom"
-      heap_size="20480"
+      heap_size="245760"
       libcxx="No"
       link_linker_script_file="$(ProjectDir)/hpm_sdk/soc/HPM6750/toolchains/segger/flash_sdram_xip.icf"
-      link_symbol_definitions="_flash_size=8M;_extram_size=16M"
+      link_symbol_definitions="_flash_size=8M;_extram_size=16M;OMV_FB_SIZE=8M;OMV_FB_ALLOC_SIZE=2M;OMV_JPEG_BUF_SIZE=1M"
       linker_memory_map_file="FLASH1 RX 0x80000000 0x00800000;RAM1 RWX 0x00000000 0x00008000"
       linker_output_format="hex"
       linker_printf_fp_enabled="Float"
@@ -35,7 +35,7 @@
       rv_arch_ext="xv5"
       rv_architecture="rv32i"
       rv_debug_extensions="Andes"
-      stack_size="20480"
+      stack_size="65536"
       target_device_name="HPM6750XXXX"
       target_interface_type="JTAG"
       target_reset_script="Reset();"
@@ -296,9 +296,138 @@
       <folder Name="omv">
         <folder Name="common">
           <file file_name="openmv/src/omv/common/usbdbg.c" />
+          <file file_name="openmv/src/omv/common/array.c" />
+          <file file_name="openmv/src/omv/common/factoryreset.c" />
+          <file file_name="openmv/src/omv/common/ff_wrapper.c" />
+          <file file_name="openmv/src/omv/common/ini.c" />
+          <file file_name="openmv/src/omv/common/mutex.c" />
+          <file file_name="openmv/src/omv/common/sensor_utils.c" />
+          <file file_name="openmv/src/omv/common/trace.c" />
+          <file file_name="openmv/src/omv/common/ringbuf_omv.c" />
         </folder>
         <folder Name="port">
           <file file_name="openmv/src/omv/ports/hpm/dev_port_config.h" />
+          <file file_name="openmv/src/omv/ports/hpm/cambus.c" />
+        </folder>
+        <folder Name="module">
+          <folder Name="ulab">
+            <folder Name="code">
+              <folder Name="numpy">
+                <folder Name="carray">
+                  <file file_name="openmv/src/omv/modules/ulab/code/numpy/carray/carray.c" />
+                  <file file_name="openmv/src/omv/modules/ulab/code/numpy/carray/carray_tools.c" />
+                </folder>
+                <folder Name="fft">
+                  <file file_name="openmv/src/omv/modules/ulab/code/numpy/fft/fft.c" />
+                  <file file_name="openmv/src/omv/modules/ulab/code/numpy/fft/fft_tools.c" />
+                </folder>
+                <folder Name="linalg">
+                  <file file_name="openmv/src/omv/modules/ulab/code/numpy/linalg/linalg.c" />
+                  <file file_name="openmv/src/omv/modules/ulab/code/numpy/linalg/linalg_tools.c" />
+                </folder>
+                <folder Name="ndarray">
+                  <file file_name="openmv/src/omv/modules/ulab/code/numpy/ndarray/ndarray_iter.c" />
+                </folder>
+                <file file_name="openmv/src/omv/modules/ulab/code/numpy/approx.c" />
+                <file file_name="openmv/src/omv/modules/ulab/code/numpy/compare.c" />
+                <file file_name="openmv/src/omv/modules/ulab/code/numpy/create.c" />
+                <file file_name="openmv/src/omv/modules/ulab/code/numpy/filter.c" />
+                <file file_name="openmv/src/omv/modules/ulab/code/numpy/numerical.c" />
+                <file file_name="openmv/src/omv/modules/ulab/code/numpy/numpy.c" />
+                <file file_name="openmv/src/omv/modules/ulab/code/numpy/poly.c" />
+                <file file_name="openmv/src/omv/modules/ulab/code/numpy/stats.c" />
+                <file file_name="openmv/src/omv/modules/ulab/code/numpy/transform.c" />
+                <file file_name="openmv/src/omv/modules/ulab/code/numpy/vector.c" />
+              </folder>
+              <folder Name="scipy">
+                <folder Name="linalg">
+                  <file file_name="openmv/src/omv/modules/ulab/code/scipy/linalg/linalg1.c" />
+                </folder>
+                <folder Name="optimize">
+                  <file file_name="openmv/src/omv/modules/ulab/code/scipy/optimize/optimize.c" />
+                </folder>
+                <folder Name="signal">
+                  <file file_name="openmv/src/omv/modules/ulab/code/scipy/signal/signal.c" />
+                </folder>
+                <folder Name="special">
+                  <file file_name="openmv/src/omv/modules/ulab/code/scipy/special/special.c" />
+                </folder>
+                <file file_name="openmv/src/omv/modules/ulab/code/scipy/scipy.c" />
+              </folder>
+              <folder Name="user">
+                <file file_name="openmv/src/omv/modules/ulab/code/user/user.c" />
+              </folder>
+              <folder Name="utils">
+                <file file_name="openmv/src/omv/modules/ulab/code/utils/utils.c" />
+              </folder>
+              <file file_name="openmv/src/omv/modules/ulab/code/ndarray.c" />
+              <file file_name="openmv/src/omv/modules/ulab/code/ndarray_operators.c" />
+              <file file_name="openmv/src/omv/modules/ulab/code/ndarray_properties.c" />
+              <file file_name="openmv/src/omv/modules/ulab/code/ulab.c" />
+              <file file_name="openmv/src/omv/modules/ulab/code/ulab_tools.c" />
+            </folder>
+          </folder>
+        </folder>
+        <folder Name="alloc">
+          <file file_name="openmv/src/omv/alloc/fb_alloc.c" />
+          <file file_name="openmv/src/omv/alloc/umm_malloc.c" />
+          <file file_name="openmv/src/omv/alloc/unaligned_memcpy.c" />
+          <file file_name="openmv/src/omv/alloc/xalloc.c" />
+        </folder>
+        <folder Name="imlib">
+          <file file_name="openmv/src/omv/imlib/agast.c" />
+          <file file_name="openmv/src/omv/imlib/apriltag.c" />
+          <file file_name="openmv/src/omv/imlib/bayer.c" />
+          <file file_name="openmv/src/omv/imlib/blob.c" />
+          <file file_name="openmv/src/omv/imlib/bmp.c" />
+          <file file_name="openmv/src/omv/imlib/clahe.c" />
+          <file file_name="openmv/src/omv/imlib/collections.c" />
+          <file file_name="openmv/src/omv/imlib/dmtx.c" />
+          <file file_name="openmv/src/omv/imlib/draw.c" />
+          <file file_name="openmv/src/omv/imlib/edge.c" />
+          <file file_name="openmv/src/omv/imlib/eye.c" />
+          <file file_name="openmv/src/omv/imlib/fast.c" />
+          <file file_name="openmv/src/omv/imlib/fmath.c" />
+          <file file_name="openmv/src/omv/imlib/font.c" />
+          <file file_name="openmv/src/omv/imlib/framebuffer.c" />
+          <file file_name="openmv/src/omv/imlib/fsort.c" />
+          <file file_name="openmv/src/omv/imlib/gif.c" />
+          <file file_name="openmv/src/omv/imlib/haar.c" />
+          <file file_name="openmv/src/omv/imlib/hog.c" />
+          <file file_name="openmv/src/omv/imlib/hough.c" />
+          <file file_name="openmv/src/omv/imlib/imlib.c" />
+          <file file_name="openmv/src/omv/imlib/integral.c" />
+          <file file_name="openmv/src/omv/imlib/integral_mw.c" />
+          <file file_name="openmv/src/omv/imlib/jpeg.c" />
+          <file file_name="openmv/src/omv/imlib/jpegd.c" />
+          <file file_name="openmv/src/omv/imlib/kmeans.c" />
+          <file file_name="openmv/src/omv/imlib/lab_tab.c" />
+          <file file_name="openmv/src/omv/imlib/lbp.c" />
+          <file file_name="openmv/src/omv/imlib/line.c" />
+          <file file_name="openmv/src/omv/imlib/lodepng.c" />
+          <file file_name="openmv/src/omv/imlib/lsd.c" />
+          <file file_name="openmv/src/omv/imlib/mathop.c" />
+          <file file_name="openmv/src/omv/imlib/mjpeg.c" />
+          <file file_name="openmv/src/omv/imlib/orb.c" />
+          <file file_name="openmv/src/omv/imlib/phasecorrelation.c" />
+          <file file_name="openmv/src/omv/imlib/png.c" />
+          <file file_name="openmv/src/omv/imlib/point.c" />
+          <file file_name="openmv/src/omv/imlib/pool.c" />
+          <file file_name="openmv/src/omv/imlib/ppm.c" />
+          <file file_name="openmv/src/omv/imlib/qrcode.c" />
+          <file file_name="openmv/src/omv/imlib/qsort.c" />
+          <file file_name="openmv/src/omv/imlib/rainbow_tab.c" />
+          <file file_name="openmv/src/omv/imlib/rectangle.c" />
+          <file file_name="openmv/src/omv/imlib/selective_search.c" />
+          <file file_name="openmv/src/omv/imlib/sincos_tab.c" />
+          <file file_name="openmv/src/omv/imlib/template.c" />
+          <file file_name="openmv/src/omv/imlib/xyz_tab.c" />
+          <file file_name="openmv/src/omv/imlib/yuv.c" />
+          <file file_name="openmv/src/omv/imlib/zbar.c" />
+          <file file_name="openmv/src/omv/imlib/binary_omv.c" />
+          <file file_name="openmv/src/omv/imlib/fft_omv.c" />
+          <file file_name="openmv/src/omv/imlib/filter_omv.c" />
+          <file file_name="openmv/src/omv/imlib/stats_omv.c" />
         </folder>
       </folder>
     </folder>
@@ -307,7 +436,8 @@
       Name="Debug"
       arm_compiler_variant="SEGGER"
       debug_target_connection="GDB Server"
-      gcc_optimization_level="None"
+      gcc_optimization_level="Level 3 for more speed"
+      heap_size="245760"
       rv_architecture="rv32imac"
       target_reset_script="TargetInterface.resetAndStop()" />
     <file file_name="openmv/src/omv/ports/hpm/usbd_cdc_msc_descriptors.c" />

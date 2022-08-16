@@ -33,7 +33,7 @@
 #include "imlib.h"
 #include "xalloc.h"
 #include "fb_alloc.h"
-#include "gc.h"
+#include "py/gc.h"
 
 #ifdef IMLIB_ENABLE_FAST
 

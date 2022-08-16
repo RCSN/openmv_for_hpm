@@ -41,7 +41,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "fmath.h"
-#include "arm_math.h"
+#include "hpm_math.h"
 #include "ff.h"
 #include "imlib.h"
 #include "xalloc.h"

@@ -14,12 +14,12 @@
  * CPUs the locking function is implemented with atomic access using disable/enable IRQs.
  */
 #include "mutex.h"
-#include "cmsis_gcc.h"
+//#include "cmsis_gcc.h"
 #include "py/mphal.h"
 
 void mutex_init0(omv_mutex_t *mutex)
 {
-    __DMB();
+    //__DMB();
     mutex->tid = 0;
     mutex->lock = 0;
     mutex->last_tid = 0;
@@ -47,7 +47,7 @@ static void _mutex_lock(omv_mutex_t *mutex, uint32_t tid, bool blocking)
         }
     } while (mutex->tid != tid && blocking);
     #endif
-    __DMB();
+    //__DMB();
 }
 
 void mutex_lock(omv_mutex_t *mutex, uint32_t tid)
@@ -87,7 +87,7 @@ int mutex_lock_timeout(omv_mutex_t *mutex, uint32_t tid, uint32_t timeout)
         if (mutex_try_lock(mutex, tid)) {
             return 1;
         }
-        __WFI();
+        //__WFI();
     }
     return 0;
 }
@@ -95,7 +95,7 @@ int mutex_lock_timeout(omv_mutex_t *mutex, uint32_t tid, uint32_t timeout)
 void mutex_unlock(omv_mutex_t *mutex, uint32_t tid)
 {
     if (mutex->tid == tid) {
-        __DMB();
+        //__DMB();
         mutex->tid = 0;
         mutex->lock = 0;
     }

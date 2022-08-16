@@ -8,7 +8,7 @@
  */
 #include "py/runtime.h"
 #include "py/obj.h"
-#include <arm_math.h>
+#include <hpm_math.h>
 #include "fb_alloc.h"
 #include "ff_wrapper.h"
 #include "common.h"

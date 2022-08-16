@@ -8,6 +8,11 @@
 #include "hpm_gpio_drv.h"
 #include "hpm_rtc_drv.h"
 
+#include "omv_boardconfig.h"
+#include "framebuffer.h"
+#include "cambus.h"
+#include "sensor.h"
+#include "usbdbg.h"
 //#include "lib/utils/pyexec.h"
 extern void send_cdc_data(uint8_t *data,uint32_t len);
 extern uint32_t recv_cdc_data(uint8_t *data);
@@ -44,9 +49,12 @@ soft_reset:
   mp_init();
   mp_obj_list_init(MP_OBJ_TO_PTR(mp_sys_path), 0);
   mp_obj_list_init(MP_OBJ_TO_PTR(mp_sys_argv), 0);
+  mp_hal_init();
 
   usbdbg_init();
-  mp_hal_init();
+  fb_alloc_init0();
+  framebuffer_init0();
+  
     // If there's no script ready, just re-exec REPL
     while (!usbdbg_script_ready()) {
         nlr_buf_t nlr;

@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-
 define memory with size = 4G;
 
 /* Regions */
@@ -30,6 +29,15 @@ define block heap  with size = __HEAPSIZE__,  alignment = 8, /* fill =0x00, */ r
 define block stack with size = __STACKSIZE__, alignment = 8, /* fill =0xCD, */ readwrite access { };
 
 define block framebuffer with alignment = 8 { section .framebuffer };
+
+define block fballoc with alignment = 8 { section .fballoc };
+
+define block fb_base with size = OMV_FB_SIZE, alignment = 8, readwrite access {};
+
+define block fb_end with size = OMV_FB_ALLOC_SIZE, alignment = 8, readwrite access {};
+
+define block jpeg_buf with size = OMV_JPEG_BUF_SIZE, alignment = 8, readwrite access {};
+
 define block safe_stack with size = 512, readwrite access {};
 
 define block boot_header with fixed order        { section .boot_header, section .fw_info_table, section .dc_info };
@@ -47,6 +55,11 @@ define exported symbol __noncacheable_end__  = end of region NONCACHEABLE_RAM + 
 
 define exported symbol _stack_safe = end of block safe_stack + 1;
 define exported symbol _stack = end of block stack + 1;
+
+define exported symbol _fballoc = end of block fballoc + 1;
+define exported symbol _fb_base = end of block fb_base + 1;
+define exported symbol _fb_end  = end of block fb_end + 1;
+define exported symbol _jpeg_buf  = end of block jpeg_buf + 1;
 
 do not initialize                           { section .noncacheable };
 do not initialize                           { section .non_init, section .non_init.*, section .*.non_init, section .*.non_init.* };
@@ -100,14 +113,14 @@ place in ILM_SLV                          {
                                              section .fast, section .fast.*,                       // "ramfunc" section
                                           };
 
-place in AXI_SRAM with auto order              {
+place in AXI_SRAM with auto order         {
                                             block tls,                                            // Thread-local-storage block
                                             readwrite,                                            // Catch-all for initialized/uninitialized data sections (e.g. .data, .noinit)
                                             zeroinit                                              // Catch-all for zero-initialized data sections (e.g. .bss)
                                           };
 										  
-place in SDRAM                              { block framebuffer };
+place in SDRAM                              { block framebuffer,block fballoc,block fb_base,block fb_end,block jpeg_buf};
 place in NONCACHEABLE_RAM                   { section .noncacheable, section .noncacheable.init, section .noncacheable.bss,block stack};
-place in AXI_SRAM                              { block heap };                                         // Heap reserved block
-//place at end of AXI_SRAM                       { block stack };                                        // Stack reserved block at the end
+place in AXI_SRAM                           { block heap};                                         // Heap reserved block
+//place at end of AXI_SRAM                  { block stack };                                        // Stack reserved block at the end
 place at end of DLM                         { block safe_stack };                                   // Safe stack reserved block at the end

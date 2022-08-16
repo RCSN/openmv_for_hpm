@@ -18,7 +18,7 @@
 #include <limits.h>
 #include <float.h>
 #include <math.h>
-#include <arm_math.h>
+#include <hpm_math.h>
 #include <ff.h>
 #include "fb_alloc.h"
 #include "umm_malloc.h"
@@ -28,6 +28,7 @@
 #include "collections.h"
 #include "imlib_config.h"
 #include "omv_boardconfig.h"
+
 
 #ifndef M_PI
 #define M_PI    3.14159265f

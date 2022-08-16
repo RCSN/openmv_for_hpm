@@ -16,7 +16,7 @@
 #include "imlib.h"
 #include "xalloc.h"
 #include "fb_alloc.h"
-#include "gc.h"
+#include "py/gc.h"
 
 #define MAX_ROW         (480)
 #define MAX_CORNERS     (2000)

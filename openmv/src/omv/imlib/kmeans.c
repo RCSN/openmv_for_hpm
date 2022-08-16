@@ -10,7 +10,7 @@
  */
 #include <float.h>
 #include <limits.h>
-#include <arm_math.h>
+#include <hpm_math.h>
 #include <stdio.h>
 #include "imlib.h"
 #include "array.h"

@@ -10,7 +10,7 @@
  */
 #include <stdlib.h>
 #include <string.h>
-#include <arm_math.h>
+#include <hpm_math.h>
 #include "imlib.h"
 #include "fb_alloc.h"
 

@@ -40,8 +40,8 @@
 #define sin(x) sinf(x)
 #define pow(x,y) powf((x),(y))
 #define sinh(x) sinhf(x)
-#define radToDeg(x) ((x) * (180.0f / PI))
-#define degToRad(x) ((x) * (PI / 180.0f))
+#define radToDeg(x) ((x) * (180.0f / M_PI))
+#define degToRad(x) ((x) * (M_PI / 180.0f))
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////// "lsd.h"

@@ -13,4 +13,13 @@ static inline int __ssub16(uint32_t op1, uint32_t op2)
     return 0;
 }
 
+static inline bool isinff(float arg)
+{
+    return 0;
+}
+
+static inline bool isnanf(float arg)
+{
+    return 0;
+}
 #endif

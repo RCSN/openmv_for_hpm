@@ -28,18 +28,33 @@ extern unsigned char OMV_UNIQUE_ID_ADDR[4];
 
 // Sensor external clock timer frequency.
 // TODO Not actually used right now, frequency is hardcoded.
-#define OMV_XCLK_FREQUENCY      (12500000)
+#define OMV_XCLK_FREQUENCY      (12000000)
+
+// Sensor PLL register value.
+#define OMV_OV7725_PLL_CONFIG   (0x41)  // x4
+
+// Sensor Banding Filter Value
+#define OMV_OV7725_BANDING      (0x7F)
+
+// OV5640 Sensor Settings
+#define OMV_OV5640_XCLK_FREQ    (24000000)
+#define OMV_OV5640_PLL_CTRL2    (0x64)
+#define OMV_OV5640_PLL_CTRL3    (0x13)
+#define OMV_OV5640_REV_Y_CHECK  (0) 
+#define OMV_OV5640_REV_Y_FREQ   (25000000)
+#define OMV_OV5640_REV_Y_CTRL2  (0x54)
+#define OMV_OV5640_REV_Y_CTRL3  (0x13)
 
 // Enable hardware JPEG
 #define OMV_HARDWARE_JPEG       (0)
 
 // Enable sensor drivers
-#define OMV_ENABLE_OV2640       (0)
-#define OMV_ENABLE_OV5640       (0)
+#define OMV_ENABLE_OV2640       (1)
+#define OMV_ENABLE_OV5640       (1)
 #define OMV_ENABLE_OV7670       (1)
 #define OMV_ENABLE_OV7690       (0)
-#define OMV_ENABLE_OV7725       (0)
-#define OMV_ENABLE_OV9650       (0)
+#define OMV_ENABLE_OV7725       (1)
+#define OMV_ENABLE_OV9650       (1)
 #define OMV_ENABLE_MT9V0XX      (0)
 #define OMV_ENABLE_LEPTON       (0)
 #define OMV_ENABLE_HM01B0       (0)
@@ -163,8 +178,8 @@ void pico_reset_to_bootloader(void);
 #define DCMI_DMA_IRQ            (DMA_IRQ_0)
 #define DCMI_DMA_CHANNEL        (0)
 
-#define DCMI_PWDN_PIN           (0)
-#define DCMI_RESET_PIN          (1)
+//#define DCMI_PWDN_PIN           (0)
+//#define DCMI_RESET_PIN          (1)
 
 #define DCMI_D0_PIN             (15)
 #define DCMI_D1_PIN             (16)

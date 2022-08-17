@@ -16,7 +16,7 @@
 #include "mutex.h"
 //#include "cmsis_gcc.h"
 #include "py/mphal.h"
-
+#include "board.h"
 void mutex_init0(omv_mutex_t *mutex)
 {
     //__DMB();
@@ -29,12 +29,12 @@ static void _mutex_lock(omv_mutex_t *mutex, uint32_t tid, bool blocking)
 {
     #if (__ARM_ARCH < 7)
     do {
-        __disable_irq();
+        disable_global_irq(CSR_MSTATUS_MIE_MASK);
         if (mutex->lock == 0) {
             mutex->lock = 1;
             mutex->tid = tid;
         }
-        __enable_irq();
+        enable_global_irq(CSR_MSTATUS_MIE_MASK);
     } while (mutex->tid != tid && blocking);
     #else
     do {

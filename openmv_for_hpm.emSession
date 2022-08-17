@@ -25,13 +25,13 @@
  <Project>
   <ProjectSessionItem path="openmv_for_hpm"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;boards"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython;extmod"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython;port"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv;common"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv;port"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv;module"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;sensor"/>
  </Project>
  <Register1>
   <RegisterWindow visibleNodes="ABI, RV32I/pc;ABI, RV32I/ra;ABI, RV32I/sp;ABI, RV32I/gp;ABI, RV32I/tp;ABI, RV32I/a0;ABI, RV32I/a1;ABI, RV32I/a2;ABI, RV32I/a3;ABI, RV32I/a4;ABI, RV32I/a5;ABI, RV32I/a6;ABI, RV32I/a7;ABI, RV32I/t0;ABI, RV32I/t1;ABI, RV32I/t2;ABI, RV32I/t3;ABI, RV32I/t4;ABI, RV32I/t5;ABI, RV32I/t6;ABI, RV32I/s0;ABI, RV32I/s1;ABI, RV32I/s2;ABI, RV32I/s3;ABI, RV32I/s4;ABI, RV32I/s5;ABI, RV32I/s6;ABI, RV32I/s7;ABI, RV32I/s8;ABI, RV32I/s9;ABI, RV32I/s10;ABI, RV32I/s11;CPU, RV32I/pc;CPU, RV32I/x1;CPU, RV32I/x2;CPU, RV32I/x3;CPU, RV32I/x4;CPU, RV32I/x5;CPU, RV32I/x6;CPU, RV32I/x7;CPU, RV32I/x8;CPU, RV32I/x9;CPU, RV32I/x10;CPU, RV32I/x11;CPU, RV32I/x12;CPU, RV32I/x13;CPU, RV32I/x14;CPU, RV32I/x15;CPU, RV32I/x16;CPU, RV32I/x17;CPU, RV32I/x18;CPU, RV32I/x19;CPU, RV32I/x20;CPU, RV32I/x21;CPU, RV32I/x22;CPU, RV32I/x23;CPU, RV32I/x24;CPU, RV32I/x25;CPU, RV32I/x26;CPU, RV32I/x27;CPU, RV32I/x28;CPU, RV32I/x29;CPU, RV32I/x30;CPU, RV32I/x31" binaryNodes="" asciiNodes="" openNodes="ABI, RV32I" name="hom6750evkmini_demo" decimalNodes="" octalNodes="" unsignedNodes=""/>
@@ -68,16 +68,10 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="9" y="34" useTextEdit="1" path="openmv/src/omv/common/sensor_utils.c" left="0" top="249" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="27" y="369" useTextEdit="1" path="openmv/src/micropython/py/asmthumb.c" left="0" top="13" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="87" y="172" useTextEdit="1" path="openmv/src/omv/imlib/jpeg.c" left="0" top="152" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/omv/imlib/jpeg.c" path="openmv/src/omv/boards/HPM6750EVKMINI/omv_boardconfig.h" left="0" top="3" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="29" y="30" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/omv/imlib/jpeg.c" path="openmv/src/omv/imlib/imlib.h" left="0" top="12" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="15" y="34" useTextEdit="1" path="openmv/src/omv/sensors/hm01b0.c" left="0" top="51" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="12" y="12" useTextEdit="1" path="openmv/src/omv/ports/hpm/hpm_riscv_segger.h" left="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="35" y="256" useTextEdit="1" path="openmv/src/micropython/lib/oofatfs/ff.c" left="0" top="250" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="7" useTextEdit="1" path="openmv/src/micropython/ports/hpm/fatfs_port.c" left="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="993" useTextEdit="1" path="openmv/src/omv/ports/stm32/sensor.c" left="0" selected="1" top="955" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="48" y="1172" useTextEdit="1" path="openmv/src/omv/modules/py_sensor.c" left="0" top="1140" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="77" y="52" useTextEdit="1" path="openmv/src/micropython/ports/hpm/mpconfigport.h" left="0" top="33" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="79" y="6929" useTextEdit="1" path="openmv/src/omv/modules/py_image.c" left="0" selected="1" top="6920" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="41" y="48" useTextEdit="1" path="openmv/src/omv/modules/py_helper.c" left="0" top="60" codecName="Default"/>
  </Files>
- <EMStudioWindow activeProject="openmv_for_hpm" fileDialogDefaultFilter="*.c" autoConnectTarget="GDB Server" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/omv/ports/stm32" debugSearchPath="" autoConnectCapabilities="1343"/>
+ <EMStudioWindow activeProject="openmv_for_hpm" fileDialogDefaultFilter="*.c" autoConnectTarget="GDB Server" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="D:/vmware/share-dir/openmv_for_hpmo/openmv/src/omv/modules" debugSearchPath="" autoConnectCapabilities="1343"/>
 </session>

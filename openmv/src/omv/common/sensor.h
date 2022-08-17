@@ -13,16 +13,16 @@
 #include <stdarg.h>
 #include "cambus.h"
 #include "imlib.h"
-
-#define OV2640_SLV_ADDR         (0x60)
-#define OV5640_SLV_ADDR         (0x78)
-#define OV7725_SLV_ADDR         (0x42)
-#define MT9V0XX_SLV_ADDR        (0xB8)
-#define MT9M114_SLV_ADDR        (0x90)
-#define LEPTON_SLV_ADDR         (0x54)
-#define HM01B0_SLV_ADDR         (0x48)
-#define GC2145_SLV_ADDR         (0x78)
-#define FROGEYE2020_SLV_ADDR    (0x6E)
+#include "math.h"
+#define OV2640_SLV_ADDR         (0x30)//(0x60)
+#define OV5640_SLV_ADDR         (0x3c)//(0x78)
+#define OV7725_SLV_ADDR         (0x21) //(0x42)
+#define MT9V0XX_SLV_ADDR        (0x5c)//(0xB8)
+#define MT9M114_SLV_ADDR        (0x48)//(0x90)
+#define LEPTON_SLV_ADDR         (0x2a)//(0x54)
+#define HM01B0_SLV_ADDR         (0x24)//(0x48)
+#define GC2145_SLV_ADDR         (0x3c)//(0x78)
+#define FROGEYE2020_SLV_ADDR    (0x37)//(0x6E)
 
 // Chip ID Registers
 #define OV5640_CHIP_ID          (0x300A)
@@ -286,6 +286,10 @@ int sensor_probe_init(uint32_t bus_id, uint32_t bus_speed);
 
 // Configure DCMI hardware interface.
 int sensor_dcmi_config(uint32_t pixformat);
+
+int sensor_pixformat(uint32_t pixformat);
+
+int sensor_framesize(int32_t w,int32_t h);
 
 // Abort frame capture and disable IRQs, DMA etc..
 int sensor_abort();

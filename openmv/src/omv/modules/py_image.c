@@ -11,7 +11,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdbool.h>
-#include <arm_math.h>
+#include <hpm_math.h>
 #include "py/nlr.h"
 #include "py/obj.h"
 #include "py/objlist.h"

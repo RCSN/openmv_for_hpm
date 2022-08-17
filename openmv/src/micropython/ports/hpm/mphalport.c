@@ -168,10 +168,10 @@ void mp_hal_delay_us(mp_uint_t us)
   clock_cpu_delay_us(us);
 }
 
-
+extern uint32_t get_time_tick(void);
 mp_uint_t mp_hal_ticks_ms(void)
 {
-    return  0;
+    return  get_time_tick();
 }
 
 mp_uint_t mp_hal_ticks_us(void)

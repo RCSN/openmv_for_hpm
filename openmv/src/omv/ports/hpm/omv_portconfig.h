@@ -22,9 +22,13 @@
 #include "hpm_i2c_drv.h"
 
 // omv_gpio_t definition
-typedef uint32_t omv_gpio_t;
+typedef struct _omv_gpio {
+    uint32_t      pin;
+    uint32_t     index;
+    GPIO_Type    *ctrl;
+} omv_gpio_t;
 
 // cambus/i2c definition
-typedef i2c_config_t *omv_cambus_t;
+typedef I2C_Type *omv_cambus_t;
 
 #endif // __OMV_PORTCONFIG_H__

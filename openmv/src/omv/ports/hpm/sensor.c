@@ -1,4 +1,12 @@
 /*
+ * @Descripttion: 
+ * @version: 
+ * @Author: RCSN
+ * @Date: 2022-08-17 11:42:33
+ * @LastEditors: fy-tech
+ * @LastEditTime: 2022-08-17 11:42:34
+ */
+/*
  * This file is part of the OpenMV project.
  *
  * Copyright (c) 2013-2021 Ibrahim Abdelkader <iabdalkader@openmv.io>
@@ -6,9 +14,8 @@
  *
  * This work is licensed under the MIT license, see the file LICENSE for details.
  *
- * Sensor abstraction layer for nRF port.
+ * Sensor abstraction layer.
  */
-#if MICROPY_PY_SENSOR
 #include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -16,77 +23,96 @@
 #include "cambus.h"
 #include "sensor.h"
 #include "framebuffer.h"
-
-#include "pico/time.h"
-#include "pico/stdlib.h"
-#include "hardware/pwm.h"
-#include "hardware/pio.h"
-#include "hardware/dma.h"
-#include "hardware/irq.h"
 #include "omv_boardconfig.h"
 #include "unaligned_memcpy.h"
-#include "dcmi.pio.h"
 
-// Sensor struct.
+#include "board.h"
+#include "hpm_cam_drv.h"
+
+#define MDMA_BUFFER_SIZE        (64)
+#define DMA_MAX_XFER_SIZE       (0xFFFF*4)
+#define DMA_MAX_XFER_SIZE_DBL   ((DMA_MAX_XFER_SIZE)*2)
+#define DMA_LENGTH_ALIGNMENT    (16)
+#define SENSOR_TIMEOUT_MS       (3000)
+#define ARRAY_SIZE(a)           (sizeof(a) / sizeof((a)[0]))
+
 sensor_t sensor = {};
+static cam_config_t cam_config;
 
-static void dma_irq_handler();
-extern void __fatal_error(const char *msg);
+#if (OMV_ENABLE_SENSOR_MDMA == 1)
+static MDMA_HandleTypeDef DCMI_MDMA_Handle0 = {.Instance = MDMA_Channel0};
+static MDMA_HandleTypeDef DCMI_MDMA_Handle1 = {.Instance = MDMA_Channel1};
+#endif
+// SPI on image sensor connector.
+#ifdef ISC_SPI
+SPI_HandleTypeDef ISC_SPIHandle = {.Instance = ISC_SPI};
+#endif // ISC_SPI
 
-static void sensor_dma_config(int w, int h, int bpp, uint32_t *capture_buf, bool rev_bytes)
+static bool first_line = false;
+static bool drop_frame = false;
+
+extern uint8_t _line_buf;
+
+void DCMI_IRQHandler(void) {
+    //HAL_DCMI_IRQHandler(&DCMIHandle);
+}
+
+void DMA2_Stream1_IRQHandler(void) {
+    //HAL_DMA_IRQHandler(DCMIHandle.DMA_Handle);
+}
+
+#ifdef ISC_SPI
+void ISC_SPI_IRQHandler(void)
 {
-    dma_channel_abort(DCMI_DMA_CHANNEL);
-    dma_irqn_set_channel_enabled(DCMI_DMA, DCMI_DMA_CHANNEL, false);
+    HAL_SPI_IRQHandler(&ISC_SPIHandle);
+}
 
-    dma_channel_config c = dma_channel_get_default_config(DCMI_DMA_CHANNEL);
-    channel_config_set_read_increment(&c, false);
-    channel_config_set_write_increment(&c, true);
-    channel_config_set_dreq(&c, pio_get_dreq(DCMI_PIO, DCMI_SM, false));
-    channel_config_set_bswap(&c, rev_bytes);
+void ISC_SPI_DMA_IRQHandler(void)
+{
+    HAL_DMA_IRQHandler(ISC_SPIHandle.hdmarx);
+}
+#endif // ISC_SPI
 
-    dma_channel_configure(DCMI_DMA_CHANNEL, &c,
-        capture_buf,                // Destinatinon pointer.
-        &DCMI_PIO->rxf[DCMI_SM],    // Source pointer.
-        (w*h*bpp)>>2,               // Number of transfers in words.
-        true                        // Start immediately, will block on SM.
-    );
+static int sensor_dma_config()
+{
+    // DMA Stream configuration
+    return 0;
+}
 
-    // Re-enable DMA IRQs.
-    dma_irqn_set_channel_enabled(DCMI_DMA, DCMI_DMA_CHANNEL, true);
+void sensor_init0()
+{
+    sensor_abort();
+
+    // Re-init cambus to reset the bus state after soft reset, which
+    // could have interrupted the bus in the middle of a transfer.
+    if (sensor.bus.initialized) {
+        // Reinitialize the bus using the last used id and speed.
+        cambus_init(&sensor.bus, sensor.bus.id, sensor.bus.speed);
+    }
+
+    // Disable VSYNC IRQ and callback
+    sensor_set_vsync_callback(NULL);
+
+    // Disable Frame callback.
+    sensor_set_frame_callback(NULL);
 }
 
 int sensor_init()
 {
     int init_ret = 0;
 
-    // PIXCLK
-    gpio_init(DCMI_PXCLK_PIN);
-    gpio_set_dir(DCMI_PXCLK_PIN, GPIO_IN);
-
-    // HSYNC
-    gpio_init(DCMI_HSYNC_PIN);
-    gpio_set_dir(DCMI_HSYNC_PIN, GPIO_IN);
-
-    // VSYNC
-    gpio_init(DCMI_VSYNC_PIN);
-    gpio_set_dir(DCMI_VSYNC_PIN, GPIO_IN);
-
-    #if defined(DCMI_PWDN_PIN)
-    gpio_init(DCMI_PWDN_PIN);
-    gpio_set_dir(DCMI_PWDN_PIN, GPIO_OUT);
-    gpio_pull_down(DCMI_PWDN_PIN);
-    DCMI_PWDN_HIGH();
-    #endif
-
-    #if defined(DCMI_RESET_PIN)
-    gpio_init(DCMI_RESET_PIN);
-    gpio_set_dir(DCMI_RESET_PIN, GPIO_OUT);
-    gpio_pull_up(DCMI_RESET_PIN);
-    DCMI_RESET_HIGH();
-    #endif
+    // List of cambus I2C buses to scan.
+    uint32_t buses[][2] = {
+        {ISC_I2C_ID, ISC_I2C_SPEED},
+        #if defined(ISC_I2C_ALT)
+        {ISC_I2C_ALT_ID, ISC_I2C_ALT_SPEED},
+        #endif
+    };
 
     // Reset the sesnor state
     memset(&sensor, 0, sizeof(sensor_t));
+    cam_config.width = 320;
+    cam_config.height = 240;
 
     // Set default snapshot function.
     // Some sensors need to call snapshot from init.
@@ -99,125 +125,220 @@ int sensor_init()
     }
 
     // Detect and initialize the image sensor.
-    if ((init_ret = sensor_probe_init(ISC_I2C_ID, ISC_I2C_SPEED)) != 0) {
-        // Sensor probe/init failed.
-        return init_ret;
+    for (uint32_t i=0, n_buses = ARRAY_SIZE(buses); i < n_buses; i++) {
+        uint32_t id = buses[i][0], speed = buses[i][1];
+        if ((init_ret = sensor_probe_init(id, speed)) == 0) {
+            // Sensor was detected on the current bus.
+            break;
+        }
+        cambus_deinit(&sensor.bus);
+        // Scan the next bus or fail if this is the last one.
+        if ((i+1) == n_buses) {
+            // Sensor probe/init failed.
+            return init_ret;
+        }
     }
+
+    // Configure the DCMI DMA Stream
+    if (sensor_dma_config() != 0) {
+        // DMA problem
+        return SENSOR_ERROR_DMA_INIT_FAILED;
+    }
+
+    // Configure the DCMI interface.
+    if (sensor_pixformat(PIXFORMAT_INVALID) != 0){
+        // DCMI config failed
+        return SENSOR_ERROR_DCMI_INIT_FAILED;
+    }
+
+    if (sensor_framesize(cam_config.width,cam_config.height) != 0){
+        // DCMI config failed
+        return -1;
+    }
+
+    // Clear fb_enabled flag
+    // This is executed only once to initialize the FB enabled flag.
+    JPEG_FB()->enabled = 0;
 
     // Set default color palette.
     sensor.color_palette = rainbow_table;
 
-    // Set new DMA IRQ handler.
-    // Disable IRQs.
-    irq_set_enabled(DCMI_DMA_IRQ, false);
-
-    // Clear DMA interrupts.
-    dma_irqn_acknowledge_channel(DCMI_DMA, DCMI_DMA_CHANNEL);
-
-    // Remove current handler if any
-    irq_handler_t irq_handler = irq_get_exclusive_handler(DCMI_DMA_IRQ);
-    if (irq_handler != NULL) {
-        irq_remove_handler(DCMI_DMA_IRQ, irq_handler);
-    }
-
-    // Set new exclusive IRQ handler.
-    irq_set_exclusive_handler(DCMI_DMA_IRQ, dma_irq_handler);
-    // Or set shared IRQ handler, but this needs to be called once.
-    // irq_add_shared_handler(DCMI_DMA_IRQ, dma_irq_handler, PICO_DEFAULT_IRQ_PRIORITY);
-
-    irq_set_enabled(DCMI_DMA_IRQ, true);
-
-    // Disable VSYNC IRQ and callback
-    sensor_set_vsync_callback(NULL);
-
-    // Disable Frame callback.
-    sensor_set_frame_callback(NULL);
-
-    /* All good! */
     sensor.detected = true;
 
+    /* All good! */
+    return 0;
+}
+
+int sensor_pixformat(uint32_t pixformat)
+{
+    cam_config_t _config;
+ //   cam_stop(HPM_CAM0);
+    cam_get_default_config(HPM_CAM0, &_config, display_pixel_format_rgb565);
+    cam_config.hsync_active_low = (sensor.hw_flags.hsync ? 1 : 0);
+    cam_config.pixclk_sampling_falling = (sensor.hw_flags.pixck ? 1 : 0);
+    cam_config.vsync_active_low = (sensor.hw_flags.vsync ? 1 : 0);
+    cam_config.sensor_bitwidth = CAM_SENSOR_BITWIDTH_10BITS;
+    cam_config.data_pack_msb = false;
+    cam_config.color_ext = false;    
+    MAIN_FB()->pixfmt = pixformat;
+    if(pixformat == PIXFORMAT_RGB565)
+    {
+        cam_config.data_store_mode = 0;
+        cam_config.color_format = CAM_COLOR_FORMAT_RGB565;   
+    }
+    else if(pixformat == PIXFORMAT_GRAYSCALE)
+    {
+        cam_config.data_store_mode = 2;
+        cam_config.color_format = CAM_COLOR_FORMAT_YCBCR422;
+    }
+    else
+    {
+        cam_config.data_store_mode = 0;
+        cam_config.color_format = CAM_COLOR_FORMAT_RGB565;   
+    }
+ //   cam_start(HPM_CAM0);
+    return 0;
+}
+
+int sensor_framesize(int32_t w,int32_t h)
+{
+    cam_config_t _config;
+//    cam_stop(HPM_CAM0);
+    cam_config.width = w;
+    cam_config.height = h;
+//    cam_init(HPM_CAM0, &cam_config);
+//    cam_start(HPM_CAM0);
+    return 0;
+}
+
+int sensor_dcmi_config(uint32_t pixformat)
+{
     return 0;
 }
 
 int sensor_abort()
 {
-    // Disable DMA channel
-    dma_channel_abort(DCMI_DMA_CHANNEL);
-    dma_irqn_set_channel_enabled(DCMI_DMA, DCMI_DMA_CHANNEL, false);
+    // This stops the DCMI hardware from generating DMA requests immediately and then stops the DMA
+    // hardware. Note that HAL_DMA_Abort is a blocking operation. Do not use this in an interrupt.
+    //if (DCMI->CR & DCMI_CR_ENABLE) {
+    //    DCMI->CR &= ~DCMI_CR_ENABLE;
+    //    HAL_DMA_Abort(&DMAHandle);
+    //    HAL_NVIC_EnableIRQ(DMA2_Stream1_IRQn);
+    //    #if (OMV_ENABLE_SENSOR_MDMA == 1)
+    //    HAL_MDMA_Abort(&DCMI_MDMA_Handle0);
+    //    HAL_MDMA_Abort(&DCMI_MDMA_Handle1);
+    //    HAL_MDMA_DeInit(&DCMI_MDMA_Handle0);
+    //    HAL_MDMA_DeInit(&DCMI_MDMA_Handle1);
+    //    #endif
+    //    __HAL_DCMI_DISABLE_IT(&DCMIHandle, DCMI_IT_FRAME);
+    //    __HAL_DCMI_CLEAR_FLAG(&DCMIHandle, DCMI_FLAG_FRAMERI);
+    //    first_line = false;
+    //    drop_frame = false;
+    //    sensor.last_frame_ms = 0;
+    //    sensor.last_frame_ms_valid = false;
+    //}
 
-    // Disable state machine.
-    pio_sm_set_enabled(DCMI_PIO, DCMI_SM, false);
-    pio_sm_clear_fifos(DCMI_PIO, DCMI_SM);
-
-    // Clear bpp flag.
-    MAIN_FB()->pixfmt = PIXFORMAT_INVALID;
+    //framebuffer_reset_buffers();
 
     return 0;
+}
+
+uint32_t sensor_get_xclk_frequency()
+{
+    return clock_get_frequency(clock_camera0);
 }
 
 int sensor_set_xclk_frequency(uint32_t frequency)
 {
-    uint32_t p = 4;
-
-    // Allocate pin to the PWM
-    gpio_set_function(DCMI_XCLK_PIN, GPIO_FUNC_PWM);
-
-    // Find out which PWM slice is connected to the GPIO
-    uint slice_num = pwm_gpio_to_slice_num(DCMI_XCLK_PIN);
-
-    // Set period to p cycles
-    pwm_set_wrap(slice_num, p-1);
-
-    // Set channel A 50% duty cycle.
-    pwm_set_chan_level(slice_num, PWM_CHAN_A, p/2);
-
-    // Set sysclk divider
-    // f = 125000000 / (p * (1 + (p/16)))
-    pwm_set_clkdiv_int_frac(slice_num, 1, p);
-
-    // Set the PWM running
-    pwm_set_enabled(slice_num, true);
-
+    if(frequency == (12000000))
+    {
+      clock_set_source_divider(clock_camera0, clk_src_osc24m, 2U);
+    }
+    else if(frequency == (24000000))
+    {
+      clock_set_source_divider(clock_camera0, clk_src_osc24m, 1U);
+    }
+    else
+    {
+      clock_set_source_divider(clock_camera0, clk_src_osc24m, 1U);
+    }
     return 0;
 }
 
-int sensor_set_windowing(int x, int y, int w, int h)
+int sensor_shutdown(int enable)
 {
-    return SENSOR_ERROR_CTL_UNSUPPORTED;
+    int ret = 0;
+    //sensor_abort();
+
+    //if (enable) {
+    //    if (sensor.pwdn_pol == ACTIVE_HIGH) {
+    //        DCMI_PWDN_HIGH();
+    //    } else {
+    //        DCMI_PWDN_LOW();
+    //    }
+    //    HAL_NVIC_DisableIRQ(DCMI_IRQn);
+    //    HAL_DCMI_DeInit(&DCMIHandle);
+    //} else {
+    //    if (sensor.pwdn_pol == ACTIVE_HIGH) {
+    //        DCMI_PWDN_LOW();
+    //    } else {
+    //        DCMI_PWDN_HIGH();
+    //    }
+    //    ret = sensor_dcmi_config(sensor.pixformat);
+    //}
+
+    //mp_hal_delay_ms(10);
+    return ret;
 }
 
-static void dma_irq_handler()
+int sensor_set_vsync_callback(vsync_cb_t vsync_cb)
 {
-    if (dma_irqn_get_channel_status(DCMI_DMA, DCMI_DMA_CHANNEL)) {
-        // Clear the interrupt request.
-        dma_irqn_acknowledge_channel(DCMI_DMA, DCMI_DMA_CHANNEL);
+    sensor.vsync_callback = vsync_cb;
+    //if (sensor.vsync_callback == NULL) {
+    //    // Disable VSYNC EXTI IRQ
+    //    HAL_NVIC_DisableIRQ(DCMI_VSYNC_IRQN);
+    //} else {
+    //    // Enable VSYNC EXTI IRQ
+    //    NVIC_SetPriority(DCMI_VSYNC_IRQN, IRQ_PRI_EXTINT);
+    //    HAL_NVIC_EnableIRQ(DCMI_VSYNC_IRQN);
+    //}
+    return 0;
+}
 
-        framebuffer_get_tail(FB_NO_FLAGS);
-        vbuffer_t *buffer = framebuffer_get_tail(FB_PEEK);
-        if (buffer != NULL) {
-            // Set next buffer and retrigger the DMA channel.
-            dma_channel_set_write_addr(DCMI_DMA_CHANNEL, buffer->data, true);
+void DCMI_VsyncExtiCallback()
+{
+    //__HAL_GPIO_EXTI_CLEAR_FLAG(1 << DCMI_VSYNC_IRQ_LINE);
+    //if (sensor.vsync_callback != NULL) {
+    //    sensor.vsync_callback(HAL_GPIO_ReadPin(DCMI_VSYNC_PORT, DCMI_VSYNC_PIN));
+    //}
+}
 
-            // Unblock the state machine
-            pio_sm_restart(DCMI_PIO, DCMI_SM);
-            pio_sm_clear_fifos(DCMI_PIO, DCMI_SM);
-            pio_sm_put_blocking(DCMI_PIO, DCMI_SM, (MAIN_FB()->v - 1));
-            pio_sm_put_blocking(DCMI_PIO, DCMI_SM, (MAIN_FB()->u * MAIN_FB()->bpp) - 1);
-        }
+// If we are cropping the image by more than 1 word in width we can align the line start to
+// a word address to improve copy performance. Do not crop by more than 1 word as this will
+// result in less time between DMA transfers complete interrupts on 16-byte boundaries.
+static uint32_t get_dcmi_hw_crop(uint32_t bytes_per_pixel)
+{
+    uint32_t byte_x_offset = (MAIN_FB()->x * bytes_per_pixel) % sizeof(uint32_t);
+    uint32_t width_remainder = (resolution[sensor.framesize][0] - (MAIN_FB()->x + MAIN_FB()->u)) * bytes_per_pixel;
+    uint32_t x_crop = 0;
+
+    if (byte_x_offset && (width_remainder >= (sizeof(uint32_t) - byte_x_offset))) {
+        x_crop = byte_x_offset;
     }
+
+    return x_crop;
 }
 
-// This is the default snapshot function, which can be replaced in sensor_init functions.
+
+// This is the default snapshot function, which can be replaced in sensor_init functions. This function
+// uses the DCMI and DMA to capture frames and each line is processed in the DCMI_DMAConvCpltUser function.
 int sensor_snapshot(sensor_t *sensor, image_t *image, uint32_t flags)
 {
-    // Compress the framebuffer for the IDE preview.
     framebuffer_update_jpeg_buffer();
-
-    if (sensor_check_framebuffer_size() != 0) {
+     if (sensor_check_framebuffer_size() != 0) {
         return SENSOR_ERROR_FRAMEBUFFER_OVERFLOW;
     }
-
-    // Free the current FB head.
+     // Free the current FB head.
     framebuffer_free_current_buffer();
 
     // Set framebuffer pixel format.
@@ -227,43 +348,20 @@ int sensor_snapshot(sensor_t *sensor, image_t *image, uint32_t flags)
     MAIN_FB()->pixfmt = sensor->pixformat;
 
     vbuffer_t *buffer = framebuffer_get_head(FB_NO_FLAGS);
-
-    // If there's no ready buffer in the fifo, and the DMA is Not currently
-    // transferring a new buffer, reconfigure and restart the DMA transfer.
-    if (buffer == NULL && !dma_channel_is_busy(DCMI_DMA_CHANNEL)) {
-        buffer = framebuffer_get_tail(FB_PEEK);
-        if (buffer == NULL) {
+    buffer = framebuffer_get_tail(FB_PEEK);
+    if (buffer == NULL) {
             return SENSOR_ERROR_FRAMEBUFFER_ERROR;
-        }
-
-        // Configure the DMA on the first frame, for later frames only the write is changed.
-        sensor_dma_config(MAIN_FB()->u, MAIN_FB()->v, MAIN_FB()->bpp,
-                (void *) buffer->data, (sensor->hw_flags.rgb_swap && MAIN_FB()->bpp == 2));
-
-
-        // Re-enable the state machine.
-        pio_sm_clear_fifos(DCMI_PIO, DCMI_SM);
-        pio_sm_set_enabled(DCMI_PIO, DCMI_SM, true);
-
-        // Unblock the state machine
-        pio_sm_put_blocking(DCMI_PIO, DCMI_SM, (MAIN_FB()->v - 1));
-        pio_sm_put_blocking(DCMI_PIO, DCMI_SM, (MAIN_FB()->u * MAIN_FB()->bpp) - 1);
     }
-
-    // Wait for the DMA to finish the transfer.
-    for (mp_uint_t ticks = mp_hal_ticks_ms(); buffer == NULL;) {
-        buffer = framebuffer_get_head(FB_NO_FLAGS);
-        if ((mp_hal_ticks_ms() - ticks) > 3000) {
-            sensor_abort();
-            return SENSOR_ERROR_CAPTURE_TIMEOUT;
-        }
+    cam_config.buffer1 = core_local_mem_to_sys_address(HPM_CORE0, (uint32_t)buffer->data);
+    cam_init(HPM_CAM0, &cam_config);
+    cam_start(HPM_CAM0);
+    mp_uint_t ticks = mp_hal_ticks_ms();
+    while((mp_hal_ticks_ms() - ticks) < 3000)
+    {
+      if((HPM_CAM0->STA & CAM_STATUS_END_OF_FRAME) == CAM_STATUS_END_OF_FRAME)
+        break;
     }
-
-    MAIN_FB()->w = MAIN_FB()->u;
-    MAIN_FB()->h = MAIN_FB()->v;
-
-    // Set the user image.
+    cam_stop(HPM_CAM0);
     framebuffer_init_image(image);
     return 0;
 }
-#endif

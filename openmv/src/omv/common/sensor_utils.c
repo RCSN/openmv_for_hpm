@@ -31,7 +31,7 @@
 #include "gc2145.h"
 #include "framebuffer.h"
 #include "omv_boardconfig.h"
-
+#include "board.h"
 #if (OMV_ENABLE_PAJ6100 == 1)
 #define OMV_ENABLE_NONI2CIS
 #endif
@@ -453,12 +453,12 @@ __weak int sensor_get_id()
 
 __weak uint32_t sensor_get_xclk_frequency()
 {
-    return SENSOR_ERROR_CTL_UNSUPPORTED;
+    return 0;
 }
 
 __weak int sensor_set_xclk_frequency(uint32_t frequency)
 {
-    return SENSOR_ERROR_CTL_UNSUPPORTED;
+    return 0;
 }
 
 __weak bool sensor_is_detected()
@@ -594,7 +594,7 @@ __weak int sensor_set_pixformat(pixformat_t pixformat)
     framebuffer_auto_adjust_buffers();
 
     // Reconfigure the DCMI if needed.
-    return sensor_dcmi_config(pixformat);
+    return sensor_pixformat(pixformat);
 }
 
 __weak int sensor_set_framesize(framesize_t framesize)
@@ -636,7 +636,7 @@ __weak int sensor_set_framesize(framesize_t framesize)
     // Pickout a good buffer count for the user.
     framebuffer_auto_adjust_buffers();
 
-    return 0;
+    return sensor_framesize(MAIN_FB()->w,MAIN_FB()->h);
 }
 
 __weak int sensor_set_framerate(int framerate)

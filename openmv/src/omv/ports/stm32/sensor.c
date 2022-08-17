@@ -18,6 +18,9 @@
 #include "omv_boardconfig.h"
 #include "unaligned_memcpy.h"
 
+#include "board.h"
+#include "hpm_cam_drv.h"
+
 #define MDMA_BUFFER_SIZE        (64)
 #define DMA_MAX_XFER_SIZE       (0xFFFF*4)
 #define DMA_MAX_XFER_SIZE_DBL   ((DMA_MAX_XFER_SIZE)*2)
@@ -26,9 +29,8 @@
 #define ARRAY_SIZE(a)           (sizeof(a) / sizeof((a)[0]))
 
 sensor_t sensor = {};
-//static TIM_HandleTypeDef  TIMHandle  = {.Instance = DCMI_TIM};
-//static DMA_HandleTypeDef  DMAHandle  = {.Instance = DMA2_Stream1};
-//static DCMI_HandleTypeDef DCMIHandle = {.Instance = DCMI};
+static cam_config_t cam_config;
+
 #if (OMV_ENABLE_SENSOR_MDMA == 1)
 static MDMA_HandleTypeDef DCMI_MDMA_Handle0 = {.Instance = MDMA_Channel0};
 static MDMA_HandleTypeDef DCMI_MDMA_Handle1 = {.Instance = MDMA_Channel1};
@@ -66,33 +68,6 @@ void ISC_SPI_DMA_IRQHandler(void)
 static int sensor_dma_config()
 {
     // DMA Stream configuration
-    //#if defined(MCU_SERIES_H7)
-    //DMAHandle.Init.Request              = DMA_REQUEST_DCMI;         /* DMA Channel                      */
-    //#else
-    //DMAHandle.Init.Channel              = DMA_CHANNEL_1;            /* DMA Channel                      */
-    //#endif
-    //DMAHandle.Init.Direction            = DMA_PERIPH_TO_MEMORY;     /* Peripheral to memory transfer    */
-    //DMAHandle.Init.MemInc               = DMA_MINC_ENABLE;          /* Memory increment mode Enable     */
-    //DMAHandle.Init.PeriphInc            = DMA_PINC_DISABLE;         /* Peripheral increment mode Enable */
-    //DMAHandle.Init.PeriphDataAlignment  = DMA_PDATAALIGN_WORD;      /* Peripheral data alignment : Word */
-    //DMAHandle.Init.MemDataAlignment     = DMA_MDATAALIGN_WORD;      /* Memory data alignment : Word     */
-    //DMAHandle.Init.Mode                 = DMA_NORMAL;               /* Normal DMA mode                  */
-    //DMAHandle.Init.Priority             = DMA_PRIORITY_HIGH;        /* Priority level : high            */
-    //DMAHandle.Init.FIFOMode             = DMA_FIFOMODE_ENABLE;      /* FIFO mode enabled                */
-    //DMAHandle.Init.FIFOThreshold        = DMA_FIFO_THRESHOLD_FULL;  /* FIFO threshold full              */
-    //DMAHandle.Init.MemBurst             = DMA_MBURST_INC4;          /* Memory burst                     */
-    //DMAHandle.Init.PeriphBurst          = DMA_PBURST_SINGLE;        /* Peripheral burst                 */
-
-    //// Initialize the DMA stream
-    //HAL_DMA_DeInit(&DMAHandle);
-    //if (HAL_DMA_Init(&DMAHandle) != HAL_OK) {
-    //    // Initialization Error
-    //    return -1;
-    //}
-
-    //// Configure and enable DMA IRQ Channel
-    //NVIC_SetPriority(DMA2_Stream1_IRQn, IRQ_PRI_DMA21);
-    //HAL_NVIC_EnableIRQ(DMA2_Stream1_IRQn);
     return 0;
 }
 
@@ -128,6 +103,8 @@ int sensor_init()
 
     // Reset the sesnor state
     memset(&sensor, 0, sizeof(sensor_t));
+    cam_config.width = 320;
+    cam_config.height = 240;
 
     // Set default snapshot function.
     // Some sensors need to call snapshot from init.
@@ -179,42 +156,55 @@ int sensor_init()
     return 0;
 }
 
-int sensor_dcmi_config(uint32_t pixformat)
+int sensor_pixformat(uint32_t pixformat)
 {
-    //// VSYNC clock polarity
-    //DCMIHandle.Init.VSPolarity  = sensor.hw_flags.vsync ? DCMI_VSPOLARITY_HIGH : DCMI_VSPOLARITY_LOW;
-    //// HSYNC clock polarity
-    //DCMIHandle.Init.HSPolarity  = sensor.hw_flags.hsync ? DCMI_HSPOLARITY_HIGH : DCMI_HSPOLARITY_LOW;
-    //// PXCLK clock polarity
-    //DCMIHandle.Init.PCKPolarity = sensor.hw_flags.pixck ? DCMI_PCKPOLARITY_RISING : DCMI_PCKPOLARITY_FALLING;
+    cam_config_t _config;
+    cam_stop(HPM_CAM0);
+    cam_get_default_config(HPM_CAM0, &_config, display_pixel_format_rgb565);
+    _config.hsync_active_low = (sensor.hw_flags.hsync ? 1 : 0);
+    _config.pixclk_sampling_falling = (sensor.hw_flags.pixck ? 1 : 0);
+    _config.vsync_active_low = (sensor.hw_flags.vsync ? 1 : 0);
+    _config.sensor_bitwidth = CAM_SENSOR_BITWIDTH_10BITS;
+    _config.width = cam_config.width;
+    _config.height = cam_config.height;
+    _config.data_pack_msb = false;
+    _config.color_ext = false;
 
-    //// Setup capture parameters.
-    //DCMIHandle.Init.SynchroMode = DCMI_SYNCHRO_HARDWARE;    // Enable Hardware synchronization
-    //DCMIHandle.Init.CaptureRate = DCMI_CR_ALL_FRAME;        // Capture rate all frames
-    //DCMIHandle.Init.ExtendedDataMode = DCMI_EXTEND_DATA_8B; // Capture 8 bits on every pixel clock
-    //// Set JPEG Mode
-    //DCMIHandle.Init.JPEGMode = (pixformat == PIXFORMAT_JPEG) ?
-    //                                DCMI_JPEG_ENABLE : DCMI_JPEG_DISABLE;
-    //#if defined(MCU_SERIES_F7) || defined(MCU_SERIES_H7)
-    //DCMIHandle.Init.ByteSelectMode  = DCMI_BSM_ALL;         // Capture all received bytes
-    //DCMIHandle.Init.ByteSelectStart = DCMI_OEBS_ODD;        // Ignored
-    //DCMIHandle.Init.LineSelectMode  = DCMI_LSM_ALL;         // Capture all received lines
-    //DCMIHandle.Init.LineSelectStart = DCMI_OELS_ODD;        // Ignored
-    //#endif
 
-    //// Associate the DMA handle to the DCMI handle
-    //__HAL_LINKDMA(&DCMIHandle, DMA_Handle, DMAHandle);
+}
 
-    //// Initialize the DCMI
-    //HAL_DCMI_DeInit(&DCMIHandle);
-    //if (HAL_DCMI_Init(&DCMIHandle) != HAL_OK) {
-    //    // Initialization Error
-    //    return -1;
-    //}
+int sensor_dcmi_config(uint32_t pixformat)
+{;
 
-    //// Configure and enable DCMI IRQ Channel
-    //NVIC_SetPriority(DCMI_IRQn, IRQ_PRI_DCMI);
-    //HAL_NVIC_EnableIRQ(DCMI_IRQn);
+    cam_get_default_config(HPM_CAM0, &cam_config, display_pixel_format_rgb565);
+    cam_config.hsync_active_low = (sensor.hw_flags.hsync ? 1 : 0);
+    cam_config.pixclk_sampling_falling = (sensor.hw_flags.pixck ? 1 : 0);
+    cam_config.vsync_active_low = (sensor.hw_flags.vsync ? 1 : 0);
+    cam_config.sensor_bitwidth = CAM_SENSOR_BITWIDTH_10BITS;
+    cam_config.width = MAIN_FB()->w;
+    cam_config.height = MAIN_FB()->h;
+    cam_config.data_pack_msb = false;
+    cam_config.color_ext = false;
+    //cam_config.clrbit_format = false;
+    
+    cam_config.buffer1 = core_local_mem_to_sys_address(HPM_CORE0, (uint32_t)MAIN_FB()->data);
+
+    if(bpp == 2)   
+    {
+        cam_config.data_store_mode = 0;
+        cam_config.color_format = CAM_COLOR_FORMAT_RGB565;   
+    }
+    else if(bpp == 1)
+    {
+        cam_config.data_store_mode = 2;
+        cam_config.color_format = CAM_COLOR_FORMAT_YCBCR422;
+    }
+    else
+    {
+        cam_config.data_store_mode = 0;
+        cam_config.color_format = CAM_COLOR_FORMAT_RGB565;   
+    }
+    cam_init(HPM_CAM0, &cam_config);
     return 0;
 }
 
@@ -247,59 +237,23 @@ int sensor_abort()
 
 uint32_t sensor_get_xclk_frequency()
 {
-    //return (DCMI_TIM_PCLK_FREQ() * 2) / (TIMHandle.Init.Period + 1);
+    return clock_get_frequency(clock_camera0);
 }
 
 int sensor_set_xclk_frequency(uint32_t frequency)
 {
-    //#if (OMV_XCLK_SOURCE == OMV_XCLK_TIM)
-    ///* TCLK (PCLK * 2) */
-    //int tclk = DCMI_TIM_PCLK_FREQ() * 2;
-
-    ///* Period should be even */
-    //int period = (tclk / frequency) - 1;
-    //int pulse = period / 2;
-
-    //if (TIMHandle.Init.Period && (TIMHandle.Init.Period != period)) {
-    //    // __HAL_TIM_SET_AUTORELOAD sets TIMHandle.Init.Period...
-    //    __HAL_TIM_SET_AUTORELOAD(&TIMHandle, period);
-    //    __HAL_TIM_SET_COMPARE(&TIMHandle, DCMI_TIM_CHANNEL, pulse);
-    //    return 0;
-    //}
-
-    ///* Timer base configuration */
-    //TIMHandle.Init.Period            = period;
-    //TIMHandle.Init.Prescaler         = 0;
-    //TIMHandle.Init.CounterMode       = TIM_COUNTERMODE_UP;
-    //TIMHandle.Init.ClockDivision     = TIM_CLOCKDIVISION_DIV1;
-    //TIMHandle.Init.RepetitionCounter = 0;
-    //TIMHandle.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
-
-    ///* Timer channel configuration */
-    //TIM_OC_InitTypeDef TIMOCHandle;
-    //TIMOCHandle.Pulse           = pulse;
-    //TIMOCHandle.OCMode          = TIM_OCMODE_PWM1;
-    //TIMOCHandle.OCPolarity      = TIM_OCPOLARITY_HIGH;
-    //TIMOCHandle.OCNPolarity     = TIM_OCNPOLARITY_HIGH;
-    //TIMOCHandle.OCFastMode      = TIM_OCFAST_DISABLE;
-    //TIMOCHandle.OCIdleState     = TIM_OCIDLESTATE_RESET;
-    //TIMOCHandle.OCNIdleState    = TIM_OCNIDLESTATE_RESET;
-
-    //if ((HAL_TIM_PWM_Init(&TIMHandle) != HAL_OK)
-    //|| (HAL_TIM_PWM_ConfigChannel(&TIMHandle, &TIMOCHandle, DCMI_TIM_CHANNEL) != HAL_OK)
-    //|| (HAL_TIM_PWM_Start(&TIMHandle, DCMI_TIM_CHANNEL) != HAL_OK)) {
-    //    return -1;
-    //}
-    //#elif (OMV_XCLK_SOURCE == OMV_XCLK_MCO)
-    //// Pass through the MCO1 clock with source input set to HSE (12MHz).
-    //// Note MCO1 is multiplexed on OPENMV2/TIM1 only.
-    //HAL_RCC_MCOConfig(RCC_MCO1, RCC_MCO1SOURCE_HSE, RCC_MCODIV_1);
-    //#elif (OMV_XCLK_SOURCE == OMV_XCLK_OSC)
-    //// An external oscillator is used for the sensor clock.
-    //// Configure and enable external oscillator if needed.
-    //#else
-    //#error "OMV_XCLK_SOURCE is not set!"
-    //#endif // (OMV_XCLK_SOURCE == OMV_XCLK_TIM)
+    if(frequency == (12000000))
+    {
+      clock_set_source_divider(clock_camera0, clk_src_osc24m, 2U);
+    }
+    else if(frequency == (24000000))
+    {
+      clock_set_source_divider(clock_camera0, clk_src_osc24m, 1U);
+    }
+    else
+    {
+      clock_set_source_divider(clock_camera0, clk_src_osc24m, 1U);
+    }
     return 0;
 }
 
@@ -367,33 +321,6 @@ static uint32_t get_dcmi_hw_crop(uint32_t bytes_per_pixel)
     return x_crop;
 }
 
-// Stop allowing new data in on the end of the frame and let snapshot know that the frame has been
-// received. Note that DCMI_DMAConvCpltUser() is called before DCMI_IT_FRAME is enabled by
-// DCMI_DMAXferCplt() so this means that the last line of data is *always* transferred before
-// moving the tail to the next buffer.
-//void HAL_DCMI_FrameEventCallback(DCMI_HandleTypeDef *hdcmi)
-//{
-//    // This can be executed at any time since this interrupt has a higher priority than DMA2_Stream1_IRQn.
-//    #if (OMV_ENABLE_SENSOR_MDMA == 1)
-//    // Clear out any stale flags.
-//    DMA2->LIFCR = DMA_FLAG_TCIF1_5 | DMA_FLAG_HTIF1_5;
-//    // Re-enable the DMA IRQ to catch the next start line.
-//    HAL_NVIC_EnableIRQ(DMA2_Stream1_IRQn);
-//    #endif
-
-//    // Reset DCMI_DMAConvCpltUser frame drop state.
-//    first_line = false;
-//    if (drop_frame) {
-//        drop_frame = false;
-//        return;
-//    }
-
-//    framebuffer_get_tail(FB_NO_FLAGS);
-
-//    if (sensor.frame_callback) {
-//        sensor.frame_callback();
-//    }
-//}
 
 #if (OMV_ENABLE_SENSOR_MDMA == 1)
 static void mdma_memcpy(vbuffer_t *buffer, void *dst, void *src, int bpp, bool transposed)

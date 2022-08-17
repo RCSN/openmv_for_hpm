@@ -2,7 +2,7 @@
 
 extern const struct _mp_obj_module_t pyb_module;
 extern const struct _mp_obj_module_t mp_module_utime;
-
+extern const struct _mp_obj_module_t sensor_module;
 //#ifndef MICROPY_CONFIG_ROM_LEVEL
 //#define MICROPY_CONFIG_ROM_LEVEL            (30)
 //#endif
@@ -50,6 +50,7 @@ extern const struct _mp_obj_module_t mp_module_utime;
 
 #define MICROPY_PORT_BUILTIN_MODULES \
             {MP_OBJ_NEW_QSTR(MP_QSTR_utime), MP_ROM_PTR(&mp_module_utime)},\
+            { MP_OBJ_NEW_QSTR(MP_QSTR_sensor),  (mp_obj_t)&sensor_module }, \
             PYB_BUILTIN_MODULE
 
 

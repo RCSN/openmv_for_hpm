@@ -7,13 +7,22 @@
 #include "common/usbdbg.h"
 #include "hpm_gpio_drv.h"
 #include "hpm_rtc_drv.h"
-
+#include "hpm_mchtmr_drv.h"
 #include "omv_boardconfig.h"
 #include "framebuffer.h"
 #include "cambus.h"
 #include "sensor.h"
 #include "usbdbg.h"
+
 //#include "lib/utils/pyexec.h"
+#define LED_FLASH_PERIOD_IN_MS 1500
+
+#define MCHTMR_PERIOD_IN_MS (1)
+#ifndef MCHTMR_CLK_NAME
+#define MCHTMR_CLK_NAME (clock_mchtmr0)
+#endif
+
+
 extern void send_cdc_data(uint8_t *data,uint32_t len);
 extern uint32_t recv_cdc_data(uint8_t *data);
 extern bool usb_vcp_is_enabled(void);
@@ -21,10 +30,30 @@ extern int mp_hal_init(void);
 //HPM_PRO_BASE=D:/vmware/share-dir/openmv_for_hpmo/hpm_sdk
 //HPM_PRO_BASE=C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/hpm_sdk
 static ATTR_PLACE_AT_NONCACHEABLE  uint8_t heap[10240];
-
 static void rtc_init(void);
-
 unsigned char OMV_UNIQUE_ID_ADDR[4];
+
+uint32_t mchtmr_freq = 0;
+static uint32_t time_tick = 0;
+
+static void mchtmr_delay_ms(uint32_t ms)
+{
+    mchtmr_delay(HPM_MCHTMR, (uint64_t) ms * mchtmr_freq / 1000);
+}
+
+void isr_mchtmr(void)
+{
+    time_tick++;
+    mchtmr_delay_ms(MCHTMR_PERIOD_IN_MS);
+}
+
+SDK_DECLARE_MCHTMR_ISR(isr_mchtmr)
+
+uint32_t get_time_tick(void)
+{
+    return time_tick;
+}
+
 
 int main(void)
 {
@@ -40,6 +69,11 @@ int main(void)
   board_init_led_pins();
   //gpio_write_pin(BOARD_R_GPIO_CTRL,BOARD_R_GPIO_INDEX,BOARD_R_GPIO_PIN,1);
   board_init_usb_pins();
+
+  mchtmr_freq = clock_get_frequency(MCHTMR_CLK_NAME);
+  enable_mchtmr_irq();
+  mchtmr_delay_ms(MCHTMR_PERIOD_IN_MS);
+
   extern void cdc_acm_msc_init(void);  
   cdc_acm_msc_init();
 
@@ -54,7 +88,7 @@ soft_reset:
   usbdbg_init();
   fb_alloc_init0();
   framebuffer_init0();
-  
+  sensor_init();
     // If there's no script ready, just re-exec REPL
     while (!usbdbg_script_ready()) {
         nlr_buf_t nlr;

@@ -8,7 +8,7 @@
       arm_compiler_variant="SEGGER"
       arm_linker_variant="SEGGER"
       c_preprocessor_definitions="FLASH_XIP=1;BOARD_SHOW_CLOCK=1;CONFIG_USB_HS;INIT_EXT_RAM_FOR_DATA=1;CFG_TUSB_MCU=OPT_MCU_HPM;USB_HOST_MCU_CORE=HPM_CORE0;__ICRISCV__;MICROPY_PY_ULAB;OPENMV;MICROPY_PY_SENSOR;MICROPY_VFS=1;MICROPY_VFS_FAT=1"
-      c_user_include_directories="hpm_sdk/arch/.;hpm_sdk/drivers/inc;hpm_sdk/boards/hpm6750evkmini/.;hpm_sdk/soc/HPM6750;hpm_sdk/soc/HPM6750/boot;hpm_sdk/soc/HPM6750/toolchains;hpm_sdk/soc/ip;hpm_sdk/utils/.;hpm_sdk/components/debug_console/.;hpm_sdk/components/usb/device;hpm_sdk/components/usb/host;hpm_sdk/middleware/cherryusb/common;hpm_sdk/middleware/cherryusb/core;hpm_sdk/middleware/cherryusb/class/cdc;hpm_sdk/middleware/cherryusb/class/hid;hpm_sdk/middleware/cherryusb/class/msc;hpm_sdk/middleware/hpm_math/;hpm_sdk/middleware/hpm_math/nds_dsp;openmv/src/micropython/py;openmv/src/micropython/.;openmv/src/micropython/ports/hpm/.;openmv/src/micropython/lib/oofatfs;openmv/src/omv/.;openmv/src/omv/imlib;openmv/src/omv/ports/hpm;openmv/src/omv/alloc;openmv/src/omv/common;openmv/src/omv/boards/HPM6750EVKMINI;openmv/src/omv/sensors"
+      c_user_include_directories="hpm_sdk/arch/.;hpm_sdk/drivers/inc;hpm_sdk/boards/hpm6750evkmini/.;hpm_sdk/soc/HPM6750;hpm_sdk/soc/HPM6750/boot;hpm_sdk/soc/HPM6750/toolchains;hpm_sdk/soc/ip;hpm_sdk/utils/.;hpm_sdk/components/debug_console/.;hpm_sdk/components/usb/device;hpm_sdk/components/usb/host;hpm_sdk/middleware/cherryusb/common;hpm_sdk/middleware/cherryusb/core;hpm_sdk/middleware/cherryusb/class/cdc;hpm_sdk/middleware/cherryusb/class/hid;hpm_sdk/middleware/cherryusb/class/msc;hpm_sdk/middleware/hpm_math/;hpm_sdk/middleware/hpm_math/nds_dsp;openmv/src/micropython/py;openmv/src/micropython/.;openmv/src/micropython/ports/hpm/.;openmv/src/micropython/lib/oofatfs;openmv/src/omv/.;openmv/src/omv/modules;openmv/src/omv/imlib;openmv/src/omv/ports/hpm;openmv/src/omv/alloc;openmv/src/omv/common;openmv/src/omv/boards/HPM6750EVKMINI;openmv/src/omv/sensors"
       debug_register_definition_file=""
       debug_stack_pointer_start=""
       debug_start_from_entry_point_symbol="Yes"
@@ -317,7 +317,7 @@
           <file file_name="openmv/src/omv/ports/hpm/dev_port_config.h" />
           <file file_name="openmv/src/omv/ports/hpm/cambus.c" />
           <file file_name="openmv/src/omv/ports/hpm/hpm_riscv_segger.h" />
-          <file file_name="openmv/src/omv/ports/stm32/sensor.c" />
+          <file file_name="openmv/src/omv/ports/hpm/sensor.c" />
         </folder>
         <folder Name="module">
           <folder Name="ulab">
@@ -377,6 +377,10 @@
               <file file_name="openmv/src/omv/modules/ulab/code/ulab_tools.c" />
             </folder>
           </folder>
+          <file file_name="openmv/src/omv/modules/py_sensor.c" />
+          <file file_name="openmv/src/omv/modules/py_clock.c" />
+          <file file_name="openmv/src/omv/modules/py_helper.c" />
+          <file file_name="openmv/src/omv/modules/py_image.c" />
         </folder>
         <folder Name="alloc">
           <file file_name="openmv/src/omv/alloc/fb_alloc.c" />

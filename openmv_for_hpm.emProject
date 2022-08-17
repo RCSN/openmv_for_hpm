@@ -28,7 +28,7 @@
       linker_printf_fp_enabled="Float"
       linker_printf_width_precision_supported="Yes"
       linker_section_placements_segments=""
-      macros="HPM_PRO_BASE=D:/vmware/share-dir/openmv_for_hpmo/hpm_sdk"
+      macros="HPM_PRO_BASE=C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/hpm_sdk"
       project_directory=""
       project_type="Executable"
       rv_abi="ilp32"
@@ -318,6 +318,7 @@
           <file file_name="openmv/src/omv/ports/hpm/cambus.c" />
           <file file_name="openmv/src/omv/ports/hpm/hpm_riscv_segger.h" />
           <file file_name="openmv/src/omv/ports/hpm/sensor.c" />
+          <file file_name="openmv/src/omv/ports/hpm/arm_dsp_compat.c" />
         </folder>
         <folder Name="module">
           <folder Name="ulab">

@@ -54,6 +54,10 @@ uint32_t get_time_tick(void)
     return time_tick;
 }
 
+extern char _fb_base;
+extern char _fb_end;
+extern char _jpeg_buf;
+extern char _fballoc;
 
 int main(void)
 {
@@ -89,6 +93,7 @@ soft_reset:
   fb_alloc_init0();
   framebuffer_init0();
   sensor_init();
+  printf("_fb_base:0x%08x _fb_end:0x%08x _jpeg_buf:0x%08x _fballoc:0x%08x \r\n",&_fb_base,&_fb_end,&_jpeg_buf,&_fballoc);
     // If there's no script ready, just re-exec REPL
     while (!usbdbg_script_ready()) {
         nlr_buf_t nlr;

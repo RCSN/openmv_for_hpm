@@ -15,6 +15,7 @@
  */
 #include "mutex.h"
 //#include "cmsis_gcc.h"
+#include "arm_compat.h"
 #include "py/mphal.h"
 #include "board.h"
 void mutex_init0(omv_mutex_t *mutex)

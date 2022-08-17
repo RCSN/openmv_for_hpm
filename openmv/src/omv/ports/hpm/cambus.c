@@ -24,6 +24,7 @@
 int cambus_init(cambus_t *bus, uint32_t bus_id, uint32_t speed)
 {
     board_init_i2c(CAM_I2C);
+    board_init_cam_pins();
     bus->id = bus_id;
     bus->speed = speed;
     bus->i2c = NULL;

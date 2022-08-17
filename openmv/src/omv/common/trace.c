@@ -10,6 +10,7 @@
  */
 #include <stdint.h>
 //#include "cmsis_gcc.h"
+#include "arm_compat.h"
 #include "trace.h"
 
 #define TRACEBUF_SIZE   (256)

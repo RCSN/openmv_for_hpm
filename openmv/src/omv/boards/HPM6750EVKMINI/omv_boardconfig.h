@@ -10,7 +10,7 @@
  */
 #ifndef __OMV_BOARDCONFIG_H__
 #define __OMV_BOARDCONFIG_H__
-
+#include "arm_compat.h"
 // Architecture info
 #define OMV_ARCH_STR            "risc 1024" // 33 chars max
 #define OMV_BOARD_TYPE          "HPM6750EVKMINI"

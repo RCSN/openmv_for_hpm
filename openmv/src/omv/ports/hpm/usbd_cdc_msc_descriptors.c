@@ -263,7 +263,7 @@ void usbd_cdc_acm_bulk_out(uint8_t ep, uint32_t nbytes)
         xfer_length = cmd->xfer_length;
         usbdbg_control(NULL, request, xfer_length);
     }
-    USB_LOG_RAW("actual out len:%d 0x%02x 0x%02x\r\n", nbytes,read_buffer[0],read_buffer[1]);
+    //USB_LOG_RAW("actual out len:%d 0x%02x 0x%02x\r\n", nbytes,read_buffer[0],read_buffer[1]);
     if(request & 0x80)
     {
       // Device-to-host data phase     

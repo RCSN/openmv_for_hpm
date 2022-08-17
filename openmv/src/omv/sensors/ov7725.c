@@ -625,7 +625,7 @@ int ov7725_init(sensor_t *sensor)
     sensor->hw_flags.gs_bpp     = 2;
     sensor->hw_flags.rgb_swap   = 1;
     sensor->hw_flags.yuv_order  = SENSOR_HW_FLAGS_YVU422;
-
+    
     return 0;
 }
 #endif // (OMV_ENABLE_OV7725 == 1)

@@ -198,7 +198,7 @@ int sensor_probe_init(uint32_t bus_id, uint32_t bus_speed)
 
     // Initialize the camera bus.
     cambus_init(&sensor.bus, bus_id, bus_speed);
-    mp_hal_delay_ms(10);
+    mp_hal_delay_ms(100);
 
     // Probe the sensor
     sensor.slv_addr = cambus_scan(&sensor.bus);
@@ -239,6 +239,9 @@ int sensor_probe_init(uint32_t bus_id, uint32_t bus_speed)
     switch (sensor.slv_addr) {
         #if (OMV_ENABLE_OV2640 == 1)
         case OV2640_SLV_ADDR: // Or OV9650.
+            cambus_writeb(&sensor.bus, sensor.slv_addr, 0xFF, 0x01); //reset
+            cambus_writeb(&sensor.bus, sensor.slv_addr, 0x12, 0x80);
+            mp_hal_delay_ms(100);
             cambus_readb(&sensor.bus, sensor.slv_addr, OV_CHIP_ID, &sensor.chip_id);
             break;
         #endif // (OMV_ENABLE_OV2640 == 1)
@@ -251,6 +254,8 @@ int sensor_probe_init(uint32_t bus_id, uint32_t bus_speed)
 
         #if (OMV_ENABLE_OV7725 == 1) || (OMV_ENABLE_OV7670 == 1) || (OMV_ENABLE_OV7690 == 1)
         case OV7725_SLV_ADDR: // Or OV7690 or OV7670.
+            cambus_writeb(&sensor.bus, sensor.slv_addr, 0x12, 0x80); //reset
+            mp_hal_delay_ms(100);
             cambus_readb(&sensor.bus, sensor.slv_addr, OV_CHIP_ID, &sensor.chip_id);
             break;
         #endif //(OMV_ENABLE_OV7725 == 1) || (OMV_ENABLE_OV7670 == 1) || (OMV_ENABLE_OV7690 == 1)
@@ -316,6 +321,7 @@ int sensor_probe_init(uint32_t bus_id, uint32_t bus_speed)
             if (sensor_set_xclk_frequency(OV2640_XCLK_FREQ) != 0) {
                 return SENSOR_ERROR_TIM_INIT_FAILED;
             }
+            
             init_ret = ov2640_init(&sensor);
             break;
         #endif // (OMV_ENABLE_OV2640 == 1)
@@ -355,6 +361,7 @@ int sensor_probe_init(uint32_t bus_id, uint32_t bus_speed)
 
         #if (OMV_ENABLE_OV7725 == 1)
         case OV7725_ID:
+            
             init_ret = ov7725_init(&sensor);
             break;
         #endif // (OMV_ENABLE_OV7725 == 1)

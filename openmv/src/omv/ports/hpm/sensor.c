@@ -35,7 +35,7 @@
 #define DMA_LENGTH_ALIGNMENT    (16)
 #define SENSOR_TIMEOUT_MS       (3000)
 #define ARRAY_SIZE(a)           (sizeof(a) / sizeof((a)[0]))
-
+static uint8_t __attribute__((section (".framebuffer"))) sensor_buffer[2048 * 1024] __attribute__ ((aligned(16)));
 sensor_t sensor = {};
 static cam_config_t cam_config;
 
@@ -138,7 +138,7 @@ int sensor_init()
             return init_ret;
         }
     }
-
+    
     // Configure the DCMI DMA Stream
     if (sensor_dma_config() != 0) {
         // DMA problem
@@ -206,8 +206,9 @@ int sensor_framesize(int32_t w,int32_t h)
 //    cam_stop(HPM_CAM0);
     cam_config.width = w;
     cam_config.height = h;
-//    cam_init(HPM_CAM0, &cam_config);
-//    cam_start(HPM_CAM0);
+    cam_config.buffer1 = core_local_mem_to_sys_address(HPM_CORE0, (uint32_t)sensor_buffer);
+    cam_init(HPM_CAM0, &cam_config);
+    cam_start(HPM_CAM0);
     return 0;
 }
 
@@ -338,6 +339,14 @@ int sensor_snapshot(sensor_t *sensor, image_t *image, uint32_t flags)
      if (sensor_check_framebuffer_size() != 0) {
         return SENSOR_ERROR_FRAMEBUFFER_OVERFLOW;
     }
+        // This driver supports a single buffer.
+    if (MAIN_FB()->n_buffers != 1) {
+        framebuffer_set_buffers(1);
+    }
+
+    if (sensor_check_framebuffer_size() != 0) {
+        return SENSOR_ERROR_FRAMEBUFFER_OVERFLOW;
+    }
      // Free the current FB head.
     framebuffer_free_current_buffer();
 
@@ -347,21 +356,29 @@ int sensor_snapshot(sensor_t *sensor, image_t *image, uint32_t flags)
     }
     MAIN_FB()->pixfmt = sensor->pixformat;
 
-    vbuffer_t *buffer = framebuffer_get_head(FB_NO_FLAGS);
-    buffer = framebuffer_get_tail(FB_PEEK);
-    if (buffer == NULL) {
-            return SENSOR_ERROR_FRAMEBUFFER_ERROR;
+    vbuffer_t *buffer = framebuffer_get_tail(FB_NO_FLAGS);
+
+     if (!buffer) {
+        return SENSOR_ERROR_FRAMEBUFFER_ERROR;
     }
-    cam_config.buffer1 = core_local_mem_to_sys_address(HPM_CORE0, (uint32_t)buffer->data);
-    cam_init(HPM_CAM0, &cam_config);
-    cam_start(HPM_CAM0);
     mp_uint_t ticks = mp_hal_ticks_ms();
-    while((mp_hal_ticks_ms() - ticks) < 3000)
+    while(1)
     {
+      if((mp_hal_ticks_ms() - ticks) > 3000)
+      {
+          return SENSOR_ERROR_CAPTURE_TIMEOUT;
+      }
       if((HPM_CAM0->STA & CAM_STATUS_END_OF_FRAME) == CAM_STATUS_END_OF_FRAME)
         break;
     }
-    cam_stop(HPM_CAM0);
+    MAIN_FB()->w = MAIN_FB()->u;
+    MAIN_FB()->h = MAIN_FB()->v;
+    memcpy(buffer->data,sensor_buffer,MAIN_FB()->u * MAIN_FB()->v * MAIN_FB()->bpp);
+    if ((MAIN_FB()->pixfmt == PIXFORMAT_RGB565 && sensor->hw_flags.rgb_swap) ||
+        (MAIN_FB()->pixfmt == PIXFORMAT_YUV422 && sensor->hw_flags.yuv_swap)) {
+        unaligned_memcpy_rev16(buffer->data, buffer->data, MAIN_FB()->w * MAIN_FB()->h);
+    }
+
     framebuffer_init_image(image);
     return 0;
 }

@@ -198,7 +198,7 @@ void usbdbg_data_out(void *buffer, int length)
             if (enable == 0) {
                 // When disabling framebuffer, the IDE might still be holding FB lock.
                 // If the IDE is not the current lock owner, this operation is ignored.
-                //mutex_unlock(&JPEG_FB()->lock, MUTEX_TID_IDE);
+                mutex_unlock(&JPEG_FB()->lock, MUTEX_TID_IDE);
             }
             cmd = USBDBG_NONE;
             break;

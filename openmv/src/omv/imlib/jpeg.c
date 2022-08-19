@@ -1877,7 +1877,7 @@ bool jpeg_compress(image_t *src, image_t *dst, int quality, bool realloc)
             jpeg_subsample = JPEG_SUBSAMPLE_2x1;
         }
     }
-
+    //printf("jpeg_compress %d %d %d \r\n", src->w, src->h, src->is_color );
     jpeg_write_headers(&jpeg_buf, src->w, src->h, src->is_color ? 2 : 1, jpeg_subsample);
 
     int DCY = 0, DCU = 0, DCV = 0;

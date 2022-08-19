@@ -83,14 +83,14 @@ extern unsigned char OMV_UNIQUE_ID_ADDR[4];
 
 // If buffer size is bigger than this threshold, the quality is reduced.
 // This is only used for JPEG images sent to the IDE not normal compression.
-#define JPEG_QUALITY_THRESH     (160*120)
+#define JPEG_QUALITY_THRESH     (1920*1080*2)
 
 // Low and high JPEG QS.
-#define JPEG_QUALITY_LOW        35
-#define JPEG_QUALITY_HIGH       60
+#define JPEG_QUALITY_LOW        50
+#define JPEG_QUALITY_HIGH       90
 
 // FB Heap Block Size
-#define OMV_UMM_BLOCK_SIZE      16
+#define OMV_UMM_BLOCK_SIZE      256
 
 // Core VBAT for selftests
 #define OMV_CORE_VBAT           "3.3"

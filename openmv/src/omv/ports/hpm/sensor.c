@@ -174,28 +174,29 @@ int sensor_pixformat(uint32_t pixformat)
     cam_config_t _config;
  //   cam_stop(HPM_CAM0);
     cam_get_default_config(HPM_CAM0, &_config, display_pixel_format_rgb565);
-    cam_config.hsync_active_low = (sensor.hw_flags.hsync ? 1 : 0);
-    cam_config.pixclk_sampling_falling = (sensor.hw_flags.pixck ? 1 : 0);
-    cam_config.vsync_active_low = (sensor.hw_flags.vsync ? 1 : 0);
+    cam_config.hsync_active_low = (sensor.hw_flags.hsync ? 0 : 1);
+    cam_config.pixclk_sampling_falling = (sensor.hw_flags.pixck ? 0 : 1);
+    cam_config.vsync_active_low = (sensor.hw_flags.vsync ? 0 : 1);
     cam_config.sensor_bitwidth = CAM_SENSOR_BITWIDTH_10BITS;
     cam_config.data_pack_msb = false;
     cam_config.color_ext = false;    
-    MAIN_FB()->pixfmt = pixformat;
+    //MAIN_FB()->pixfmt = pixformat;
     if(pixformat == PIXFORMAT_RGB565)
     {
-        cam_config.data_store_mode = 0;
+        cam_config.data_store_mode = CAM_DATA_STORE_MODE_NORMAL;
         cam_config.color_format = CAM_COLOR_FORMAT_RGB565;   
     }
     else if(pixformat == PIXFORMAT_GRAYSCALE)
     {
-        cam_config.data_store_mode = 2;
+        cam_config.data_store_mode = CAM_DATA_STORE_MODE_Y_ONLY;
         cam_config.color_format = CAM_COLOR_FORMAT_YCBCR422;
     }
     else
     {
-        cam_config.data_store_mode = 0;
+        cam_config.data_store_mode = CAM_DATA_STORE_MODE_NORMAL;
         cam_config.color_format = CAM_COLOR_FORMAT_RGB565;   
     }
+    printf("sensor_pixformat:%d %d %d\r\n",pixformat, cam_config.data_store_mode,cam_config.color_format);
  //   cam_start(HPM_CAM0);
     return 0;
 }
@@ -209,6 +210,7 @@ int sensor_framesize(int32_t w,int32_t h)
     cam_config.buffer1 = core_local_mem_to_sys_address(HPM_CORE0, (uint32_t)sensor_buffer);
     cam_init(HPM_CAM0, &cam_config);
     cam_start(HPM_CAM0);
+     printf("sensor_framesize:%d %d\r\n", cam_config.data_store_mode,cam_config.color_format);
     return 0;
 }
 

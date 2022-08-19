@@ -4,7 +4,7 @@
  * @Author: RCSN
  * @Date: 2022-08-17 11:42:33
  * @LastEditors: fy-tech
- * @LastEditTime: 2022-08-17 11:42:34
+ * @LastEditTime: 2022-08-19 14:04:43
  */
 /*
  * This file is part of the OpenMV project.
@@ -158,7 +158,7 @@ int sensor_init()
 
     // Clear fb_enabled flag
     // This is executed only once to initialize the FB enabled flag.
-    JPEG_FB()->enabled = 0;
+    // JPEG_FB()->enabled = 0;
 
     // Set default color palette.
     sensor.color_palette = rainbow_table;
@@ -336,8 +336,8 @@ static uint32_t get_dcmi_hw_crop(uint32_t bytes_per_pixel)
 int sensor_snapshot(sensor_t *sensor, image_t *image, uint32_t flags)
 {
     framebuffer_update_jpeg_buffer();
-     if (sensor_check_framebuffer_size() != 0) {
-        return SENSOR_ERROR_FRAMEBUFFER_OVERFLOW;
+    if (sensor_check_framebuffer_size() != 0) {
+       return SENSOR_ERROR_FRAMEBUFFER_OVERFLOW;
     }
         // This driver supports a single buffer.
     if (MAIN_FB()->n_buffers != 1) {
@@ -354,7 +354,7 @@ int sensor_snapshot(sensor_t *sensor, image_t *image, uint32_t flags)
     if (sensor->pixformat == PIXFORMAT_INVALID) {
         return SENSOR_ERROR_INVALID_PIXFORMAT;
     }
-    MAIN_FB()->pixfmt = sensor->pixformat;
+    
 
     vbuffer_t *buffer = framebuffer_get_tail(FB_NO_FLAGS);
 
@@ -369,8 +369,16 @@ int sensor_snapshot(sensor_t *sensor, image_t *image, uint32_t flags)
           return SENSOR_ERROR_CAPTURE_TIMEOUT;
       }
       if((HPM_CAM0->STA & CAM_STATUS_END_OF_FRAME) == CAM_STATUS_END_OF_FRAME)
+      {
+        HPM_CAM0->STA |= CAM_STA_DMA_TSF_DONE_FB1_SET(1);
         break;
+      }
     }
+    // Not useful for the NRF but must call to keep API the same.
+    if (sensor->frame_callback) {
+        sensor->frame_callback();
+    }
+    MAIN_FB()->pixfmt = sensor->pixformat;
     MAIN_FB()->w = MAIN_FB()->u;
     MAIN_FB()->h = MAIN_FB()->v;
     memcpy(buffer->data,sensor_buffer,MAIN_FB()->u * MAIN_FB()->v * MAIN_FB()->bpp);

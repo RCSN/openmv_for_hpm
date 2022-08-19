@@ -269,7 +269,7 @@ STATIC void int_py_imageio_pause(py_imageio_obj_t *stream, bool pause)
     }
 
     while (pause && ((mp_hal_ticks_ms() - stream->ms) < elapsed_ms)) {
-        __WFI();
+        //__WFI();
     }
 
     stream->ms += elapsed_ms;

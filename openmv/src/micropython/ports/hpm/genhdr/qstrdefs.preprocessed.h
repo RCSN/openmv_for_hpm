@@ -7434,3 +7434,16 @@ Q(EXTRACT_RGB_CHANNEL_FIRST)
 Q(APPLY_COLOR_PALETTE_FIRST)
 
 Q(ImageIO)
+
+Q(pause)
+
+Q(imageio)
+
+Q(FILE_STREAM)
+
+Q(MEMORY_STREAM)
+
+Q(is_closed)
+
+Q(buffer_size)
+

@@ -68,19 +68,39 @@ int mutex_try_lock(omv_mutex_t *mutex, uint32_t tid)
 
     return (mutex->tid == tid);
 }
-
+#if 1
 int mutex_try_lock_alternate(omv_mutex_t *mutex, uint32_t tid)
 {
     if (mutex->last_tid != tid) {
         if (mutex_try_lock(mutex, tid)) {
             mutex->last_tid = tid;
+            //printf("mutex_try_lock_alternate:%d \r\n",tid);
             return 1;
         }
     }
 
     return 0;
 }
-
+#else
+int mutex_try_lock_alternate(omv_mutex_t *mutex, uint32_t tid)
+{
+    volatile int locked = 1;
+    if(mutex->tid == tid)
+    {
+        mutex_unlock(mutex,tid);
+    }
+    else if(mutex->lock == 0)
+    {
+        locked = mutex->lock;
+        mutex->lock = 1;
+        if(locked == 0)
+        {
+            mutex->tid = tid;
+        }
+    }
+    return (locked == 0);
+}
+#endif
 int mutex_lock_timeout(omv_mutex_t *mutex, uint32_t tid, uint32_t timeout)
 {
     mp_uint_t tick_start = mp_hal_ticks_ms();

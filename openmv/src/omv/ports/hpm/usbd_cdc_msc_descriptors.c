@@ -263,13 +263,14 @@ void usbd_cdc_acm_bulk_out(uint8_t ep, uint32_t nbytes)
         xfer_length = cmd->xfer_length;
         usbdbg_control(NULL, request, xfer_length);
     }
+    //if(read_buffer[1] == USBDBG_FRAME_DUMP)
     //USB_LOG_RAW("actual out len:%d 0x%02x 0x%02x\r\n", nbytes,read_buffer[0],read_buffer[1]);
     if(request & 0x80)
     {
       // Device-to-host data phase     
         int bytes = MIN(xfer_length, DBG_MAX_PACKET);
         usbdbg_data_in(read_buffer, bytes);
-        dev2host_lenth = xfer_length;
+        dev2host_lenth = xfer_length - bytes;
         openmv_send_data(read_buffer, bytes);
     }
     else
@@ -289,23 +290,13 @@ void usbd_cdc_acm_bulk_in(uint8_t ep, uint32_t nbytes)
     else 
     {    
       ep_tx_busy_flag = false;  
-      if(nbytes == 0)
+      if(dev2host_lenth == 0)
         return;
-      if(dev2host_lenth)
-      {
-        if(dev2host_lenth < nbytes)    
-            dev2host_lenth = 0;      
-        else     
-            dev2host_lenth -= nbytes;
-      }
-      else
-      {
-         return;
-      }
-  //        USB_LOG_RAW("actual in len:%d\r\n", nbytes);      
+        //USB_LOG_RAW("actual in len:%d\r\n", nbytes);      
         int bytes = MIN(dev2host_lenth, DBG_MAX_PACKET);
         usbdbg_data_in(send_buffer, bytes);
         openmv_send_data(send_buffer, bytes);
+        dev2host_lenth -= bytes;
     }
 }
 

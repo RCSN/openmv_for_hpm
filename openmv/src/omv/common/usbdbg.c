@@ -137,7 +137,7 @@ void usbdbg_data_in(void *buffer, int length)
             // Try to lock FB. If header size == 0 frame is not ready
             if (mutex_try_lock_alternate(&JPEG_FB()->lock, MUTEX_TID_IDE)) {
                 // If header size == 0 frame is not ready
-                if (JPEG_FB()->size == 0) {
+                if (JPEG_FB()->size == 0 || JPEG_FB()->w == 0 || JPEG_FB()->h == 0) {
                     // unlock FB
                     mutex_unlock(&JPEG_FB()->lock, MUTEX_TID_IDE);
                 } else {
@@ -194,7 +194,7 @@ void usbdbg_data_out(void *buffer, int length)
     switch (cmd) {
         case USBDBG_FB_ENABLE: {
             uint32_t enable = *((int32_t*)buffer);
-            //JPEG_FB()->enabled = enable;
+            JPEG_FB()->enabled = enable;
             if (enable == 0) {
                 // When disabling framebuffer, the IDE might still be holding FB lock.
                 // If the IDE is not the current lock owner, this operation is ignored.

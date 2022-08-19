@@ -729,7 +729,7 @@ __weak int sensor_set_windowing(int x, int y, int w, int h)
     framebuffer_update_jpeg_buffer();
 
     // Skip the first frame.
-    MAIN_FB()->pixfmt = PIXFORMAT_INVALID;
+     MAIN_FB()->pixfmt = PIXFORMAT_INVALID;
 
     MAIN_FB()->x = x;
     MAIN_FB()->y = y;

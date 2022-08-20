@@ -248,6 +248,9 @@ int sensor_probe_init(uint32_t bus_id, uint32_t bus_speed)
 
         #if (OMV_ENABLE_OV5640 == 1)
         case OV5640_SLV_ADDR:
+            cambus_writeb2(&sensor.bus, sensor.slv_addr, 0x3103, 0x11); //reset
+            cambus_writeb2(&sensor.bus, sensor.slv_addr, 0x3008, 0x82);
+            mp_hal_delay_ms(100);
             cambus_readb2(&sensor.bus, sensor.slv_addr, OV5640_CHIP_ID, &sensor.chip_id);
             break;
         #endif // (OMV_ENABLE_OV5640 == 1)
@@ -460,11 +463,23 @@ __weak int sensor_get_id()
 
 __weak uint32_t sensor_get_xclk_frequency()
 {
-    return 0;
+  return clock_get_frequency(clock_camera0);
 }
 
 __weak int sensor_set_xclk_frequency(uint32_t frequency)
 {
+    if(frequency == (12000000))
+    {
+      clock_set_source_divider(clock_camera0, clk_src_osc24m, 2U);
+    }
+    else if(frequency == (24000000))
+    {
+      clock_set_source_divider(clock_camera0, clk_src_osc24m, 1U);
+    }
+    else
+    {
+      clock_set_source_divider(clock_camera0, clk_src_osc24m, 1U);
+    }
     return 0;
 }
 

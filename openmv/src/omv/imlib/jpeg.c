@@ -1735,6 +1735,7 @@ static void jpeg_init(int quality)
 
 static void jpeg_write_headers(jpeg_buf_t *jpeg_buf, int w, int h, int bpp, jpeg_subsample_t jpeg_subsample)
 {
+    printf("jpeg_write_headers w:%d h:%d bpp:%d jpeg_subsample:%d \r\n",w,h,bpp,jpeg_subsample);
     // Number of components (1 or 3)
     uint8_t nr_comp = (bpp == 1)? 1 : 3;
 

@@ -357,6 +357,7 @@ static int reset(sensor_t *sensor)
     // Write default regsiters
     for (int i = 0; default_regs[i][0]; i++) {
         ret |= cambus_writeb(&sensor->bus, sensor->slv_addr, default_regs[i][0], default_regs[i][1]);
+        mp_hal_delay_ms(1);
     }
 
     // Delay 300 ms

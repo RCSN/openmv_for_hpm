@@ -90,7 +90,10 @@ int cambus_writeb(cambus_t *bus, uint8_t slv_addr, uint8_t reg_addr, uint8_t reg
 int cambus_readb2(cambus_t *bus, uint8_t slv_addr, uint16_t reg_addr, uint8_t *reg_data)
 {
     int ret = 0;
-    if(i2c_master_address_read(bus->i2c, (uint16_t)slv_addr, (uint8_t*)&reg_addr, 2, reg_data, 1) != status_success)
+    uint8_t r[2];
+    r[0] = reg_addr >> 8;
+    r[1] = reg_addr & 0xFF;
+    if(i2c_master_address_read(bus->i2c, (uint16_t)slv_addr, r, sizeof(r), reg_data, 1) != status_success)
       ret = -1;
     return ret;
 
@@ -99,7 +102,10 @@ int cambus_readb2(cambus_t *bus, uint8_t slv_addr, uint16_t reg_addr, uint8_t *r
 int cambus_writeb2(cambus_t *bus, uint8_t slv_addr, uint16_t reg_addr, uint8_t reg_data)
 {
     int ret = 0;
-    if(i2c_master_address_write(bus->i2c,(uint16_t)slv_addr,  (uint8_t*)&reg_addr, 2, (uint8_t*)&reg_data, 1) != status_success)
+    uint8_t r[2];
+    r[0] = reg_addr >> 8;
+    r[1] = reg_addr & 0xFF;
+    if(i2c_master_address_write(bus->i2c,(uint16_t)slv_addr,  r, sizeof(r), (uint8_t*)&reg_data, 1) != status_success)
       ret = -1;
     return ret;
 }

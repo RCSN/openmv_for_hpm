@@ -136,6 +136,8 @@ void framebuffer_update_jpeg_buffer()
     image_t main_fb_src;
     framebuffer_init_image(&main_fb_src);
     image_t *src = &main_fb_src;
+    //extern void LCD_DrawImage(uint16_t x, uint16_t y, uint16_t w, uint16_t h, const uint8_t *data);
+    //LCD_DrawImage(0,0,src->w, src->h,src->pixels);
 
     if (src->pixfmt != PIXFORMAT_INVALID &&
             framebuffer->streaming_enabled && jpeg_framebuffer->enabled) {

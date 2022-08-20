@@ -78,6 +78,27 @@ static int sensor_dma_config()
     // DMA Stream configuration
     return 0;
 }
+uint32_t sensor_get_xclk_frequency()
+{
+    return clock_get_frequency(clock_camera0);
+}
+
+int sensor_set_xclk_frequency(uint32_t frequency)
+{
+    if(frequency == (12000000))
+    {
+      clock_set_source_divider(clock_camera0, clk_src_osc24m, 2U);
+    }
+    else if(frequency == (24000000))
+    {
+      clock_set_source_divider(clock_camera0, clk_src_osc24m, 1U);
+    }
+    else
+    {
+      clock_set_source_divider(clock_camera0, clk_src_osc24m, 1U);
+    }
+    return 0;
+}
 
 void sensor_init0()
 {
@@ -203,7 +224,6 @@ int sensor_pixformat(uint32_t pixformat)
 
 int sensor_framesize(int32_t w,int32_t h)
 {
-    cam_config_t _config;
 //    cam_stop(HPM_CAM0);
     cam_config.width = w;
     cam_config.height = h;
@@ -246,27 +266,6 @@ int sensor_abort()
     return 0;
 }
 
-uint32_t sensor_get_xclk_frequency()
-{
-    return clock_get_frequency(clock_camera0);
-}
-
-int sensor_set_xclk_frequency(uint32_t frequency)
-{
-    if(frequency == (12000000))
-    {
-      clock_set_source_divider(clock_camera0, clk_src_osc24m, 2U);
-    }
-    else if(frequency == (24000000))
-    {
-      clock_set_source_divider(clock_camera0, clk_src_osc24m, 1U);
-    }
-    else
-    {
-      clock_set_source_divider(clock_camera0, clk_src_osc24m, 1U);
-    }
-    return 0;
-}
 
 int sensor_shutdown(int enable)
 {
@@ -363,6 +362,7 @@ int sensor_snapshot(sensor_t *sensor, image_t *image, uint32_t flags)
      if (!buffer) {
         return SENSOR_ERROR_FRAMEBUFFER_ERROR;
     }
+
     mp_uint_t ticks = mp_hal_ticks_ms();
     while(1)
     {
@@ -371,7 +371,9 @@ int sensor_snapshot(sensor_t *sensor, image_t *image, uint32_t flags)
           return SENSOR_ERROR_CAPTURE_TIMEOUT;
       }
       if((HPM_CAM0->STA & CAM_STATUS_END_OF_FRAME) == CAM_STATUS_END_OF_FRAME)
+      //if((HPM_CAM0->STA & CAM_STATUS_FB1_DMA_TRANSFER_DONE) == CAM_STATUS_FB1_DMA_TRANSFER_DONE)
       {
+        //printf("sensor_snapshot : 0x%08x \r\n",HPM_CAM0->STA);
         HPM_CAM0->STA |= CAM_STA_DMA_TSF_DONE_FB1_SET(1);
         break;
       }
@@ -383,12 +385,15 @@ int sensor_snapshot(sensor_t *sensor, image_t *image, uint32_t flags)
     MAIN_FB()->pixfmt = sensor->pixformat;
     MAIN_FB()->w = MAIN_FB()->u;
     MAIN_FB()->h = MAIN_FB()->v;
+    
+    
     memcpy(buffer->data,sensor_buffer,MAIN_FB()->u * MAIN_FB()->v * MAIN_FB()->bpp);
     if ((MAIN_FB()->pixfmt == PIXFORMAT_RGB565 && sensor->hw_flags.rgb_swap) ||
         (MAIN_FB()->pixfmt == PIXFORMAT_YUV422 && sensor->hw_flags.yuv_swap)) {
         unaligned_memcpy_rev16(buffer->data, buffer->data, MAIN_FB()->w * MAIN_FB()->h);
     }
-
+   ;
     framebuffer_init_image(image);
+
     return 0;
 }

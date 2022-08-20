@@ -13,7 +13,7 @@
 #include "cambus.h"
 #include "sensor.h"
 #include "usbdbg.h"
-
+#include "bsp_lcd.h"
 //#include "lib/utils/pyexec.h"
 #define LED_FLASH_PERIOD_IN_MS 1500
 
@@ -80,6 +80,7 @@ int main(void)
 
   extern void cdc_acm_msc_init(void);  
   cdc_acm_msc_init();
+  bsp_lcd_init();
 
 soft_reset:
   mp_stack_ctrl_init();

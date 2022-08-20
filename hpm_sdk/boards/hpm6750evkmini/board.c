@@ -367,7 +367,9 @@ uint32_t board_init_spi_clock(SPI_Type *ptr)
     if (ptr == HPM_SPI2) {
         /* SPI2 clock configure */
         clock_add_to_group(clock_spi2, 0);
-        clock_set_source_divider(clock_spi2, clk_src_osc24m, 1U);
+        //clock_set_source_divider(clock_spi2, clk_src_osc24m, 1U);
+        clock_set_source_divider(clock_spi2, clk_src_pll1_clk1, 5U);
+        return clock_get_frequency(clock_spi2);
 
         return clock_get_frequency(clock_spi2);
     } else {

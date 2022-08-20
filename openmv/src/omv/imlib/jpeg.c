@@ -15,7 +15,7 @@
 #include "ff_wrapper.h"
 #include "imlib.h"
 #include "omv_boardconfig.h"
-
+#include "arm_compat.h"
 #define TIME_JPEG   (0)
 #if (TIME_JPEG == 1)
 #include "py/mphal.h"

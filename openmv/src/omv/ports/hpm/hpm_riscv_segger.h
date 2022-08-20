@@ -8,10 +8,10 @@
 //  return result;
 //}
 
-static inline int __ssub16(uint32_t op1, uint32_t op2)
-{
-    return 0;
-}
+//static inline int __ssub16(uint32_t op1, uint32_t op2)
+//{
+//    return 0;
+//}
 
 static inline bool isinff(float arg)
 {

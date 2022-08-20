@@ -31,14 +31,9 @@
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;toolchains"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython;py"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython;shared"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython;shared;readline"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv;alloc"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv;common"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv;imlib"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv;module"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv;port"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;sensor"/>
  </Project>
@@ -67,15 +62,17 @@
  <Watch1>
   <Watches active="1" update="Never">
    <Watchpoint expression="jpeg_buf" name="jpeg_buf" radix="-1" linenumber="1523" filename="openmv/src/omv/imlib/jpeg.c"/>
-   <Watchpoint expression="src" name="src" radix="-1" linenumber="140" filename="openmv/src/omv/imlib/framebuffer.c"/>
+   <Watchpoint expression="src" name="src" radix="-1" linenumber="142" filename="openmv/src/omv/imlib/framebuffer.c"/>
    <Watchpoint expression="framebuffer" name="framebuffer" radix="16" linenumber="105" filename="openmv/src/omv/imlib/framebuffer.c"/>
-   <Watchpoint expression="jpeg_framebuffer" name="jpeg_framebuffer" radix="10" linenumber="167" filename="openmv/src/omv/imlib/framebuffer.c"/>
-   <Watchpoint expression="HPM_CAM0" name="HPM_CAM0" radix="-1" linenumber="374" filename="openmv/src/omv/ports/hpm/sensor.c"/>
-   <Watchpoint expression="STA" name="STA" radix="16" linenumber="379" filename="openmv/src/omv/ports/hpm/sensor.c"/>
-   <Watchpoint expression="sensor_buffer" name="sensor_buffer" radix="16" linenumber="390" filename="openmv/src/omv/ports/hpm/sensor.c"/>
-   <Watchpoint expression="cam_config" name="cam_config" radix="-1" linenumber="229" filename="openmv/src/omv/ports/hpm/sensor.c"/>
-   <Watchpoint expression="dst" name="dst" radix="-1" linenumber="168" filename="openmv/src/omv/imlib/framebuffer.c"/>
+   <Watchpoint expression="jpeg_framebuffer" name="jpeg_framebuffer" radix="10" linenumber="169" filename="openmv/src/omv/imlib/framebuffer.c"/>
+   <Watchpoint expression="HPM_CAM0" name="HPM_CAM0" radix="-1" linenumber="378" filename="openmv/src/omv/ports/hpm/sensor.c"/>
+   <Watchpoint expression="STA" name="STA" radix="16" linenumber="383" filename="openmv/src/omv/ports/hpm/sensor.c"/>
+   <Watchpoint expression="sensor_buffer" name="sensor_buffer" radix="16" linenumber="394" filename="openmv/src/omv/ports/hpm/sensor.c"/>
+   <Watchpoint expression="cam_config" name="cam_config" radix="-1" linenumber="232" filename="openmv/src/omv/ports/hpm/sensor.c"/>
+   <Watchpoint expression="dst" name="dst" radix="10" linenumber="170" filename="openmv/src/omv/imlib/framebuffer.c"/>
    <Watchpoint expression="bpp" name="bpp" radix="16" linenumber="1793" filename="openmv/src/omv/imlib/jpeg.c"/>
+   <Watchpoint expression="o" name="o" radix="-1" linenumber="6547" filename="openmv/src/omv/modules/py_image.c"/>
+   <Watchpoint expression="image" name="image" radix="-1" linenumber="338" filename="openmv/src/omv/ports/hpm/sensor.c"/>
   </Watches>
  </Watch1>
  <Watch2>
@@ -88,7 +85,23 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="234" useTextEdit="1" openedFrom="D:/vmware/share-dir/openmv_for_hpmo/openmv/src/omv/ports/hpm/main.c" path="openmv/src/omv/ports/hpm/sensor.c" left="0" selected="1" top="347" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="1180" useTextEdit="1" openedFrom="D:/vmware/share-dir/openmv_for_hpmo/openmv/src/omv/ports/hpm/sensor.c" path="openmv/src/omv/common/sensor_utils.c" left="0" top="1243" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="31" y="352" useTextEdit="1" path="openmv/src/omv/common/usbdbg.c" left="0" top="321" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="55" useTextEdit="1" path="openmv/src/omv/ports/hpm/main.c" left="0" selected="1" top="48" codecName=""/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="380" useTextEdit="1" openedFrom="D:/vmware/share-dir/openmv_for_hpmo/openmv/src/omv/ports/hpm/main.c" path="openmv/src/omv/ports/hpm/sensor.c" left="0" top="358" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="12" y="32" useTextEdit="1" openedFrom="D:/vmware/share-dir/openmv_for_hpmo/openmv/src/omv/imlib/jpeg.c" path="openmv/src/omv/imlib/imlib.h" left="0" top="16" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="31" y="172" useTextEdit="1" openedFrom="D:/vmware/share-dir/openmv_for_hpmo/openmv/src/omv/imlib/framebuffer.c" path="openmv/src/omv/imlib/jpeg.c" left="0" top="152" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="40" y="177" useTextEdit="1" openedFrom="D:/vmware/share-dir/openmv_for_hpmo/openmv/src/omv/ports/hpm/sensor.c" path="openmv/src/omv/imlib/framebuffer.c" left="0" top="163" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="14" y="20" useTextEdit="1" path="openmv/src/omv/sensors/ov2640.c" left="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="36" y="77" useTextEdit="1" openedFrom="D:/vmware/share-dir/openmv_for_hpmo/openmv/src/omv/sensors/ov2640.c" path="openmv/src/omv/sensors/ov2640_regs.h" left="0" top="67" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="173" useTextEdit="1" path="openmv/src/micropython/ports/hpm/mphalport.c" left="0" top="154" codecName=""/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="14" y="12" useTextEdit="1" path="openmv/src/omv/modules/bsp_lcd.c" left="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="18" y="232" useTextEdit="1" openedFrom="D:/vmware/share-dir/openmv_for_hpmo/openmv/src/omv/modules/bsp_lcd.c" path="openmv/src/omv/modules/bsp_lcd.h" left="0" top="203" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="31" y="100" useTextEdit="1" openedFrom="D:/vmware/share-dir/openmv_for_hpmo/openmv/src/omv/imlib/jpeg.c" path="openmv/src/omv/boards/HPM6750EVKMINI/omv_boardconfig.h" left="0" top="78" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="10" useTextEdit="1" openedFrom="D:/vmware/share-dir/openmv_for_hpmo/openmv/src/omv/imlib/imlib.h" path="openmv/src/omv/ports/hpm/hpm_riscv_segger.h" left="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" path="openmv/src/omv/ports/hpm/arm_dsp_compat.c" left="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" path="openmv/src/omv/ports/hpm/dev_port_config.h" left="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="30" y="37" useTextEdit="1" openedFrom="D:/vmware/share-dir/openmv_for_hpmo/openmv/src/omv/imlib/jpeg.c" path="openmv/src/omv/ports/hpm/arm_compat.h" left="0" top="25" codecName="Default"/>
  </Files>
- <EMStudioWindow activeProject="openmv_for_hpm" fileDialogDefaultFilter="*.c" autoConnectTarget="GDB Server" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="D:/vmware/share-dir/openmv_for_hpmo/openmv/src/omv/modules" debugSearchPath="" autoConnectCapabilities="1343"/>
+ <EMStudioWindow activeProject="openmv_for_hpm" fileDialogDefaultFilter="*" autoConnectTarget="GDB Server" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="D:/vmware/share-dir/openmv_for_hpmo/openmv/src/omv/ports/hpm" debugSearchPath="" autoConnectCapabilities="1343"/>
 </session>

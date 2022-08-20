@@ -132,8 +132,8 @@ int sensor_init()
 
     // Reset the sesnor state
     memset(&sensor, 0, sizeof(sensor_t));
-    cam_config.width = 320;
-    cam_config.height = 240;
+    cam_config.width = 0;
+    cam_config.height = 0;
 
     // Set default snapshot function.
     // Some sensors need to call snapshot from init.
@@ -193,6 +193,8 @@ int sensor_init()
 int sensor_pixformat(uint32_t pixformat)
 {
     cam_config_t _config;
+    if(pixformat == PIXFORMAT_INVALID)
+      return 0;
  //   cam_stop(HPM_CAM0);
     cam_get_default_config(HPM_CAM0, &_config, display_pixel_format_rgb565);
     cam_config.hsync_active_low = (sensor.hw_flags.hsync ? 0 : 1);
@@ -225,6 +227,8 @@ int sensor_pixformat(uint32_t pixformat)
 int sensor_framesize(int32_t w,int32_t h)
 {
 //    cam_stop(HPM_CAM0);
+    if(w == 0 || h == 0)
+      return 0;
     cam_config.width = w;
     cam_config.height = h;
     cam_config.buffer1 = core_local_mem_to_sys_address(HPM_CORE0, (uint32_t)sensor_buffer);

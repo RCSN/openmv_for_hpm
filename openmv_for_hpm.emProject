@@ -320,6 +320,7 @@
           <file file_name="openmv/src/omv/ports/hpm/sensor.c" />
           <file file_name="openmv/src/omv/ports/hpm/arm_dsp_compat.c" />
           <file file_name="openmv/src/omv/modules/bsp_lcd.c" />
+          <file file_name="openmv/src/omv/ports/hpm/arm_compat.h" />
         </folder>
         <folder Name="module">
           <folder Name="ulab">
@@ -468,7 +469,7 @@
       Name="Debug"
       arm_compiler_variant="SEGGER"
       debug_target_connection="GDB Server"
-      gcc_optimization_level="Level 1"
+      gcc_optimization_level="Level 3 for more speed"
       heap_size="245760"
       rv_architecture="rv32imac"
       target_reset_script="TargetInterface.resetAndStop()" />

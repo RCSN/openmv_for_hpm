@@ -29,13 +29,14 @@
 #include "imlib_config.h"
 #include "omv_boardconfig.h"
 #include "hpm_riscv_segger.h"
+#include "arm_compat.h"
 #ifndef __CLZ
 #define __CLZ (uint8_t)__builtin_clz
 #endif
 
-#ifndef  _SSUB16
-#define __SSUB16   __ssub16
-#endif
+//#ifndef  _SSUB16
+//#define __SSUB16   __ssub16
+//#endif
 
 #ifndef M_PI
 #define M_PI    3.14159265f

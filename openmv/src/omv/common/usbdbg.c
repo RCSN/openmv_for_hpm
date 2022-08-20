@@ -145,6 +145,7 @@ void usbdbg_data_in(void *buffer, int length)
                     ((uint32_t*)buffer)[0] = JPEG_FB()->w;
                     ((uint32_t*)buffer)[1] = JPEG_FB()->h;
                     ((uint32_t*)buffer)[2] = JPEG_FB()->size;
+                    printf("USBDBG_FRAME_SIZE %d \r\n", JPEG_FB()->size);
                 }
             }
             cmd = USBDBG_NONE;

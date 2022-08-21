@@ -363,8 +363,7 @@ int sensor_probe_init(uint32_t bus_id, uint32_t bus_speed)
         #endif // (OMV_ENABLE_OV7690 == 1)
 
         #if (OMV_ENABLE_OV7725 == 1)
-        case OV7725_ID:
-            
+        case OV7725_ID:      
             init_ret = ov7725_init(&sensor);
             break;
         #endif // (OMV_ENABLE_OV7725 == 1)

@@ -35,7 +35,7 @@
 #define DMA_LENGTH_ALIGNMENT    (16)
 #define SENSOR_TIMEOUT_MS       (3000)
 #define ARRAY_SIZE(a)           (sizeof(a) / sizeof((a)[0]))
-static uint8_t __attribute__((section (".framebuffer"))) sensor_buffer[2048 * 1024] __attribute__ ((aligned(16)));
+static uint8_t __attribute__((section (".framebuffer"))) sensor_buffer[220 * 1024] __attribute__ ((aligned(16)));
 sensor_t sensor = {};
 static cam_config_t cam_config;
 
@@ -341,9 +341,7 @@ static uint32_t get_dcmi_hw_crop(uint32_t bytes_per_pixel)
 int sensor_snapshot(sensor_t *sensor, image_t *image, uint32_t flags)
 {
     framebuffer_update_jpeg_buffer();
-    if (sensor_check_framebuffer_size() != 0) {
-       return SENSOR_ERROR_FRAMEBUFFER_OVERFLOW;
-    }
+
         // This driver supports a single buffer.
     if (MAIN_FB()->n_buffers != 1) {
         framebuffer_set_buffers(1);

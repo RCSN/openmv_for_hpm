@@ -87,7 +87,7 @@ extern unsigned char OMV_UNIQUE_ID_ADDR[4];
 
 // Low and high JPEG QS.
 #define JPEG_QUALITY_LOW        50
-#define JPEG_QUALITY_HIGH       90
+#define JPEG_QUALITY_HIGH       95
 
 // FB Heap Block Size
 #define OMV_UMM_BLOCK_SIZE      256

@@ -15,6 +15,7 @@
       debug_target_connection="GDB Server"
       debug_type_file="$(StudioDir)/bin/libc++.xml"
       gcc_entry_point="_start"
+      gcc_optimization_level="Level 3 for more speed"
       gdb_server_command_line="$(HPM_PRO_BASE)/tools/openocd/openocd.exe -f $(HPM_PRO_BASE)/boards/openocd/probes/ft2232.cfg -f $(HPM_PRO_BASE)/boards/openocd/soc/hpm6750-dual-core.cfg -f $(HPM_PRO_BASE)/boards/openocd/boards/hpm6750evkmini.cfg"
       gdb_server_port="3333"
       gdb_server_reset_command="reset halt"
@@ -22,7 +23,7 @@
       heap_size="245760"
       libcxx="No"
       link_linker_script_file="$(ProjectDir)/hpm_sdk/soc/HPM6750/toolchains/segger/flash_sdram_xip.icf"
-      link_symbol_definitions="_flash_size=8M;_extram_size=16M;OMV_FB_SIZE=8M;OMV_FB_ALLOC_SIZE=2M;OMV_JPEG_BUF_SIZE=1M"
+      link_symbol_definitions="_flash_size=8M;_extram_size=16M"
       linker_memory_map_file="FLASH1 RX 0x80000000 0x00800000;RAM1 RWX 0x00000000 0x00008000"
       linker_output_format="hex"
       linker_printf_fp_enabled="Float"
@@ -267,15 +268,18 @@
             </file>
             <file file_name="openmv/src/micropython/shared/runtime/gchelper_native.c">
               <configuration Name="Debug" build_exclude_from_build="Yes" />
+              <configuration Name="Release" build_exclude_from_build="Yes" />
             </file>
             <file file_name="openmv/src/micropython/shared/runtime/interrupt_char.c" />
             <file file_name="openmv/src/micropython/shared/runtime/mpirq.c" />
             <file file_name="openmv/src/micropython/shared/runtime/pyexec.c" />
             <file file_name="openmv/src/micropython/shared/runtime/semihosting.c">
               <configuration Name="Debug" build_exclude_from_build="Yes" />
+              <configuration Name="Release" build_exclude_from_build="Yes" />
             </file>
             <file file_name="openmv/src/micropython/shared/runtime/stdout_helpers.c">
               <configuration Name="Debug" build_exclude_from_build="Yes" />
+              <configuration Name="Release" build_exclude_from_build="Yes" />
             </file>
             <file file_name="openmv/src/micropython/shared/runtime/sys_stdio_mphal.c" />
           </folder>
@@ -416,7 +420,9 @@
           <file file_name="openmv/src/omv/imlib/imlib.c" />
           <file file_name="openmv/src/omv/imlib/integral.c" />
           <file file_name="openmv/src/omv/imlib/integral_mw.c" />
-          <file file_name="openmv/src/omv/imlib/jpeg.c" />
+          <file file_name="openmv/src/omv/imlib/jpeg.c">
+            <configuration Name="Debug" default_code_section=".text" />
+          </file>
           <file file_name="openmv/src/omv/imlib/jpegd.c" />
           <file file_name="openmv/src/omv/imlib/kmeans.c" />
           <file file_name="openmv/src/omv/imlib/lab_tab.c" />
@@ -471,10 +477,16 @@
       debug_target_connection="GDB Server"
       gcc_optimization_level="Level 3 for more speed"
       heap_size="245760"
+      link_symbol_definitions="OMV_FB_SIZE=8M;OMV_FB_ALLOC_SIZE=2M;OMV_JPEG_BUF_SIZE=1M"
       rv_architecture="rv32imac"
       target_reset_script="TargetInterface.resetAndStop()" />
     <file file_name="openmv/src/omv/ports/hpm/usbd_cdc_msc_descriptors.c" />
     <file file_name="openmv/src/micropython/ports/hpm/mphalport.c" />
+    <configuration
+      Name="Release"
+      link_linker_script_file="$(ProjectDir)/hpm_sdk/soc/HPM6750/toolchains/segger/openmv_flash_ram.icf"
+      link_symbol_definitions="OMV_FB_SIZE=400K;OMV_FB_ALLOC_SIZE=100K;OMV_FBA_SIZE=150K;OMV_JPEG_BUF_SIZE=20K"
+      target_reset_script="TargetInterface.resetAndStop()" />
   </project>
   <configuration
     Name="Debug"

@@ -30,7 +30,7 @@ define block stack with size = __STACKSIZE__, alignment = 8, /* fill =0xCD, */ r
 
 define block framebuffer with alignment = 8 { section .framebuffer };
 
-define block fballoc with alignment = 8 { section .fballoc };
+define block fballoc with size = OMV_FBA_SIZE, alignment = 8, readwrite access {};//alignment = 8 { section .fballoc };
 
 define block fb_base with size = OMV_FB_SIZE, alignment = 8, readwrite access {};
 
@@ -59,7 +59,7 @@ define exported symbol _stack = end of block stack + 1;
 define exported symbol _fballoc = start of block fballoc;
 define exported symbol _fb_base = start of block fb_base;
 define exported symbol _fb_end  = start of block fb_end;
-define exported symbol _jpeg_buf  = start of block jpeg_buf + 1;
+define exported symbol _jpeg_buf  = start of block jpeg_buf;
 
 do not initialize                           { section .noncacheable };
 do not initialize                           { section .non_init, section .non_init.*, section .*.non_init, section .*.non_init.* };
@@ -110,7 +110,7 @@ define access readonly { section .sdata.DW.* };
 //                                          };
 
 place in ILM_SLV                          {
-                                             section .fast, section .fast.*,                       // "ramfunc" section
+                                             section .fast, section .fast.*,  block jpeg_buf,block framebuffer                     // "ramfunc" section
                                           };
 
 place in AXI_SRAM with auto order         {
@@ -118,9 +118,9 @@ place in AXI_SRAM with auto order         {
                                             readwrite,                                            // Catch-all for initialized/uninitialized data sections (e.g. .data, .noinit)
                                             zeroinit                                              // Catch-all for zero-initialized data sections (e.g. .bss)
                                           };
-										  
-place in SDRAM                              { block framebuffer,block fballoc,block fb_base,block fb_end,block jpeg_buf};
+//place in SDRAM                             {block framebuffer};									  
+place in AXI_SRAM                           {block fb_base,block fb_end,block fballoc};
 place in NONCACHEABLE_RAM                   { section .noncacheable, section .noncacheable.init, section .noncacheable.bss};//,block stack};
-place in AXI_SRAM                           { block heap};                                         // Heap reserved block
-place at end of AXI_SRAM                  { block stack };                                        // Stack reserved block at the end
+place in DLM                               { block heap};                                         // Heap reserved block
+place at end of AXI_SRAM                    { block stack };                                        // Stack reserved block at the end
 place at end of DLM                         { block safe_stack };                                   // Safe stack reserved block at the end

@@ -11,7 +11,7 @@ hpm_sdk目前为v0.13.0
 
 编译平台使用segger的IDE--> SEGGER Embedded Studio for RISC-V 6.30  最好使用这个版本！！
 
-交流-->QQ:1084534437
+交流-->QQ:1084534438
 
 #### 使用说明
 ses工程里面 有两个版本：

@@ -65,7 +65,7 @@
  </TraceWindow>
  <Watch1>
   <Watches active="1" update="Never">
-   <Watchpoint expression="jpeg_buf" name="jpeg_buf" radix="-1" linenumber="1523" filename="openmv/src/omv/imlib/jpeg.c"/>
+   <Watchpoint expression="jpeg_buf" name="jpeg_buf" radix="-1" linenumber="1328" filename="openmv/src/omv/imlib/jpeg.c"/>
    <Watchpoint expression="src" name="src" radix="-1" linenumber="142" filename="openmv/src/omv/imlib/framebuffer.c"/>
    <Watchpoint expression="framebuffer" name="framebuffer" radix="16" linenumber="105" filename="openmv/src/omv/imlib/framebuffer.c"/>
    <Watchpoint expression="jpeg_framebuffer" name="jpeg_framebuffer" radix="10" linenumber="169" filename="openmv/src/omv/imlib/framebuffer.c"/>
@@ -74,7 +74,7 @@
    <Watchpoint expression="sensor_buffer" name="sensor_buffer" radix="16" linenumber="392" filename="openmv/src/omv/ports/hpm/sensor.c"/>
    <Watchpoint expression="cam_config" name="cam_config" radix="-1" linenumber="232" filename="openmv/src/omv/ports/hpm/sensor.c"/>
    <Watchpoint expression="dst" name="dst" radix="10" linenumber="170" filename="openmv/src/omv/imlib/framebuffer.c"/>
-   <Watchpoint expression="bpp" name="bpp" radix="16" linenumber="1793" filename="openmv/src/omv/imlib/jpeg.c"/>
+   <Watchpoint expression="bpp" name="bpp" radix="16" linenumber="1598" filename="openmv/src/omv/imlib/jpeg.c"/>
    <Watchpoint expression="o" name="o" radix="-1" linenumber="6547" filename="openmv/src/omv/modules/py_image.c"/>
    <Watchpoint expression="image" name="image" radix="-1" linenumber="338" filename="openmv/src/omv/ports/hpm/sensor.c"/>
   </Watches>
@@ -89,10 +89,7 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="109" y="37" useTextEdit="1" path="openmv/src/omv/ports/hpm/sensor.c" left="0" top="10" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="67" y="122" useTextEdit="1" path="hpm_sdk/soc/HPM6750/toolchains/segger/openmv_flash_ram.icf" left="0" top="98" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="62" useTextEdit="1" path="openmv/src/omv/ports/hpm/main.c" left="0" selected="1" top="48" codecName=""/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" path="hpm_sdk/soc/HPM6750/toolchains/segger/flash_sdram_xip.icf" left="0" top="126" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="140" y="1189" useTextEdit="1" path="openmv/src/omv/imlib/jpeg.c" left="0" selected="1" top="1203" codecName="Default"/>
  </Files>
  <EMStudioWindow activeProject="openmv_for_hpm" fileDialogDefaultFilter="*" autoConnectTarget="GDB Server" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="D:/vmware/share-dir/openmv_for_hpmo/openmv/src/omv/ports/hpm" debugSearchPath="" autoConnectCapabilities="1343"/>
 </session>

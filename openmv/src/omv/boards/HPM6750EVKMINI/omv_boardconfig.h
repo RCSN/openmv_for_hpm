@@ -46,7 +46,7 @@ extern unsigned char OMV_UNIQUE_ID_ADDR[4];
 #define OMV_OV5640_REV_Y_CTRL3  (0x13)
 
 // Enable hardware JPEG
-#define OMV_HARDWARE_JPEG       (1)
+#define OMV_HARDWARE_JPEG       (0)
 
 // Enable sensor drivers
 #define OMV_ENABLE_OV2640       (1)

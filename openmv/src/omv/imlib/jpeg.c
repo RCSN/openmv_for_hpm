@@ -21,6 +21,7 @@
 #include "py/mphal.h"
 #endif
 
+
 #define MCU_W                       (8)
 #define MCU_H                       (8)
 #define JPEG_444_GS_MCU_SIZE        ((MCU_W) * (MCU_H))
@@ -28,6 +29,9 @@
 
 // Expand 4 bits to 32 for binary to grayscale - process 4 pixels at a time
 #if (OMV_HARDWARE_JPEG == 1)
+static void jpeg_build_file(uint32_t *dbsize, uint8_t *filesbuff);
+static bool wait_jpeg_finish(void);
+static void jpeg_encode(uint8_t *rgbbuff, uint32_t width, uint32_t height, uint32_t *dasize, uint8_t *filesbuff);
 #define JPEG_BINARY_0 0x00
 #define JPEG_BINARY_1 0xFF
 static const uint32_t jpeg_expand[16] = {0x0, 0xff, 0xff00, 0xffff, 0xff0000,
@@ -962,6 +966,9 @@ static void jpeg_get_mcu(image_t *src, int x_offset, int y_offset, int dx, int d
 #if (OMV_HARDWARE_JPEG == 1)
 #include "board.h"
 #include "hpm_jpeg_drv.h"
+
+/*JPG file data header length*/
+#define JPGHEADERLEN 623
 /*---------------------------------------------------------------------*
  *JPG file data header data
  *the data is extracted from the reference_jpeg_from_design.jpg, it is provided by design as reference
@@ -1030,41 +1037,94 @@ const uint16_t qetable[256]={
 #include "qetable.cdat"
 };
 
+/*---------------------------------------------------------------------*
+ *jpeg file build
+ *---------------------------------------------------------------------
+ */
+static void jpeg_build_file(uint32_t *dbsize, uint8_t *filesbuff)
+{
+    memcpy(filesbuff, &in_ecs[0], JPGHEADERLEN);
+    *dbsize = *dbsize + JPGHEADERLEN;
+}
+/*---------------------------------------------------------------------*
+ *jpeg hardware file encode table
+ *---------------------------------------------------------------------
+ */
+static void fill_jpeg_encode_table(void)
+{
+    jpeg_enable(HPM_JPEG);
+    jpeg_fill_table(HPM_JPEG, jpeg_table_qmem, (uint8_t *)qetable, ARRAY_SIZE(qetable));
+    jpeg_disable(HPM_JPEG);
+}
 
-#define FB_ALLOC_PADDING            ((__SCB_DCACHE_LINE_SIZE) * 4)
-#define OUTPUT_CHUNK_SIZE           (512) // The minimum output buffer size is 2x this - so 1KB.d
-#define JPEG_INPUT_FIFO_BYTES       (32)
-#define JPEG_OUTPUT_FIFO_BYTES      (32)
+/*---------------------------------------------------------------------*
+ *jpeg hardware wait finish
+ *---------------------------------------------------------------------
+ */
+static bool wait_jpeg_finish(void)
+{
+    do {
+        if (jpeg_get_status(HPM_JPEG) & JPEG_EVENT_OUT_DMA_FINISH) {
+            jpeg_clear_status(HPM_JPEG, JPEG_EVENT_OUT_DMA_FINISH);
+            return true;
+        }
+        if (jpeg_get_status(HPM_JPEG) & JPEG_EVENT_ERROR) {
+            jpeg_clear_status(HPM_JPEG, JPEG_EVENT_ERROR);
+            return false;
+        }
+    } while(1);
+}
 
-static int JPEG_out_data_length_max = 0;
-static volatile int JPEG_out_data_length = 0;
-static volatile bool JPEG_input_paused = false;
-static volatile bool JPEG_output_paused = false;
+/*---------------------------------------------------------------------*
+ *jpeg hardware convert
+ *---------------------------------------------------------------------
+ */
+static void jpeg_encode(uint8_t *rgbbuff, uint32_t width, uint32_t height, uint32_t *dasize, uint8_t *filesbuff)
+{
 
-// JIFF-APP0 header designed to be injected at the start of the JPEG byte stream.
-// Contains a variable sized COM header at the end for cache alignment.
-static const uint8_t JPEG_APP0[] = {
-    0xFF, 0xE0, // JIFF-APP0
-    0x00, 0x10, // 16
-    0x4A, 0x46, 0x49, 0x46, 0x00, // JIFF
-    0x01, 0x01, // V1.01
-    0x01, // DPI
-    0x00, 0x00, // Xdensity 0
-    0x00, 0x00, // Ydensity 0
-    0x00, // Xthumbnail 0
-    0x00, // Ythumbnail 0
-    0xFF, 0xFE // COM
-};
+    jpeg_job_config_t config = {0};
 
+    /*JPEG default parameter table settings*/
+    jpeg_init(HPM_JPEG);
+    fill_jpeg_encode_table();
 
+    /*jpeg encode parameter configuration*/
+    config.jpeg_format = JPEG_SUPPORTED_FORMAT_420;
+    config.in_pixel_format = JPEG_PIXEL_FORMAT_RGB565;
+    config.out_pixel_format = JPEG_PIXEL_FORMAT_YUV422H1P;
+    config.byte_order = JPEG_BYTE_ORDER_3210;
+    config.enable_csc = true;
+    config.enable_ycbcr = true;
+    config.width_in_pixel = width;
+    config.height_in_pixel = height;
+    config.in_buffer = core_local_mem_to_sys_address(BOARD_RUNNING_CORE, (uint32_t)rgbbuff);
+    config.out_buffer = core_local_mem_to_sys_address(BOARD_RUNNING_CORE, (uint32_t)(filesbuff + JPGHEADERLEN));
 
+    /* Start compressor */
+    if (status_success != jpeg_start_encode(HPM_JPEG, &config)) {
+        printf("failed to endcode\n");
+        while (1) {
+        };
+    }
+    if (!wait_jpeg_finish()) {
+        printf("encoding failed\n");
+        while (1) {
+        };
+    }
+    *dasize = jpeg_get_encoded_length(HPM_JPEG);
+    printf("complete encoding length %d bytes %d %d %d %d \n", *dasize,width,height,config.width_in_pixel ,config.height_in_pixel );
+}
 
 bool jpeg_compress(image_t *src, image_t *dst, int quality, bool realloc)
 {
 #if (TIME_JPEG==1)
     mp_uint_t start = mp_hal_ticks_ms();
 #endif
-
+    //imlib_jpeg_compress_init();
+    /*jpeg hardware convert*/
+    jpeg_encode(src->pixels, dst->w, dst->h, &dst->size, dst->pixels);
+    /*jpeg file build*/
+    jpeg_build_file(&dst->size, dst->pixels);
 #if (TIME_JPEG==1)
     printf("time: %u ms\n", mp_hal_ticks_ms() - start);
 #endif
@@ -1084,7 +1144,7 @@ void imlib_jpeg_compress_init()
 
 void imlib_jpeg_compress_deinit()
 {
-
+    jpeg_disable(HPM_JPEG);
 }
 
 #else

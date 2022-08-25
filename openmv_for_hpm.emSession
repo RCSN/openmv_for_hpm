@@ -27,19 +27,13 @@
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;boards"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;drivers"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;toolchains"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython;extmod"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython;shared"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython;shared;readline"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv;common"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv;alloc"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv;imlib"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv;module"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv;port"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;sensor"/>
  </Project>
  <Register1>
   <RegisterWindow visibleNodes="ABI, RV32I/pc;ABI, RV32I/ra;ABI, RV32I/sp;ABI, RV32I/gp;ABI, RV32I/tp;ABI, RV32I/a0;ABI, RV32I/a1;ABI, RV32I/a2;ABI, RV32I/a3;ABI, RV32I/a4;ABI, RV32I/a5;ABI, RV32I/a6;ABI, RV32I/a7;ABI, RV32I/t0;ABI, RV32I/t1;ABI, RV32I/t2;ABI, RV32I/t3;ABI, RV32I/t4;ABI, RV32I/t5;ABI, RV32I/t6;ABI, RV32I/s0;ABI, RV32I/s1;ABI, RV32I/s2;ABI, RV32I/s3;ABI, RV32I/s4;ABI, RV32I/s5;ABI, RV32I/s6;ABI, RV32I/s7;ABI, RV32I/s8;ABI, RV32I/s9;ABI, RV32I/s10;ABI, RV32I/s11;CPU, RV32I/pc;CPU, RV32I/x1;CPU, RV32I/x2;CPU, RV32I/x3;CPU, RV32I/x4;CPU, RV32I/x5;CPU, RV32I/x6;CPU, RV32I/x7;CPU, RV32I/x8;CPU, RV32I/x9;CPU, RV32I/x10;CPU, RV32I/x11;CPU, RV32I/x12;CPU, RV32I/x13;CPU, RV32I/x14;CPU, RV32I/x15;CPU, RV32I/x16;CPU, RV32I/x17;CPU, RV32I/x18;CPU, RV32I/x19;CPU, RV32I/x20;CPU, RV32I/x21;CPU, RV32I/x22;CPU, RV32I/x23;CPU, RV32I/x24;CPU, RV32I/x25;CPU, RV32I/x26;CPU, RV32I/x27;CPU, RV32I/x28;CPU, RV32I/x29;CPU, RV32I/x30;CPU, RV32I/x31" binaryNodes="" asciiNodes="" openNodes="ABI, RV32I" name="hom6750evkmini_demo" decimalNodes="" octalNodes="" unsignedNodes=""/>
@@ -65,18 +59,9 @@
  </TraceWindow>
  <Watch1>
   <Watches active="1" update="Never">
-   <Watchpoint expression="jpeg_buf" name="jpeg_buf" radix="-1" linenumber="1328" filename="openmv/src/omv/imlib/jpeg.c"/>
-   <Watchpoint expression="src" name="src" radix="-1" linenumber="142" filename="openmv/src/omv/imlib/framebuffer.c"/>
-   <Watchpoint expression="framebuffer" name="framebuffer" radix="16" linenumber="105" filename="openmv/src/omv/imlib/framebuffer.c"/>
-   <Watchpoint expression="jpeg_framebuffer" name="jpeg_framebuffer" radix="10" linenumber="169" filename="openmv/src/omv/imlib/framebuffer.c"/>
-   <Watchpoint expression="HPM_CAM0" name="HPM_CAM0" radix="-1" linenumber="376" filename="openmv/src/omv/ports/hpm/sensor.c"/>
-   <Watchpoint expression="STA" name="STA" radix="16" linenumber="381" filename="openmv/src/omv/ports/hpm/sensor.c"/>
-   <Watchpoint expression="sensor_buffer" name="sensor_buffer" radix="16" linenumber="392" filename="openmv/src/omv/ports/hpm/sensor.c"/>
-   <Watchpoint expression="cam_config" name="cam_config" radix="-1" linenumber="232" filename="openmv/src/omv/ports/hpm/sensor.c"/>
-   <Watchpoint expression="dst" name="dst" radix="10" linenumber="170" filename="openmv/src/omv/imlib/framebuffer.c"/>
-   <Watchpoint expression="bpp" name="bpp" radix="16" linenumber="1598" filename="openmv/src/omv/imlib/jpeg.c"/>
-   <Watchpoint expression="o" name="o" radix="-1" linenumber="6547" filename="openmv/src/omv/modules/py_image.c"/>
-   <Watchpoint expression="image" name="image" radix="-1" linenumber="338" filename="openmv/src/omv/ports/hpm/sensor.c"/>
+   <Watchpoint expression="config" name="config" radix="16" linenumber="135" filename="hpm_sdk/drivers/src/hpm_jpeg_drv.c"/>
+   <Watchpoint expression="filesbuff" name="filesbuff" radix="16" linenumber="1044" filename="openmv/src/omv/imlib/jpeg.c"/>
+   <Watchpoint expression="jpeg_framebuffer" name="jpeg_framebuffer" radix="16" linenumber="127" filename="openmv/src/omv/imlib/framebuffer.c"/>
   </Watches>
  </Watch1>
  <Watch2>
@@ -89,7 +74,9 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="140" y="1189" useTextEdit="1" path="openmv/src/omv/imlib/jpeg.c" left="0" selected="1" top="1203" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="37" y="391" useTextEdit="1" path="openmv/src/omv/ports/hpm/sensor.c" left="0" selected="1" top="361" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="111" y="112" useTextEdit="1" path="hpm_sdk/soc/HPM6750/toolchains/segger/openmv_flash_ram.icf" left="0" top="101" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="62" useTextEdit="1" path="openmv/src/omv/ports/hpm/main.c" left="0" top="42" codecName=""/>
  </Files>
- <EMStudioWindow activeProject="openmv_for_hpm" fileDialogDefaultFilter="*" autoConnectTarget="GDB Server" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="D:/vmware/share-dir/openmv_for_hpmo/openmv/src/omv/ports/hpm" debugSearchPath="" autoConnectCapabilities="1343"/>
+ <EMStudioWindow activeProject="openmv_for_hpm" fileDialogDefaultFilter="*" autoConnectTarget="GDB Server" buildConfiguration="Release" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="D:/vmware/share-dir/openmv_for_hpmo/openmv/src/omv/ports/hpm" debugSearchPath="" autoConnectCapabilities="1343"/>
 </session>

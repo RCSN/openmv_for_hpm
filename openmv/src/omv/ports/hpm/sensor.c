@@ -234,7 +234,7 @@ int sensor_framesize(int32_t w,int32_t h)
     cam_config.buffer1 = core_local_mem_to_sys_address(HPM_CORE0, (uint32_t)sensor_buffer);
     cam_init(HPM_CAM0, &cam_config);
     cam_start(HPM_CAM0);
-     printf("sensor_framesize:%d %d\r\n", cam_config.data_store_mode,cam_config.color_format);
+    printf("sensor_framesize:%d %d\r\n", cam_config.data_store_mode,cam_config.color_format);
     return 0;
 }
 

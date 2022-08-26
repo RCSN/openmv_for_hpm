@@ -29,7 +29,7 @@
       linker_printf_fp_enabled="Float"
       linker_printf_width_precision_supported="Yes"
       linker_section_placements_segments=""
-      macros="HPM_PRO_BASE=D:/vmware/share-dir/openmv_for_hpmo/hpm_sdk"
+      macros="HPM_PRO_BASE=C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/hpm_sdk"
       project_directory=""
       project_type="Executable"
       rv_abi="ilp32"
@@ -478,7 +478,7 @@
       gcc_optimization_level="Level 3 for more speed"
       heap_size="245760"
       link_symbol_definitions="OMV_FB_SIZE=4M;OMV_FB_ALLOC_SIZE=4M;OMV_JPEG_BUF_SIZE=1M"
-      rv_architecture="rv32imac"
+      rv_architecture="rv32imfc"
       target_reset_script="TargetInterface.resetAndStop()" />
     <file file_name="openmv/src/omv/ports/hpm/usbd_cdc_msc_descriptors.c" />
     <file file_name="openmv/src/micropython/ports/hpm/mphalport.c" />

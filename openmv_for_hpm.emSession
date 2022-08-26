@@ -27,6 +27,7 @@
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;boards"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;drivers"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;toolchains"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv"/>
@@ -74,9 +75,13 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="37" y="391" useTextEdit="1" path="openmv/src/omv/ports/hpm/sensor.c" left="0" selected="1" top="361" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="111" y="112" useTextEdit="1" path="hpm_sdk/soc/HPM6750/toolchains/segger/openmv_flash_ram.icf" left="0" top="101" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="62" useTextEdit="1" path="openmv/src/omv/ports/hpm/main.c" left="0" top="42" codecName=""/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="374" useTextEdit="1" path="openmv/src/omv/ports/hpm/sensor.c" left="0" top="367" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="111" y="112" useTextEdit="1" path="hpm_sdk/soc/HPM6750/toolchains/segger/openmv_flash_ram.icf" left="0" top="68" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="62" useTextEdit="1" path="openmv/src/omv/ports/hpm/main.c" left="0" selected="1" top="52" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="29" y="32" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/omv/imlib/jpeg.c" path="openmv/src/omv/boards/HPM6750EVKMINI/omv_boardconfig.h" left="0" top="24" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="1105" useTextEdit="1" path="openmv/src/omv/imlib/jpeg.c" left="0" top="1077" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="267" useTextEdit="1" path="hpm_sdk/soc/HPM6750/toolchains/segger/startup.s" left="0" top="248" codecName=""/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="36" y="116" useTextEdit="1" path="hpm_sdk/drivers/src/hpm_jpeg_drv.c" left="0" top="83" codecName="Default"/>
  </Files>
- <EMStudioWindow activeProject="openmv_for_hpm" fileDialogDefaultFilter="*" autoConnectTarget="GDB Server" buildConfiguration="Release" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="D:/vmware/share-dir/openmv_for_hpmo/openmv/src/omv/ports/hpm" debugSearchPath="" autoConnectCapabilities="1343"/>
+ <EMStudioWindow activeProject="openmv_for_hpm" fileDialogDefaultFilter="*" autoConnectTarget="GDB Server" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="D:/vmware/share-dir/openmv_for_hpmo/openmv/src/omv/ports/hpm" debugSearchPath="" autoConnectCapabilities="1343"/>
 </session>

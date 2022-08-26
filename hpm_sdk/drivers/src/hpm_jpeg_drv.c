@@ -101,10 +101,8 @@ static void jpeg_config_interal_regs(JPEG_Type *ptr,
     hc = JPEG_HC(&jpeg_supported_sampling[format]);
     vc = JPEG_VC(&jpeg_supported_sampling[format]);
 
-    if (format == JPEG_SUPPORTED_FORMAT_400) {
-        ptr->IMGREG1 = JPEG_IMGREG1_RE_MASK;
-    } else {
-        ptr->IMGREG1 = JPEG_IMGREG1_RE_MASK | JPEG_IMGREG1_NCOL_SET(2);
+    if (format != JPEG_SUPPORTED_FORMAT_400) {
+        ptr->IMGREG1 =  JPEG_IMGREG1_NCOL_SET(2);
     }
     ptr->IMGREG2 = JPEG_IMGREG2_NMCU_SET(macro_block_count - 1);
     ptr->IMGREG3 = JPEG_IMGREG3_NRST_SET(1);

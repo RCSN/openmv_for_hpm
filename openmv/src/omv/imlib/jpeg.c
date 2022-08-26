@@ -974,7 +974,7 @@ static void jpeg_get_mcu(image_t *src, int x_offset, int y_offset, int dx, int d
  *the data is extracted from the reference_jpeg_from_design.jpg, it is provided by design as reference
  *---------------------------------------------------------------------*
 */
-const uint8_t in_ecs[] = {
+uint8_t __attribute__((section (".framebuffer")))in_ecs[] = {
 #include "jpg_header.cdat"
 };
 
@@ -1124,6 +1124,10 @@ bool jpeg_compress(image_t *src, image_t *dst, int quality, bool realloc)
     /*jpeg hardware convert*/
     jpeg_encode(src->pixels, dst->w, dst->h, &dst->size, dst->pixels);
     /*jpeg file build*/
+    in_ecs[163] = dst->h >> 8;
+    in_ecs[164] = dst->h & 0xFF;
+    in_ecs[165] = dst->w >> 8;
+    in_ecs[166] = dst->w & 0xFF;
     jpeg_build_file(&dst->size, dst->pixels);
 #if (TIME_JPEG==1)
     printf("time: %u ms\n", mp_hal_ticks_ms() - start);

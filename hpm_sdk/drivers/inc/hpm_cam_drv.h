@@ -85,7 +85,7 @@ typedef struct {
     bool color_ext;
     bool data_pack_msb;
     bool enable_buffer2;
-    uint8_t data_store_mode;
+    uint16_t data_store_mode;
     uint8_t color_format;
     uint8_t sensor_bitwidth;
     uint32_t buffer1;

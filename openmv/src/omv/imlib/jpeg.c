@@ -16,7 +16,7 @@
 #include "imlib.h"
 #include "omv_boardconfig.h"
 #include "arm_compat.h"
-#define TIME_JPEG   (1)
+#define TIME_JPEG   (0)
 #if (TIME_JPEG == 1)
 #include "py/mphal.h"
 #endif
@@ -31,7 +31,7 @@
 #if (OMV_HARDWARE_JPEG == 1)
 static void jpeg_build_file(uint32_t *dbsize, uint8_t *filesbuff);
 static bool wait_jpeg_finish(void);
-static void jpeg_encode(uint8_t *rgbbuff, uint32_t width, uint32_t height, uint32_t *dasize, uint8_t *filesbuff);
+static void jpeg_encode(uint8_t *rgbbuff, uint32_t width, uint32_t height,uint8_t bpp, uint32_t *dasize, uint8_t *filesbuff);
 #define JPEG_BINARY_0 0x00
 #define JPEG_BINARY_1 0xFF
 static const uint32_t jpeg_expand[16] = {0x0, 0xff, 0xff00, 0xffff, 0xff0000,
@@ -1079,7 +1079,7 @@ static bool wait_jpeg_finish(void)
  *jpeg hardware convert
  *---------------------------------------------------------------------
  */
-static void jpeg_encode(uint8_t *rgbbuff, uint32_t width, uint32_t height, uint32_t *dasize, uint8_t *filesbuff)
+static void jpeg_encode(uint8_t *rgbbuff, uint32_t width, uint32_t height,uint8_t bpp, uint32_t *dasize, uint8_t *filesbuff)
 {
 
     jpeg_job_config_t config = {0};
@@ -1090,7 +1090,11 @@ static void jpeg_encode(uint8_t *rgbbuff, uint32_t width, uint32_t height, uint3
 
     /*jpeg encode parameter configuration*/
     config.jpeg_format = JPEG_SUPPORTED_FORMAT_420;
-    config.in_pixel_format = JPEG_PIXEL_FORMAT_RGB565;
+    if(bpp == 2)
+      config.in_pixel_format = JPEG_PIXEL_FORMAT_RGB565;
+    else
+      config.in_pixel_format = JPEG_PIXEL_FORMAT_YUV422H1P;
+      
     config.out_pixel_format = JPEG_PIXEL_FORMAT_YUV422H1P;
     config.byte_order = JPEG_BYTE_ORDER_3210;
     config.enable_csc = true;
@@ -1122,7 +1126,7 @@ bool jpeg_compress(image_t *src, image_t *dst, int quality, bool realloc)
 #endif
     //imlib_jpeg_compress_init();
     /*jpeg hardware convert*/
-    jpeg_encode(src->pixels, dst->w, dst->h, &dst->size, dst->pixels);
+    jpeg_encode(src->pixels, dst->w, dst->h,src->bpp, &dst->size, dst->pixels);
     /*jpeg file build*/
     in_ecs[163] = dst->h >> 8;
     in_ecs[164] = dst->h & 0xFF;

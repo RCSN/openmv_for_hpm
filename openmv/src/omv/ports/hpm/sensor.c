@@ -29,13 +29,18 @@
 #include "board.h"
 #include "hpm_cam_drv.h"
 
+#define TIME_SENSOR   (0)
+#if (TIME_SENSOR == 1)
+#include "py/mphal.h"
+#endif
+
 #define MDMA_BUFFER_SIZE        (64)
 #define DMA_MAX_XFER_SIZE       (0xFFFF*4)
 #define DMA_MAX_XFER_SIZE_DBL   ((DMA_MAX_XFER_SIZE)*2)
 #define DMA_LENGTH_ALIGNMENT    (16)
 #define SENSOR_TIMEOUT_MS       (3000)
 #define ARRAY_SIZE(a)           (sizeof(a) / sizeof((a)[0]))
-static uint8_t __attribute__((section (".framebuffer"))) sensor_buffer[1024 * 1024] __attribute__ ((aligned(16)));
+static uint8_t __attribute__((section (".framebuffer"))) sensor_buffer[3072 * 1024] __attribute__ ((aligned(16)));
 sensor_t sensor = {};
 static cam_config_t cam_config;
 
@@ -388,12 +393,23 @@ int sensor_snapshot(sensor_t *sensor, image_t *image, uint32_t flags)
     MAIN_FB()->w = MAIN_FB()->u;
     MAIN_FB()->h = MAIN_FB()->v;
     
-    
-//    memcpy(buffer->data,sensor_buffer,MAIN_FB()->u * MAIN_FB()->v * MAIN_FB()->bpp);
+    #if (TIME_SENSOR==1)
+    mp_uint_t start = mp_hal_ticks_ms();
+#endif
+
+#if 1
+    memcpy(buffer->data,sensor_buffer,MAIN_FB()->u * MAIN_FB()->v * MAIN_FB()->bpp);
+#else
     for(int i = 0;i < (MAIN_FB()->w * MAIN_FB()->h * MAIN_FB()->bpp);i++)
     {
         buffer->data[i] = sensor_buffer[i];
     }
+#endif
+
+#if (TIME_SENSOR==1)
+    printf("time: %u ms\n", mp_hal_ticks_ms() - start);
+#endif
+
     if ((MAIN_FB()->pixfmt == PIXFORMAT_RGB565 && sensor->hw_flags.rgb_swap) ||
         (MAIN_FB()->pixfmt == PIXFORMAT_YUV422 && sensor->hw_flags.yuv_swap)) {
         unaligned_memcpy_rev16(buffer->data, buffer->data, MAIN_FB()->w * MAIN_FB()->h);

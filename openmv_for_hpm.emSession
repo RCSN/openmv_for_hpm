@@ -28,10 +28,20 @@
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;boards"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;drivers"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;middleware"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;middleware;cherry_usb"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;middleware;cherry_usb;core"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;middleware;cherry_usb;port"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;toolchains"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython;py"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython;shared"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython;shared;readline"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython;shared;runtime"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv;alloc"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv;common"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv;imlib"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv;module"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv;port"/>
@@ -63,6 +73,7 @@
    <Watchpoint expression="config" name="config" radix="16" linenumber="135" filename="hpm_sdk/drivers/src/hpm_jpeg_drv.c"/>
    <Watchpoint expression="filesbuff" name="filesbuff" radix="16" linenumber="1044" filename="openmv/src/omv/imlib/jpeg.c"/>
    <Watchpoint expression="jpeg_framebuffer" name="jpeg_framebuffer" radix="16" linenumber="127" filename="openmv/src/omv/imlib/framebuffer.c"/>
+   <Watchpoint expression="framebuffer" name="framebuffer" radix="-1" linenumber="22" filename="openmv/src/omv/imlib/framebuffer.c"/>
   </Watches>
  </Watch1>
  <Watch2>
@@ -75,13 +86,26 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="374" useTextEdit="1" path="openmv/src/omv/ports/hpm/sensor.c" left="0" top="287" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="111" y="112" useTextEdit="1" path="hpm_sdk/soc/HPM6750/toolchains/segger/openmv_flash_ram.icf" left="0" top="12" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="62" useTextEdit="1" path="openmv/src/omv/ports/hpm/main.c" left="0" selected="1" top="52" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="29" y="32" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/omv/imlib/jpeg.c" path="openmv/src/omv/boards/HPM6750EVKMINI/omv_boardconfig.h" left="0" top="24" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="1105" useTextEdit="1" path="openmv/src/omv/imlib/jpeg.c" left="0" top="1077" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="267" useTextEdit="1" path="hpm_sdk/soc/HPM6750/toolchains/segger/startup.s" left="0" top="248" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="36" y="116" useTextEdit="1" path="hpm_sdk/drivers/src/hpm_jpeg_drv.c" left="0" top="83" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="24" y="31" useTextEdit="1" path="openmv/src/omv/ports/hpm/sensor.c" left="0" top="17" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="24" y="65" useTextEdit="1" path="openmv/src/omv/ports/hpm/main.c" left="0" selected="1" top="59" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="12" y="1159" useTextEdit="1" path="hpm_sdk/middleware/cherryusb/core/usbd_core.c" left="0" top="1132" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="4" y="76" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/hpm_sdk/middleware/cherryusb/core/usbd_core.c" path="hpm_sdk/middleware/cherryusb/port/hpm/usb_dc_hpm.c" left="0" top="73" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="8" y="110" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/omv/ports/hpm/sensor.c" path="hpm_sdk/soc/HPM6750/hpm_soc.h" left="0" top="89" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="25" y="188" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/omv/ports/hpm/sensor.c" path="hpm_sdk/soc/HPM6750/hpm_interrupt.h" left="0" top="167" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="34" y="252" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/omv/ports/hpm/sensor.c" path="hpm_sdk/soc/ip/hpm_cam_regs.h" left="0" top="192" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="440" useTextEdit="1" path="openmv/src/micropython/shared/readline/readline.c" left="0" top="419" codecName=""/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="8" y="81" useTextEdit="1" path="openmv/src/omv/common/usbdbg.c" left="0" top="49" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="575" useTextEdit="1" path="openmv/src/micropython/py/gc.c" left="0" top="557" codecName=""/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="95" useTextEdit="1" path="openmv/src/micropython/py/malloc.c" left="0" top="68" codecName=""/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="192" useTextEdit="1" path="openmv/src/micropython/py/objfloat.c" left="0" top="172" codecName=""/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="66" useTextEdit="1" path="openmv/src/micropython/py/objmodule.c" left="0" top="48" codecName=""/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="59" useTextEdit="1" path="hpm_sdk/soc/HPM6750/hpm_misc.h" left="0" top="40" codecName=""/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="83" useTextEdit="1" path="openmv/src/micropython/py/runtime.h" left="0" top="66" codecName=""/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="174" useTextEdit="1" path="hpm_sdk/soc/HPM6750/toolchains/segger/startup.s" left="0" top="152" codecName=""/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="276" useTextEdit="1" path="openmv/src/omv/imlib/framebuffer.c" left="0" top="244" codecName=""/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="12" useTextEdit="1" openedFrom="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/omv/ports/hpm/sensor.c" path="hpm_sdk/drivers/src/hpm_cam_drv.c" left="0" top="27" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="168" useTextEdit="1" path="openmv/src/micropython/py/runtime.c" left="0" top="151" codecName=""/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="62" y="155" useTextEdit="1" path="openmv/src/omv/modules/bsp_lcd.c" left="0" top="135" codecName="Default"/>
  </Files>
- <EMStudioWindow activeProject="openmv_for_hpm" fileDialogDefaultFilter="*" autoConnectTarget="GDB Server" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="D:/vmware/share-dir/openmv_for_hpmo/openmv/src/omv/ports/hpm" debugSearchPath="" autoConnectCapabilities="1343"/>
+ <EMStudioWindow activeProject="openmv_for_hpm" fileDialogDefaultFilter="*" autoConnectTarget="GDB Server" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/micropython/extmod" debugSearchPath="" autoConnectCapabilities="1343"/>
 </session>

@@ -29,54 +29,50 @@
 #include "board.h"
 #include "hpm_cam_drv.h"
 
+#define USE_CAM_IRQ   (0)
 #define TIME_SENSOR   (0)
 #if (TIME_SENSOR == 1)
 #include "py/mphal.h"
 #endif
 
-#define MDMA_BUFFER_SIZE        (64)
-#define DMA_MAX_XFER_SIZE       (0xFFFF*4)
-#define DMA_MAX_XFER_SIZE_DBL   ((DMA_MAX_XFER_SIZE)*2)
-#define DMA_LENGTH_ALIGNMENT    (16)
 #define SENSOR_TIMEOUT_MS       (3000)
 #define ARRAY_SIZE(a)           (sizeof(a) / sizeof((a)[0]))
+
+#if (USE_CAM_IRQ == 0)
 static uint8_t __attribute__((section (".framebuffer"))) sensor_buffer[3072 * 1024] __attribute__ ((aligned(16)));
+#endif
+
 sensor_t sensor = {};
 static cam_config_t cam_config;
-
-#if (OMV_ENABLE_SENSOR_MDMA == 1)
-static MDMA_HandleTypeDef DCMI_MDMA_Handle0 = {.Instance = MDMA_Channel0};
-static MDMA_HandleTypeDef DCMI_MDMA_Handle1 = {.Instance = MDMA_Channel1};
-#endif
-// SPI on image sensor connector.
-#ifdef ISC_SPI
-SPI_HandleTypeDef ISC_SPIHandle = {.Instance = ISC_SPI};
-#endif // ISC_SPI
 
 static bool first_line = false;
 static bool drop_frame = false;
 
 extern uint8_t _line_buf;
 
-void DCMI_IRQHandler(void) {
-    //HAL_DCMI_IRQHandler(&DCMIHandle);
-}
+#if (USE_CAM_IRQ == 1)
 
-void DMA2_Stream1_IRQHandler(void) {
-    //HAL_DMA_IRQHandler(DCMIHandle.DMA_Handle);
-}
-
-#ifdef ISC_SPI
-void ISC_SPI_IRQHandler(void)
+ATTR_RAMFUNC void isr_cam0(void)
 {
-    HAL_SPI_IRQHandler(&ISC_SPIHandle);
+    if((HPM_CAM0->STA & CAM_STATUS_END_OF_FRAME) == CAM_STATUS_END_OF_FRAME)
+  //if((HPM_CAM0->STA & CAM_STATUS_FB1_DMA_TRANSFER_DONE) == CAM_STATUS_FB1_DMA_TRANSFER_DONE)
+    {
+      //printf("sensor_snapshot : 0x%08x \r\n",HPM_CAM0->STA);
+      HPM_CAM0->STA |= CAM_STA_DMA_TSF_DONE_FB1_SET(1);
+      framebuffer_get_tail(FB_NO_FLAGS);
+      vbuffer_t *buffer = framebuffer_get_tail(FB_PEEK);
+      if (buffer != NULL) 
+      {
+          cam_config.buffer1 = core_local_mem_to_sys_address(HPM_CORE0, (uint32_t)buffer->data);
+          cam_init(HPM_CAM0, &cam_config);
+          cam_start(HPM_CAM0);
+      }
+    }
 }
+SDK_DECLARE_EXT_ISR_M(IRQn_CAM1, isr_cam0)
 
-void ISC_SPI_DMA_IRQHandler(void)
-{
-    HAL_DMA_IRQHandler(ISC_SPIHandle.hdmarx);
-}
-#endif // ISC_SPI
+#endif 
+
 
 static int sensor_dma_config()
 {
@@ -149,7 +145,12 @@ int sensor_init()
         // Failed to initialize the sensor clock.
         return SENSOR_ERROR_TIM_INIT_FAILED;
     }
-
+#if  (USE_CAM_IRQ == 1)
+    HPM_CAM0->INT_EN = CAM_INT_EN_EOF_INT_EN_SET(1);
+    printf("cam1 int_en:0x%08x",HPM_CAM0->INT_EN);
+    intc_m_enable_irq_with_priority(IRQn_CAM1, 8);
+    //intc_m_enable_irq(IRQn_CAM1);
+#endif
     // Detect and initialize the image sensor.
     for (uint32_t i=0, n_buses = ARRAY_SIZE(buses); i < n_buses; i++) {
         uint32_t id = buses[i][0], speed = buses[i][1];
@@ -197,11 +198,10 @@ int sensor_init()
 
 int sensor_pixformat(uint32_t pixformat)
 {
-    cam_config_t _config;
     if(pixformat == PIXFORMAT_INVALID)
       return 0;
  //   cam_stop(HPM_CAM0);
-    cam_get_default_config(HPM_CAM0, &_config, display_pixel_format_rgb565);
+    cam_get_default_config(HPM_CAM0, &cam_config, display_pixel_format_rgb565);
     cam_config.hsync_active_low = (sensor.hw_flags.hsync ? 0 : 1);
     cam_config.pixclk_sampling_falling = (sensor.hw_flags.pixck ? 0 : 1);
     cam_config.vsync_active_low = (sensor.hw_flags.vsync ? 0 : 1);
@@ -236,9 +236,11 @@ int sensor_framesize(int32_t w,int32_t h)
       return 0;
     cam_config.width = w;
     cam_config.height = h;
+#if (USE_CAM_IRQ == 0)
     cam_config.buffer1 = core_local_mem_to_sys_address(HPM_CORE0, (uint32_t)sensor_buffer);
     cam_init(HPM_CAM0, &cam_config);
     cam_start(HPM_CAM0);
+#endif
     printf("sensor_framesize:%d %d\r\n", cam_config.data_store_mode,cam_config.color_format);
     return 0;
 }
@@ -250,28 +252,6 @@ int sensor_dcmi_config(uint32_t pixformat)
 
 int sensor_abort()
 {
-    // This stops the DCMI hardware from generating DMA requests immediately and then stops the DMA
-    // hardware. Note that HAL_DMA_Abort is a blocking operation. Do not use this in an interrupt.
-    //if (DCMI->CR & DCMI_CR_ENABLE) {
-    //    DCMI->CR &= ~DCMI_CR_ENABLE;
-    //    HAL_DMA_Abort(&DMAHandle);
-    //    HAL_NVIC_EnableIRQ(DMA2_Stream1_IRQn);
-    //    #if (OMV_ENABLE_SENSOR_MDMA == 1)
-    //    HAL_MDMA_Abort(&DCMI_MDMA_Handle0);
-    //    HAL_MDMA_Abort(&DCMI_MDMA_Handle1);
-    //    HAL_MDMA_DeInit(&DCMI_MDMA_Handle0);
-    //    HAL_MDMA_DeInit(&DCMI_MDMA_Handle1);
-    //    #endif
-    //    __HAL_DCMI_DISABLE_IT(&DCMIHandle, DCMI_IT_FRAME);
-    //    __HAL_DCMI_CLEAR_FLAG(&DCMIHandle, DCMI_FLAG_FRAMERI);
-    //    first_line = false;
-    //    drop_frame = false;
-    //    sensor.last_frame_ms = 0;
-    //    sensor.last_frame_ms_valid = false;
-    //}
-
-    //framebuffer_reset_buffers();
-
     return 0;
 }
 
@@ -279,65 +259,14 @@ int sensor_abort()
 int sensor_shutdown(int enable)
 {
     int ret = 0;
-    //sensor_abort();
-
-    //if (enable) {
-    //    if (sensor.pwdn_pol == ACTIVE_HIGH) {
-    //        DCMI_PWDN_HIGH();
-    //    } else {
-    //        DCMI_PWDN_LOW();
-    //    }
-    //    HAL_NVIC_DisableIRQ(DCMI_IRQn);
-    //    HAL_DCMI_DeInit(&DCMIHandle);
-    //} else {
-    //    if (sensor.pwdn_pol == ACTIVE_HIGH) {
-    //        DCMI_PWDN_LOW();
-    //    } else {
-    //        DCMI_PWDN_HIGH();
-    //    }
-    //    ret = sensor_dcmi_config(sensor.pixformat);
-    //}
-
-    //mp_hal_delay_ms(10);
     return ret;
 }
 
 int sensor_set_vsync_callback(vsync_cb_t vsync_cb)
 {
     sensor.vsync_callback = vsync_cb;
-    //if (sensor.vsync_callback == NULL) {
-    //    // Disable VSYNC EXTI IRQ
-    //    HAL_NVIC_DisableIRQ(DCMI_VSYNC_IRQN);
-    //} else {
-    //    // Enable VSYNC EXTI IRQ
-    //    NVIC_SetPriority(DCMI_VSYNC_IRQN, IRQ_PRI_EXTINT);
-    //    HAL_NVIC_EnableIRQ(DCMI_VSYNC_IRQN);
-    //}
+
     return 0;
-}
-
-void DCMI_VsyncExtiCallback()
-{
-    //__HAL_GPIO_EXTI_CLEAR_FLAG(1 << DCMI_VSYNC_IRQ_LINE);
-    //if (sensor.vsync_callback != NULL) {
-    //    sensor.vsync_callback(HAL_GPIO_ReadPin(DCMI_VSYNC_PORT, DCMI_VSYNC_PIN));
-    //}
-}
-
-// If we are cropping the image by more than 1 word in width we can align the line start to
-// a word address to improve copy performance. Do not crop by more than 1 word as this will
-// result in less time between DMA transfers complete interrupts on 16-byte boundaries.
-static uint32_t get_dcmi_hw_crop(uint32_t bytes_per_pixel)
-{
-    uint32_t byte_x_offset = (MAIN_FB()->x * bytes_per_pixel) % sizeof(uint32_t);
-    uint32_t width_remainder = (resolution[sensor.framesize][0] - (MAIN_FB()->x + MAIN_FB()->u)) * bytes_per_pixel;
-    uint32_t x_crop = 0;
-
-    if (byte_x_offset && (width_remainder >= (sizeof(uint32_t) - byte_x_offset))) {
-        x_crop = byte_x_offset;
-    }
-
-    return x_crop;
 }
 
 
@@ -347,10 +276,12 @@ int sensor_snapshot(sensor_t *sensor, image_t *image, uint32_t flags)
 {
     framebuffer_update_jpeg_buffer();
 
+#if (USE_CAM_IRQ == 0)
         // This driver supports a single buffer.
     if (MAIN_FB()->n_buffers != 1) {
         framebuffer_set_buffers(1);
     }
+#endif
 
     if (sensor_check_framebuffer_size() != 0) {
         return SENSOR_ERROR_FRAMEBUFFER_OVERFLOW;
@@ -362,8 +293,10 @@ int sensor_snapshot(sensor_t *sensor, image_t *image, uint32_t flags)
     if (sensor->pixformat == PIXFORMAT_INVALID) {
         return SENSOR_ERROR_INVALID_PIXFORMAT;
     }
-    
 
+    MAIN_FB()->pixfmt = sensor->pixformat;
+
+#if (USE_CAM_IRQ == 0)
     vbuffer_t *buffer = framebuffer_get_tail(FB_NO_FLAGS);
 
      if (!buffer) {
@@ -385,6 +318,8 @@ int sensor_snapshot(sensor_t *sensor, image_t *image, uint32_t flags)
         break;
       }
     }
+
+
     // Not useful for the NRF but must call to keep API the same.
     if (sensor->frame_callback) {
         sensor->frame_callback();
@@ -400,11 +335,41 @@ int sensor_snapshot(sensor_t *sensor, image_t *image, uint32_t flags)
 #if 1
     memcpy(buffer->data,sensor_buffer,MAIN_FB()->u * MAIN_FB()->v * MAIN_FB()->bpp);
 #else
-    for(int i = 0;i < (MAIN_FB()->w * MAIN_FB()->h * MAIN_FB()->bpp);i++)
+    for(int i = 0;i < (MAIN_FB()->u * MAIN_FB()->v * MAIN_FB()->bpp);i++)
     {
         buffer->data[i] = sensor_buffer[i];
     }
 #endif
+ 
+#else
+    vbuffer_t *buffer = framebuffer_get_head(FB_NO_FLAGS);
+
+    // If there's no ready buffer in the fifo, and the DMA is Not currently
+    // transferring a new buffer, reconfigure and restart the DMA transfer.
+    if (buffer == NULL) {
+        buffer = framebuffer_get_tail(FB_PEEK);
+        if (buffer == NULL) {
+            return SENSOR_ERROR_FRAMEBUFFER_ERROR;
+        }
+        cam_config.buffer1 = core_local_mem_to_sys_address(HPM_CORE0, (uint32_t)buffer->data);
+        cam_init(HPM_CAM0, &cam_config);
+        cam_start(HPM_CAM0);
+    }
+
+        // Wait for the DMA to finish the transfer.
+    for (mp_uint_t ticks = mp_hal_ticks_ms(); buffer == NULL;) {
+        buffer = framebuffer_get_head(FB_NO_FLAGS);
+        if ((mp_hal_ticks_ms() - ticks) > 3000) {
+            sensor_abort();
+            return SENSOR_ERROR_CAPTURE_TIMEOUT;
+        }
+    }
+
+#endif
+
+
+    MAIN_FB()->w = MAIN_FB()->u;
+    MAIN_FB()->h = MAIN_FB()->v;
 
 #if (TIME_SENSOR==1)
     printf("time: %u ms\n", mp_hal_ticks_ms() - start);

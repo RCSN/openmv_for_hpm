@@ -35,7 +35,7 @@
 #define DMA_LENGTH_ALIGNMENT    (16)
 #define SENSOR_TIMEOUT_MS       (3000)
 #define ARRAY_SIZE(a)           (sizeof(a) / sizeof((a)[0]))
-static uint8_t __attribute__((section (".framebuffer"))) sensor_buffer[220 * 1024] __attribute__ ((aligned(16)));
+static uint8_t __attribute__((section (".framebuffer"))) sensor_buffer[1024 * 1024] __attribute__ ((aligned(16)));
 sensor_t sensor = {};
 static cam_config_t cam_config;
 
@@ -389,7 +389,11 @@ int sensor_snapshot(sensor_t *sensor, image_t *image, uint32_t flags)
     MAIN_FB()->h = MAIN_FB()->v;
     
     
-    memcpy(buffer->data,sensor_buffer,MAIN_FB()->u * MAIN_FB()->v * MAIN_FB()->bpp);
+//    memcpy(buffer->data,sensor_buffer,MAIN_FB()->u * MAIN_FB()->v * MAIN_FB()->bpp);
+    for(int i = 0;i < (MAIN_FB()->w * MAIN_FB()->h * MAIN_FB()->bpp);i++)
+    {
+        buffer->data[i] = sensor_buffer[i];
+    }
     if ((MAIN_FB()->pixfmt == PIXFORMAT_RGB565 && sensor->hw_flags.rgb_swap) ||
         (MAIN_FB()->pixfmt == PIXFORMAT_YUV422 && sensor->hw_flags.yuv_swap)) {
         unaligned_memcpy_rev16(buffer->data, buffer->data, MAIN_FB()->w * MAIN_FB()->h);

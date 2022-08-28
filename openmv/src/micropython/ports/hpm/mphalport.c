@@ -44,6 +44,24 @@ uint32_t usb_cdc_get_buf(uint8_t *buf, uint32_t len)
     return len;
 }
 
+uintptr_t mp_hal_stdio_poll(uintptr_t poll_flags) {
+    uintptr_t ret = 0;
+    if (dbg_mode_enabled) {
+        return ret;
+    }
+
+    #if MICROPY_HW_ENABLE_UART_REPL
+    if ((poll_flags & MP_STREAM_POLL_RD) && ringbuf_peek(&stdin_ringbuf) != -1) {
+        ret |= MP_STREAM_POLL_RD;
+    }
+    #endif
+    #if MICROPY_HW_ENABLE_USBDEV
+    if (tud_cdc_connected() && tud_cdc_available()) {
+        ret |= MP_STREAM_POLL_RD;
+    }
+    #endif
+    return ret;
+}
 
 NORETURN void mp_hal_raise(HAL_StatusTypeDef status) {
     mp_raise_OSError(mp_hal_status_to_errno_table[status]);

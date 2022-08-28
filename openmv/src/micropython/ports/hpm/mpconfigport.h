@@ -4,9 +4,11 @@ extern const struct _mp_obj_module_t pyb_module;
 extern const struct _mp_obj_module_t mp_module_utime;
 extern const struct _mp_obj_module_t sensor_module;
 extern const struct _mp_obj_module_t image_module;
-//#ifndef MICROPY_CONFIG_ROM_LEVEL
-//#define MICROPY_CONFIG_ROM_LEVEL            (30)
-//#endif
+
+#ifndef MICROPY_CONFIG_ROM_LEVEL
+#define MICROPY_CONFIG_ROM_LEVEL (MICROPY_CONFIG_ROM_LEVEL_EXTRA_FEATURES)
+#endif
+
 // Python internal features.
 #define MICROPY_ENABLE_GC                       (1)
 #define MICROPY_HELPER_REPL                     (1)
@@ -23,13 +25,20 @@ extern const struct _mp_obj_module_t image_module;
 #define MICROPY_PY_ATTRTUPLE                    (0)
 #define MICROPY_PY_COLLECTIONS                  (0)
 #define MICROPY_PY_MATH                         (0)
-#define MICROPY_PY_IO                           (0)
+#define MICROPY_PY_IO                           (1)
 #define MICROPY_PY_STRUCT                       (1)
 #define MICROPY_PY_BUILTINS_EVAL_EXEC           (1)
 #define MICROPY_PY_SYS                          (1)
 #define MICROPY_PY_BUILTINS_HELP                (1)
-#define MICROPY_PY_BUILTINS_NOTIMPLEMENTED      (0)
-#define MICROPY_ENABLE_SCHEDULER                (0)
+#define MICROPY_PY_BUILTINS_NOTIMPLEMENTED      (1)
+#define MICROPY_ENABLE_SCHEDULER                (1)
+
+#define mp_type_fileio      mp_type_vfs_fat_fileio
+#define mp_type_textio      mp_type_vfs_fat_textio
+
+//#define mp_import_stat      mp_vfs_import_stat
+#define mp_builtin_open     mp_vfs_open
+#define mp_builtin_open_obj mp_vfs_open_obj
 
 #define MICROPY_PY_UTIME_MP_HAL                 (1)
  

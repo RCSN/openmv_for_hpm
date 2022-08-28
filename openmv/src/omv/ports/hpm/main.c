@@ -29,7 +29,7 @@ extern bool usb_vcp_is_enabled(void);
 extern int mp_hal_init(void);
 //HPM_PRO_BASE=D:/vmware/share-dir/openmv_for_hpmo/hpm_sdk
 //HPM_PRO_BASE=C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/hpm_sdk
-static ATTR_PLACE_AT_NONCACHEABLE  uint8_t heap[10240];
+static ATTR_PLACE_AT_NONCACHEABLE  uint8_t heap[64 * 1024];
 static void rtc_init(void);
 unsigned char OMV_UNIQUE_ID_ADDR[4];
 
@@ -58,6 +58,8 @@ extern char _fb_base;
 extern char _fb_end;
 extern char _jpeg_buf;
 extern char _fballoc;
+extern char _sstack;
+extern char _estack;
 
 int main(void)
 {
@@ -80,22 +82,30 @@ int main(void)
 
   extern void cdc_acm_msc_init(void);  
   cdc_acm_msc_init();
-  bsp_lcd_init();
+  //bsp_lcd_init();
 
 soft_reset:
-  mp_stack_ctrl_init();
-  gc_init(heap, heap + sizeof(heap));
-  mp_init();
-  mp_obj_list_init(MP_OBJ_TO_PTR(mp_sys_path), 0);
-  mp_obj_list_init(MP_OBJ_TO_PTR(mp_sys_argv), 0);
-  mp_hal_init();
+    //   mp_stack_ctrl_init();
+    // Stack limit should be less than real stack size, so we have a
+    // chance to recover from limit hit. (Limit is measured in bytes)
+    mp_stack_set_top(&_estack);
+    mp_stack_set_limit((char*)&_estack - (char*)&_sstack - 1024);
+    gc_init(heap, heap + sizeof(heap));
+    #if MICROPY_ENABLE_PYSTACK
+    static mp_obj_t pystack[384];
+    mp_pystack_init(pystack, &pystack[384]);
+    #endif
+    mp_init();
+    mp_obj_list_init(MP_OBJ_TO_PTR(mp_sys_path), 0);
+    mp_obj_list_init(MP_OBJ_TO_PTR(mp_sys_argv), 0);
+    mp_hal_init();
 
-  usbdbg_init();
-  fb_alloc_init0();
-  framebuffer_init0();
-  sensor_init();
-  imlib_init_all();
-  printf("_fb_base:0x%08x _fb_end:0x%08x _jpeg_buf:0x%08x _fballoc:0x%08x \r\n",&_fb_base,&_fb_end,&_jpeg_buf,&_fballoc);
+    usbdbg_init();
+    fb_alloc_init0();
+    framebuffer_init0();
+    sensor_init();
+    imlib_init_all();
+    printf("_fb_base:0x%08x _fb_end:0x%08x _jpeg_buf:0x%08x _fballoc:0x%08x  _sstack:0x%08x  _estack:0x%08x\r\n",&_fb_base,&_fb_end,&_jpeg_buf,&_fballoc,&_sstack,&_estack);
     // If there's no script ready, just re-exec REPL
     while (!usbdbg_script_ready()) {
         nlr_buf_t nlr;
@@ -134,7 +144,7 @@ soft_reset:
 
   gc_sweep_all();
   mp_deinit();
-  goto soft_reset;
+goto soft_reset;
   return 0;
   ////// Start a normal REPL; will exit when ctrl-D is entered on a blank line.
 //again_repl:

@@ -16,7 +16,7 @@
 #include "imlib.h"
 #include "omv_boardconfig.h"
 #include "arm_compat.h"
-#define TIME_JPEG   (0)
+#define TIME_JPEG   (1)
 #if (TIME_JPEG == 1)
 #include "py/mphal.h"
 #endif
@@ -1112,7 +1112,7 @@ static void jpeg_encode(uint8_t *rgbbuff, uint32_t width, uint32_t height, uint3
         };
     }
     *dasize = jpeg_get_encoded_length(HPM_JPEG);
-    printf("complete encoding length %d bytes %d %d %d %d \n", *dasize,width,height,config.width_in_pixel ,config.height_in_pixel );
+    //printf("complete encoding length %d bytes %d %d %d %d \n", *dasize,width,height,config.width_in_pixel ,config.height_in_pixel );
 }
 
 bool jpeg_compress(image_t *src, image_t *dst, int quality, bool realloc)

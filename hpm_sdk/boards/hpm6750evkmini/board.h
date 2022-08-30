@@ -13,7 +13,7 @@
 #include "hpm_soc_feature.h"
 #include "hpm_clock_drv.h"
 #include "pinmux.h"
-
+#include "dev_port_config.h"
 #define BOARD_NAME "hpm6750evkmini"
 #define BOARD_UF2_SIGNATURE (0x0A4D5048UL)
 

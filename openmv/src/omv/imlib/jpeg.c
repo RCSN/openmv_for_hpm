@@ -1066,6 +1066,7 @@ static bool wait_jpeg_finish(void)
     do {
         if (jpeg_get_status(HPM_JPEG) & JPEG_EVENT_OUT_DMA_FINISH) {
             jpeg_clear_status(HPM_JPEG, JPEG_EVENT_OUT_DMA_FINISH);
+            __asm("fence.i");
             return true;
         }
         if (jpeg_get_status(HPM_JPEG) & JPEG_EVENT_ERROR) {
@@ -1081,7 +1082,7 @@ static bool wait_jpeg_finish(void)
  */
 static void jpeg_encode(uint8_t *rgbbuff, uint32_t width, uint32_t height,uint8_t bpp, uint32_t *dasize, uint8_t *filesbuff)
 {
-
+    uint8_t count = 0;
     jpeg_job_config_t config = {0};
 
     /*JPEG default parameter table settings*/
@@ -1103,9 +1104,13 @@ static void jpeg_encode(uint8_t *rgbbuff, uint32_t width, uint32_t height,uint8_
     config.height_in_pixel = height;
     config.in_buffer = core_local_mem_to_sys_address(BOARD_RUNNING_CORE, (uint32_t)rgbbuff);
     config.out_buffer = core_local_mem_to_sys_address(BOARD_RUNNING_CORE, (uint32_t)(filesbuff + JPGHEADERLEN));
-
+    //printf("encoding length %d bytes %d %d %d \n", *dasize,config.jpeg_format,config.width_in_pixel ,config.height_in_pixel );
     /* Start compressor */
+compressor_again:
     if (status_success != jpeg_start_encode(HPM_JPEG, &config)) {
+        count++;
+        if(count < 5)
+          goto compressor_again;
         printf("failed to endcode\n");
         while (1) {
         };

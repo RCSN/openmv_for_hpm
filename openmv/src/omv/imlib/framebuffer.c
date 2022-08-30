@@ -371,7 +371,7 @@ void framebuffer_free_current_buffer()
     vbuffer_t *buffer = framebuffer_get_buffer(framebuffer->head);
     #ifdef __DCACHE_PRESENT
     // Make sure all cached CPU writes are flushed before returning the buffer.
-    SCB_InvalidateDCache_by_Addr(buffer->data, framebuffer_get_buffer_size());
+    l1c_dc_invalidate(buffer->data, framebuffer_get_buffer_size());
     #endif
 
     // Invalidate frame.

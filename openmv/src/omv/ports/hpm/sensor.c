@@ -39,7 +39,7 @@
 #define ARRAY_SIZE(a)           (sizeof(a) / sizeof((a)[0]))
 
 #if (USE_CAM_IRQ == 0)
-static uint8_t __attribute__((section (".framebuffer"))) sensor_buffer[3072 * 1024] __attribute__ ((aligned(16)));
+static uint8_t __attribute__((section (".framebuffer"))) sensor_buffer[3072 * 1024] __attribute__ ((aligned(__SCB_DCACHE_LINE_SIZE)));
 #endif
 
 sensor_t sensor = {};
@@ -328,17 +328,21 @@ int sensor_snapshot(sensor_t *sensor, image_t *image, uint32_t flags)
     MAIN_FB()->w = MAIN_FB()->u;
     MAIN_FB()->h = MAIN_FB()->v;
     
-    #if (TIME_SENSOR==1)
+#if (TIME_SENSOR==1)
     mp_uint_t start = mp_hal_ticks_ms();
 #endif
 
 #if 1
     memcpy(buffer->data,sensor_buffer,MAIN_FB()->u * MAIN_FB()->v * MAIN_FB()->bpp);
 #else
+    extern inline void usbdbg_set_irq_enabled(bool enabled);
+//    l1c_dc_flush(buffer->data,MAIN_FB()->u * MAIN_FB()->v * MAIN_FB()->bpp);
+    //usbdbg_set_irq_enabled(false);
     for(int i = 0;i < (MAIN_FB()->u * MAIN_FB()->v * MAIN_FB()->bpp);i++)
     {
         buffer->data[i] = sensor_buffer[i];
     }
+    //usbdbg_set_irq_enabled(true);
 #endif
  
 #else

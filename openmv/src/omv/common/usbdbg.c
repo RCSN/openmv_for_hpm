@@ -32,8 +32,8 @@
 #include "boards/HPM6750EVKMINI/omv_boardconfig.h"
 //#include "py_image.h"
 
-static int xfer_bytes;
-static int xfer_length;
+static volatile int xfer_bytes;
+static volatile int xfer_length;
 static enum usbdbg_cmd cmd;
 
 static volatile bool script_ready;

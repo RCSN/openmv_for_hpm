@@ -20,7 +20,7 @@
 #define USBD_MAX_POWER     100
 #define USBD_LANGID_STRING 1033
 
-#define DBG_MAX_PACKET      (2048)
+#define DBG_MAX_PACKET      (4096)
 
 /*!< config descriptor size */
 //#define USB_CONFIG_SIZE (9 + CDC_ACM_DESCRIPTOR_LEN)
@@ -200,14 +200,14 @@ usbd_interface_t cdc_cmd_intf;
 usbd_interface_t cdc_data_intf;
 
 static ATTR_PLACE_AT_NONCACHEABLE uint8_t read_buffer[2048];
-static ATTR_PLACE_AT_NONCACHEABLE uint8_t send_buffer[2048];
+static ATTR_PLACE_AT_NONCACHEABLE uint8_t send_buffer[DBG_MAX_PACKET];
 static ATTR_PLACE_AT_NONCACHEABLE uint8_t write_buffer[2048] = { 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x30 };
 
 uint32_t read_buffer_len = 0;
 volatile bool ep_tx_busy_flag = false;
 volatile bool ep_open_flag = 0;
-volatile static uint32_t host2dev_lenth = 0;
-volatile static uint32_t dev2host_lenth = 0;
+static volatile uint32_t host2dev_lenth = 0;
+static volatile uint32_t dev2host_lenth = 0;
 
 typedef struct __attribute__((packed)) {
     uint8_t cmd;
@@ -268,9 +268,12 @@ void usbd_cdc_acm_bulk_out(uint8_t ep, uint32_t nbytes)
     if(request & 0x80)
     {
       // Device-to-host data phase     
-        int bytes = MIN(xfer_length, DBG_MAX_PACKET);
+        int bytes = MIN(xfer_length, DBG_MAX_PACKET - 1);
         usbdbg_data_in(read_buffer, bytes);
-        dev2host_lenth = xfer_length - bytes;
+        if(xfer_length >= bytes)
+          dev2host_lenth = xfer_length - bytes;
+        else
+          dev2host_lenth = 0;
         openmv_send_data(read_buffer, bytes);
     }
     else
@@ -293,10 +296,14 @@ void usbd_cdc_acm_bulk_in(uint8_t ep, uint32_t nbytes)
       if(dev2host_lenth == 0)
         return;
         //USB_LOG_RAW("actual in len:%d\r\n", nbytes);      
-        int bytes = MIN(dev2host_lenth, DBG_MAX_PACKET);
-        usbdbg_data_in(send_buffer, bytes);
-        openmv_send_data(send_buffer, bytes);
+      int bytes = MIN(dev2host_lenth, DBG_MAX_PACKET - 1);
+      usbdbg_data_in(send_buffer, bytes);
+      openmv_send_data(send_buffer, bytes);
+      if(dev2host_lenth >= bytes)
         dev2host_lenth -= bytes;
+      else
+        dev2host_lenth = 0;
+
     }
 }
 

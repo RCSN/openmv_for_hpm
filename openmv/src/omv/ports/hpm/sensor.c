@@ -333,7 +333,23 @@ int sensor_snapshot(sensor_t *sensor, image_t *image, uint32_t flags)
 #endif
 
 #if 1
-    memcpy(buffer->data,sensor_buffer,MAIN_FB()->u * MAIN_FB()->v * MAIN_FB()->bpp);
+    if((MAIN_FB()->x == 0) && (MAIN_FB()->y == 0))
+    {
+      memcpy(buffer->data,sensor_buffer,MAIN_FB()->u * MAIN_FB()->v * MAIN_FB()->bpp);
+    }
+    else
+    {
+      int k = 0;
+      for(int i = MAIN_FB()->y;i < (MAIN_FB()->y + MAIN_FB()->h);i++)
+      {
+        for(int j = MAIN_FB()->x;j < (MAIN_FB()->x + MAIN_FB()->w);j++)
+        {
+          *(uint16_t *)&buffer->data[k] = *(uint16_t *)&sensor_buffer[(i + 1) * j * 2];
+          k += 2;
+        }
+      }  
+    }
+    
 #else
     extern inline void usbdbg_set_irq_enabled(bool enabled);
 //    l1c_dc_flush(buffer->data,MAIN_FB()->u * MAIN_FB()->v * MAIN_FB()->bpp);

@@ -2970,6 +2970,7 @@ void imlib_find_qrcodes(list_t *out, image_t *ptr, rectangle_t *roi)
     struct quirc *controller = quirc_new();
     quirc_resize(controller, roi->w, roi->h);
     uint8_t *grayscale_image = quirc_begin(controller, NULL, NULL);
+    quirc_decode_error_t err;
 
     image_t img;
     img.w = roi->w;
@@ -2985,8 +2986,8 @@ void imlib_find_qrcodes(list_t *out, image_t *ptr, rectangle_t *roi)
         struct quirc_code *code = fb_alloc(sizeof(struct quirc_code), FB_ALLOC_NO_HINT);
         struct quirc_data *data = fb_alloc(sizeof(struct quirc_data), FB_ALLOC_NO_HINT);
         quirc_extract(controller, i, code);
-
-        if(quirc_decode(code, data) == QUIRC_SUCCESS) {
+        err = quirc_decode(code, data);
+        if(err == QUIRC_SUCCESS) {
             find_qrcodes_list_lnk_data_t lnk_data;
             rectangle_init(&(lnk_data.rect), code->corners[0].x + roi->x, code->corners[0].y + roi->y, 0, 0);
 
@@ -3018,6 +3019,10 @@ void imlib_find_qrcodes(list_t *out, image_t *ptr, rectangle_t *roi)
             lnk_data.eci = data->eci;
 
             list_push_back(out, &lnk_data);
+        }
+        else
+        {
+            printf("DECODE FAILED: %s\n", quirc_strerror(err));
         }
 
         fb_free();

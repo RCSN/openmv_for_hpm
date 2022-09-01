@@ -150,16 +150,29 @@ int cambus_writew2(cambus_t *bus, uint8_t slv_addr, uint16_t reg_addr, uint16_t 
 
 int cambus_read_bytes(cambus_t *bus, uint8_t slv_addr, uint8_t *buf, int len, uint32_t flags)
 {
-    int bytes = 0;
-
-    return (bytes == len) ? 0 : -1;
+    int ret = 0;
+    if(i2c_master_read(bus->i2c,(uint16_t)slv_addr,buf,len) != status_success)
+      ret = -1;
+    return ret;
 }
 
 int cambus_write_bytes(cambus_t *bus, uint8_t slv_addr, uint8_t *buf, int len, uint32_t flags)
 {
-    int bytes = 0;
-
-    return (bytes == len) ? 0 : -1;
+    int ret = 0;
+    hpm_stat_t sta = status_success;
+    int _len = len;
+    int remain = 0;
+    int offset = 0;
+    while(len > 0)
+    {
+      remain = (len > 100)?100:len;
+      sta = i2c_master_write(bus->i2c,(uint16_t)slv_addr,&buf[offset],remain);
+      offset += remain;
+      len -= remain;
+    }
+    if(sta != status_success)
+      ret = -1;
+    return ret;
 }
 
 int cambus_pulse_scl(cambus_t *bus)

@@ -27,10 +27,12 @@
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;boards"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;drivers"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;hpm_sdk;soc"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython"/>
+  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;micropython;port"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv"/>
-  <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv;common"/>
   <ProjectSessionItem path="openmv_for_hpm;openmv_for_hpm;openmv;omv;port"/>
  </Project>
  <Register1>
@@ -75,13 +77,9 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="32" y="302" useTextEdit="1" path="openmv/src/omv/ports/hpm/usbd_cdc_msc_descriptors.c" left="0" top="262" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="20" y="2343" useTextEdit="1" path="openmv/src/omv/imlib/qrcode.c" left="0" top="2313" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="64" useTextEdit="1" path="openmv/src/omv/ports/hpm/main.c" left="0" top="56" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="65" useTextEdit="1" path="openmv/src/micropython/py/scheduler.c" left="0" top="46" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="1114" useTextEdit="1" path="openmv/src/omv/imlib/jpeg.c" left="0" top="1095" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="346" useTextEdit="1" path="openmv/src/omv/ports/hpm/sensor.c" left="0" selected="1" top="327" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="59" y="726" useTextEdit="1" path="openmv/src/omv/common/sensor_utils.c" left="0" top="716" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="64" useTextEdit="1" path="openmv/src/omv/ports/hpm/main.c" left="0" top="44" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="73" useTextEdit="1" path="openmv/src/micropython/ports/hpm/rng.c" left="0" selected="1" top="93" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="55" useTextEdit="1" path="hpm_sdk/drivers/src/hpm_rng_drv.c" left="0" top="35" codecName=""/>
  </Files>
- <EMStudioWindow activeProject="openmv_for_hpm" fileDialogDefaultFilter="*" autoConnectTarget="GDB Server" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/openmv/src/micropython/extmod" debugSearchPath="" autoConnectCapabilities="1343"/>
+ <EMStudioWindow activeProject="openmv_for_hpm" fileDialogDefaultFilter="*" autoConnectTarget="GDB Server" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="D:/vmware/share-dir/openmv_for_hpmo/openmv/src/micropython/ports/hpm" debugSearchPath="" autoConnectCapabilities="1343"/>
 </session>

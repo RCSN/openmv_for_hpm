@@ -314,6 +314,7 @@
           <file file_name="openmv/src/micropython/ports/hpm/modpyb.c" />
           <file file_name="openmv/src/micropython/ports/hpm/hpm_led_pin.h" />
           <file file_name="openmv/src/micropython/ports/hpm/fatfs_port.c" />
+          <file file_name="openmv/src/micropython/ports/hpm/rng.c" />
         </folder>
       </folder>
       <folder Name="omv">
@@ -484,12 +485,17 @@
     <file file_name="openmv/src/omv/ports/hpm/main.c" />
     <configuration
       Name="Debug"
+      RISCV_TOOLCHAIN_VARIANT="Standard"
       arm_compiler_variant="SEGGER"
+      build_generic_options_file_name=""
       debug_target_connection="GDB Server"
       gcc_optimization_level="Level 3 for more speed"
       heap_size="245760"
       link_symbol_definitions="OMV_FB_SIZE=6M;OMV_FB_ALLOC_SIZE=4M;OMV_JPEG_BUF_SIZE=1M;OMV_STACK_SIZE=64K"
+      rv_arch_ext=""
       rv_architecture="rv32imfc"
+      rv_debug_extensions="None"
+      rv_toolchain_prefix=""
       target_reset_script="TargetInterface.resetAndStop()" />
     <file file_name="openmv/src/omv/ports/hpm/usbd_cdc_msc_descriptors.c" />
     <file file_name="openmv/src/micropython/ports/hpm/mphalport.c" />

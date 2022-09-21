@@ -1,5 +1,13 @@
+/*
+ * @Descripttion: 
+ * @version: 
+ * @Author: RCSN
+ * @Date: 2022-08-30 10:17:43
+ * @LastEditors: 
+ * @LastEditTime: 2022-09-21 16:43:09
+ */
 #include <stdint.h>
-
+#include"mpconfigboard.h"
 extern const struct _mp_obj_module_t pyb_module;
 extern const struct _mp_obj_module_t mp_module_utime;
 extern const struct _mp_obj_module_t sensor_module;

@@ -38,7 +38,7 @@
 //#include "timer.h"
 //#include "extint.h"
 //#include "usrsw.h"
-//#include "rng.h"
+#include "rng.h"
 //#include "rtc.h"
 //#include "i2c.h"
 //#include "spi.h"

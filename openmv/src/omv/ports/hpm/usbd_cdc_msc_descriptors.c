@@ -20,7 +20,8 @@
 #define USBD_MAX_POWER     100
 #define USBD_LANGID_STRING 1033
 
-#define DBG_MAX_PACKET      (4096)
+#define DBG_MAX_RECV_PACKET    (10240)
+#define DBG_MAX_PACKET         (4096)
 
 /*!< config descriptor size */
 //#define USB_CONFIG_SIZE (9 + CDC_ACM_DESCRIPTOR_LEN)
@@ -199,7 +200,7 @@ usbd_interface_t cdc_cmd_intf;
 /*!< interface two */
 usbd_interface_t cdc_data_intf;
 
-static ATTR_PLACE_AT_NONCACHEABLE uint8_t read_buffer[2048];
+static ATTR_PLACE_AT_NONCACHEABLE uint8_t read_buffer[DBG_MAX_RECV_PACKET];
 static ATTR_PLACE_AT_NONCACHEABLE uint8_t send_buffer[DBG_MAX_PACKET];
 static ATTR_PLACE_AT_NONCACHEABLE uint8_t write_buffer[2048] = { 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x30 };
 
@@ -245,8 +246,8 @@ void usbd_cdc_acm_bulk_out(uint8_t ep, uint32_t nbytes)
     uint32_t xfer_length = 0;   
     read_buffer_len = nbytes;
     /* setup next out ep read transfer */
-    usbd_ep_start_read(CDC_OUT_EP, read_buffer, 2048);
-//    USB_LOG_RAW("actual out len:%d 0x%02x 0x%02x\r\n", nbytes,read_buffer[0],read_buffer[1]);
+    usbd_ep_start_read(CDC_OUT_EP, read_buffer, DBG_MAX_RECV_PACKET);
+    //USB_LOG_RAW("actual out len:%d 0x%02x 0x%02x \r\n", nbytes,read_buffer[0],read_buffer[1]);
     if(host2dev_lenth) //host send device msg 
     {
         if(host2dev_lenth < nbytes)
@@ -264,7 +265,7 @@ void usbd_cdc_acm_bulk_out(uint8_t ep, uint32_t nbytes)
         usbdbg_control(NULL, request, xfer_length);
     }
     //if(read_buffer[1] == USBDBG_FRAME_DUMP)
-    //USB_LOG_RAW("actual out len:%d 0x%02x 0x%02x\r\n", nbytes,read_buffer[0],read_buffer[1]);
+    //USB_LOG_RAW("usbdbg_cmd_t request:0x%02x xfer_length:0x%08x\r\n", request,xfer_length);
     if(request & 0x80)
     {
       // Device-to-host data phase     

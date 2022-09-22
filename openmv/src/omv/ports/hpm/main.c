@@ -71,7 +71,7 @@ int main(void)
   OMV_UNIQUE_ID_ADDR[1] = 2;
   OMV_UNIQUE_ID_ADDR[2] = 3;
   OMV_UNIQUE_ID_ADDR[4] = 4;
- // l1c_dc_disable();
+  //l1c_dc_disable();
   board_init_led_pins();
   //gpio_write_pin(BOARD_R_GPIO_CTRL,BOARD_R_GPIO_INDEX,BOARD_R_GPIO_PIN,1);
   board_init_usb_pins();

@@ -8,6 +8,7 @@
  */
 #define MICROPY_HW_BOARD_NAME       "HPM6750EVKMINI"
 #define MICROPY_HW_MCU_NAME         "HPM6750IVM1"
+#define MICROPY_HW_MCU_VERSION      0 //use a1 mcu hardware
 
 #define MICROPY_HW_ENABLE_RTC       (0)
 #define MICROPY_HW_ENABLE_RNG       (1)

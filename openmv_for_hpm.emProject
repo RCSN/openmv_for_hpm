@@ -243,6 +243,7 @@
           <file file_name="openmv/src/micropython/py/vm.c" />
           <file file_name="openmv/src/micropython/py/vstr.c" />
           <file file_name="openmv/src/micropython/py/warning.c" />
+          <configuration Name="Debug" default_code_section=".text" />
         </folder>
         <file file_name="openmv/src/micropython/ports/hpm/mpconfigport.h" />
         <folder Name="lib">
@@ -401,6 +402,7 @@
           <file file_name="openmv/src/omv/modules/py_helper.c" />
           <file file_name="openmv/src/omv/modules/py_image.c" />
           <file file_name="openmv/src/omv/modules/py_imageio.c" />
+          <configuration Name="Debug" default_code_section=".text" />
         </folder>
         <folder Name="alloc">
           <file file_name="openmv/src/omv/alloc/fb_alloc.c" />
@@ -464,6 +466,7 @@
           <file file_name="openmv/src/omv/imlib/fft_omv.c" />
           <file file_name="openmv/src/omv/imlib/filter_omv.c" />
           <file file_name="openmv/src/omv/imlib/stats_omv.c" />
+          <configuration Name="Debug" default_code_section=".text" />
         </folder>
       </folder>
       <folder Name="sensor">

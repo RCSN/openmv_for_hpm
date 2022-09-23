@@ -29,15 +29,15 @@ define block tdata_load                     { copy of block tdata };
 define block heap  with size = __HEAPSIZE__,  alignment = 8, /* fill =0x00, */ readwrite access { };
 define block stack with size = __STACKSIZE__, alignment = 8, /* fill =0xCD, */ readwrite access { };
 
-define block framebuffer with alignment = 8 { section .framebuffer };
+define block framebuffer with alignment = 4 { section .framebuffer };
 
-define block fballoc with alignment = 8 { section .fballoc };
+define block fballoc with alignment = 4 { section .fballoc };
 
-define block fb_base with size = OMV_FB_SIZE, alignment = 8, readwrite access {};
+define block fb_base with size = OMV_FB_SIZE, alignment = 4, readwrite access {};
 
-define block fb_end with size = OMV_FB_ALLOC_SIZE, alignment = 8, readwrite access {};
+define block fb_end with size = OMV_FB_ALLOC_SIZE, alignment = 4, readwrite access {};
 
-define block jpeg_buf with size = OMV_JPEG_BUF_SIZE, alignment = 8, readwrite access {};
+define block jpeg_buf with size = OMV_JPEG_BUF_SIZE, alignment = 16, readwrite access {};
 
 define block safe_stack with size = 512, readwrite access {};
 

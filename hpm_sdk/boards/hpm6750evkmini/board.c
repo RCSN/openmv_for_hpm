@@ -468,7 +468,22 @@ void board_init_pmp(void)
 {
     extern uint32_t __noncacheable_start__[];
     extern uint32_t __noncacheable_end__[];
+#if 0
+    extern uint32_t __noncacheable_sdram_start__[];
+    extern uint32_t __noncacheable_sdram_end__[];
 
+    extern uint32_t __sdram_start__[];
+    extern uint32_t __sdram_end__[];
+
+    uint32_t start_nocache_sdram_addr = (uint32_t) __noncacheable_sdram_start__;
+    uint32_t end_nocache_sdram_addr = (uint32_t) __noncacheable_sdram_end__;
+    uint32_t sdram_nocache_length = end_nocache_sdram_addr - start_nocache_sdram_addr;
+
+    uint32_t start_sdram_addr = (uint32_t) __sdram_start__;
+    uint32_t end_sdram_addr = (uint32_t) __sdram_end__;
+    uint32_t sdram_length = end_sdram_addr - start_sdram_addr;
+    printf("length:%d  sdram_nocache_length:%d sdram_length:%d %d\r\n",length,sdram_nocache_length,sdram_length,(sdram_nocache_length & (sdram_nocache_length - 1U)));
+#endif
     uint32_t start_addr = (uint32_t) __noncacheable_start__;
     uint32_t end_addr = (uint32_t) __noncacheable_end__;
     uint32_t length = end_addr - start_addr;
@@ -476,11 +491,35 @@ void board_init_pmp(void)
     if (length == 0) {
         return;
     }
-
+    
     /* Ensure the address and the length are power of 2 aligned */
     assert((length & (length - 1U)) == 0U);
     assert((start_addr & (length - 1U)) == 0U);
 
+#if 0
+    assert((sdram_length & (sdram_length - 1U)) == 0U);
+    assert((start_sdram_addr & (sdram_length - 1U)) == 0U);
+
+    assert((sdram_nocache_length & (sdram_nocache_length - 1U)) == 0U);
+    assert((start_nocache_sdram_addr & (sdram_nocache_length - 1U)) == 0U);
+#endif
+
+#ifdef SDRAM_PMP_ENABLE
+    pmp_entry_t pmp_entry[2];
+    pmp_entry[0].pmp_addr = PMP_NAPOT_ADDR(start_addr, length);
+    pmp_entry[0].pmp_cfg.val = PMP_CFG(READ_EN, WRITE_EN, EXECUTE_EN, ADDR_MATCH_NAPOT, REG_UNLOCK);
+    pmp_entry[0].pma_addr = PMA_NAPOT_ADDR(start_addr, length);
+    pmp_entry[0].pma_cfg.val = PMA_CFG(ADDR_MATCH_NAPOT, MEM_TYPE_MEM_NON_CACHE_BUF, AMO_EN);
+
+    pmp_entry[1].pmp_addr = PMP_NAPOT_ADDR(0x40000000UL, SIZE_1MB * 256U);
+    pmp_entry[1].pmp_cfg.val = PMP_CFG(READ_EN, WRITE_EN, EXECUTE_EN, ADDR_MATCH_NAPOT, REG_UNLOCK);
+    pmp_entry[1].pma_addr = PMA_NAPOT_ADDR(0x40000000UL, SIZE_1MB * 256U);
+    pmp_entry[1].pma_cfg.val = PMA_CFG(ADDR_MATCH_NAPOT, MEM_TYPE_MEM_WT_READ_ALLOC, AMO_EN); //Write-Through, Read-Allocate
+
+    //pmp_entry[1].pma_cfg.val = PMA_CFG(ADDR_MATCH_NAPOT, MEM_TYPE_MEM_WB_READ_WRITE_ALLOC, AMO_EN);//Write-Back, Read-and-Write-Allocate
+
+    pmp_config(&pmp_entry[0], ARRAY_SIZE(pmp_entry));
+#else
     pmp_entry_t pmp_entry[1];
     pmp_entry[0].pmp_addr = PMP_NAPOT_ADDR(start_addr, length);
     pmp_entry[0].pmp_cfg.val = PMP_CFG(READ_EN, WRITE_EN, EXECUTE_EN, ADDR_MATCH_NAPOT, REG_UNLOCK);
@@ -488,6 +527,7 @@ void board_init_pmp(void)
     pmp_entry[0].pma_cfg.val = PMA_CFG(ADDR_MATCH_NAPOT, MEM_TYPE_MEM_NON_CACHE_BUF, AMO_EN);
 
     pmp_config(&pmp_entry[0], ARRAY_SIZE(pmp_entry));
+#endif
 }
 
 void board_init_clock(void)

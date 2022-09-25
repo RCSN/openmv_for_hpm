@@ -54,6 +54,8 @@ extern const struct _mp_obj_module_t image_module;
 
 #define MICROPY_PY_PYB                          (1)
 
+#define MICROPY_PY_LCD                          (1)
+
 #define MICROPY_EVENT_POLL_HOOK \
     do { \
         extern void mp_handle_pending(bool); \

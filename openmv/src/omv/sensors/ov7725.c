@@ -26,6 +26,7 @@ static const uint8_t default_regs[][2] = {
 // From App Note.
 
     {COM12,         0x03},
+    {COM3,          COM3_SWAP_BR},//RGB SWAP
     {HSTART,        0x22},
     {HSIZE,         0xa4},
     {VSTART,        0x07},
@@ -623,7 +624,7 @@ int ov7725_init(sensor_t *sensor)
     sensor->hw_flags.fsync      = 0;
     sensor->hw_flags.jpege      = 0;
     sensor->hw_flags.gs_bpp     = 2;
-    sensor->hw_flags.rgb_swap   = 1;
+    sensor->hw_flags.rgb_swap   = 0;
     sensor->hw_flags.yuv_order  = SENSOR_HW_FLAGS_YVU422;
     
     return 0;

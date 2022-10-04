@@ -21,7 +21,9 @@
 #include "hpm_sdxc_soc_drv.h"
 #include "hpm_pllctl_drv.h"
 #include "hpm_pwm_drv.h"
-
+#ifdef USE_MV_OVERCLOCK
+#include "hpm_pcfg_drv.h"
+#endif
 static board_timer_cb timer_cb;
 
 /**
@@ -635,8 +637,19 @@ void board_init_clock(void)
         while(1);
     }
 
+#ifdef USE_MV_OVERCLOCK
+    clock_set_source_divider(clock_cpu0, clk_src_osc24m, 1);
+    clock_set_source_divider(clock_cpu1, clk_src_osc24m, 1);
+    board_delay_ms(100);
+    pcfg_dcdc_set_voltage(HPM_PCFG, 1275);
+    pllctl_init_frac_pll_with_freq(HPM_PLLCTL, 0, 1001 * 1000000UL);
+
     clock_set_source_divider(clock_cpu0, clk_src_pll0_clk0, 1);
     clock_set_source_divider(clock_cpu1, clk_src_pll0_clk0, 1);
+#else
+    clock_set_source_divider(clock_cpu0, clk_src_pll0_clk0, 1);
+    clock_set_source_divider(clock_cpu1, clk_src_pll0_clk0, 1);
+#endif
     /* Connect Group1 to CPU1 */
     clock_connect_group_to_cpu(1, 1);
 

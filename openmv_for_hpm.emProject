@@ -29,7 +29,7 @@
       linker_printf_fp_enabled="Float"
       linker_printf_width_precision_supported="Yes"
       linker_section_placements_segments=""
-      macros="HPM_PRO_BASE=D:/vmware/share-dir/openmv_for_hpmo/hpm_sdk"
+      macros="HPM_PRO_BASE=C:/Users/RCSN/Desktop/hpm6750evkmini/opemv_for_hpm/hpm_sdk"
       project_directory=""
       project_type="Executable"
       rv_abi="ilp32"

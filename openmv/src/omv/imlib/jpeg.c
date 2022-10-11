@@ -11,7 +11,7 @@
  * DCT implementation is based on Arai, Agui, and Nakajima's algorithm for scaled DCT.
  */
 #include <stdio.h>
-
+#include "py/obj.h"
 #include "ff_wrapper.h"
 #include "imlib.h"
 #include "omv_boardconfig.h"
@@ -1112,13 +1112,17 @@ compressor_again:
         if(count < 5)
           goto compressor_again;
         printf("failed to endcode\n");
-        while (1) {
-        };
+        mp_raise_msg(&mp_type_OSError, MP_ERROR_TEXT("Progressive JPEG is not supported."));
+        return;
+        //while (1) {
+        //};
     }
     if (!wait_jpeg_finish()) {
         printf("encoding failed\n");
-        while (1) {
-        };
+        mp_raise_msg(&mp_type_OSError, MP_ERROR_TEXT("JPEG decoder failed"));
+        return;
+        //while (1) {
+        //};
     }
     *dasize = jpeg_get_encoded_length(HPM_JPEG);
     //printf("complete encoding length %d bytes %d %d %d %d \n", *dasize,width,height,config.width_in_pixel ,config.height_in_pixel );

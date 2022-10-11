@@ -105,7 +105,7 @@ static const uint8_t default_regs[][2] = {
 
 // OpenMV Custom.
 
-    {COM7,          COM7_FMT_RGB565},
+    {COM7,          COM7_FMT_RGB565 | COM7_RES_VGA},
 
 // End.
 
@@ -237,7 +237,7 @@ static int set_framesize(sensor_t *sensor, framesize_t framesize)
     if ((w > 640) || (h > 480)) {
         return -1;
     }
-
+#if 0
     // Write MSBs
     ret |= cambus_writeb(&sensor->bus, sensor->slv_addr, HOUTSIZE, w>>2);
     ret |= cambus_writeb(&sensor->bus, sensor->slv_addr, VOUTSIZE, h>>1);
@@ -287,7 +287,25 @@ static int set_framesize(sensor_t *sensor, framesize_t framesize)
         ret |= cambus_writeb(&sensor->bus, sensor->slv_addr, SCAL1, 0x40);
         ret |= cambus_writeb(&sensor->bus, sensor->slv_addr, SCAL2, 0x40);
     }
+#else
+    uint32_t hstart = 0x22U << 2;
+    uint32_t vstart = 0x7U << 1;
+    uint32_t hsize = w + 16;
+    //reg = COM7_SET_RES(reg, COM7_RES_VGA);
+    //ret |= cambus_writeb(&sensor->bus, sensor->slv_addr, COM7, reg);
+    ret |= cambus_writeb(&sensor->bus, sensor->slv_addr, HSTART, hstart >> 2);
+    ret |= cambus_writeb(&sensor->bus, sensor->slv_addr, HSIZE, hsize >> 2);
+    ret |= cambus_writeb(&sensor->bus, sensor->slv_addr, VSTART, vstart >> 1);
+    ret |= cambus_writeb(&sensor->bus, sensor->slv_addr, VSIZE, h >> 1);
 
+    ret |= cambus_writeb(&sensor->bus, sensor->slv_addr, HOUTSIZE, w >> 2);
+    ret |= cambus_writeb(&sensor->bus, sensor->slv_addr, VOUTSIZE, h >> 1);
+
+    ret |= cambus_writeb(&sensor->bus, sensor->slv_addr, HREF, 
+            ((vstart & 1) << 6) | ((hstart & 3) << 4) | ((h & 1) << 2) | ((hsize & 3) << 0));
+
+    ret = cambus_writeb(&sensor->bus, sensor->slv_addr, EXHCH, ((h & 0x1) << 2) | (w & 0x3));
+#endif
     return ret;
 }
 

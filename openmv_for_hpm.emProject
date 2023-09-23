@@ -85,6 +85,7 @@
         <file file_name="hpm_sdk/drivers/src/hpm_usb_drv.c" />
         <file file_name="hpm_sdk/drivers/src/hpm_vad_drv.c" />
         <file file_name="hpm_sdk/drivers/src/hpm_wdg_drv.c" />
+        <file file_name="hpm_sdk/drivers/src/hpm_femc_drv.c" />
       </folder>
       <folder Name="middleware">
         <folder Name="cherry_usb">

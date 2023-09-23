@@ -1092,13 +1092,12 @@ static void jpeg_encode(uint8_t *rgbbuff, uint32_t width, uint32_t height,uint8_
     /*jpeg encode parameter configuration*/
     config.jpeg_format = JPEG_SUPPORTED_FORMAT_420;
     if(bpp == 2)
-      config.in_pixel_format = JPEG_PIXEL_FORMAT_RGB565;
+      config.in_pixel_format = jpeg_pixel_format_rgb565;
     else
-      config.in_pixel_format = JPEG_PIXEL_FORMAT_YUV422H1P;
+      config.in_pixel_format = jpeg_pixel_format_yuv422h1p;
       
-    config.out_pixel_format = JPEG_PIXEL_FORMAT_YUV422H1P;
-    config.byte_order = JPEG_BYTE_ORDER_3210;
-    config.enable_csc = true;
+    config.out_pixel_format = jpeg_pixel_format_yuv422h1p;
+    config.out_byte_order = JPEG_BYTE_ORDER_3210;
     config.enable_ycbcr = true;
     config.width_in_pixel = width;
     config.height_in_pixel = height;

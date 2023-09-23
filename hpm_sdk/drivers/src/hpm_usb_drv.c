@@ -201,6 +201,15 @@ void usb_dcd_edpt_open(USB_Type *ptr, usb_endpoint_config_t *config)
     ptr->ENDPTCTRL[epnum] |= ((config->xfer << 2) | ENDPTCTRL_ENABLE | ENDPTCTRL_TOGGLE_RESET) << (dir ? 16 : 0);
 }
 
+uint8_t usb_dcd_edpt_get_type(USB_Type *ptr, uint8_t ep_addr)
+{
+    uint8_t const epnum  = ep_addr & 0x0f;
+    uint8_t const dir = (ep_addr & 0x80) >> 7;
+    uint32_t temp =  ptr->ENDPTCTRL[epnum];
+
+    return dir ?  USB_ENDPTCTRL_TXT_GET(temp) : USB_ENDPTCTRL_RXT_GET(temp);
+}
+
 void usb_dcd_edpt_xfer(USB_Type *ptr, uint8_t ep_idx)
 {
     uint32_t offset = ep_idx / 2 + ((ep_idx % 2) ? 16 : 0);

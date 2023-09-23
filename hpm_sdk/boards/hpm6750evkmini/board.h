@@ -14,6 +14,10 @@
 #include "hpm_clock_drv.h"
 #include "pinmux.h"
 #include "dev_port_config.h"
+#if !defined(CONFIG_NDEBUG_CONSOLE) || !CONFIG_NDEBUG_CONSOLE
+#include "hpm_debug_console.h"
+#endif
+
 #define BOARD_NAME "hpm6750evkmini"
 #define BOARD_UF2_SIGNATURE (0x0A4D5048UL)
 
@@ -50,10 +54,10 @@
 #define BOARD_APP_UART_CLK_NAME clock_uart0
 
 #ifndef BOARD_CONSOLE_TYPE
-#define BOARD_CONSOLE_TYPE console_type_uart
+#define BOARD_CONSOLE_TYPE CONSOLE_TYPE_UART
 #endif
 
-#if BOARD_CONSOLE_TYPE == console_type_uart
+#if BOARD_CONSOLE_TYPE == CONSOLE_TYPE_UART
 #ifndef BOARD_CONSOLE_BASE
 #if BOARD_RUNNING_CORE == HPM_CORE0
 #define BOARD_CONSOLE_BASE HPM_UART0

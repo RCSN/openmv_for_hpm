@@ -29,6 +29,8 @@
 #include "board.h"
 #include "hpm_cam_drv.h"
 
+#include "dev_port_config.h"
+
 #define USE_CAM_IRQ   (0)
 #define TIME_SENSOR   (0)
 #if (TIME_SENSOR == 1)

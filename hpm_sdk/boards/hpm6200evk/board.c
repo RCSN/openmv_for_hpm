@@ -1,6 +1,7 @@
 /*
- * Copyright (c) 2022-2023 HPMicro
+ * Copyright (c) 2023 HPMicro
  * SPDX-License-Identifier: BSD-3-Clause
+ *
  *
  */
 
@@ -10,18 +11,14 @@
 #include "hpm_lcdc_drv.h"
 #include "hpm_i2c_drv.h"
 #include "hpm_gpio_drv.h"
-#include "hpm_femc_drv.h"
 #include "pinmux.h"
 #include "hpm_pmp_drv.h"
 #include "hpm_clock_drv.h"
 #include "hpm_sysctl_drv.h"
-#include "hpm_sdxc_drv.h"
 #include "hpm_pwm_drv.h"
 #include "hpm_trgm_drv.h"
 #include "hpm_pllctlv2_drv.h"
-#include "hpm_enet_drv.h"
 #include "hpm_pcfg_drv.h"
-#include "hpm_sdk_version.h"
 
 static board_timer_cb timer_cb;
 
@@ -79,7 +76,7 @@ static board_timer_cb timer_cb;
  *      0 - 4MB / 1 - 8MB / 2 - 16MB
  */
 #if defined(FLASH_XIP) && FLASH_XIP
-__attribute__ ((section(".nor_cfg_option"))) const uint32_t option[4] = {0xfcf90001, 0x00000007, 0x0, 0x0};
+__attribute__((section(".nor_cfg_option"))) const uint32_t option[4] = { 0xfcf90001, 0x00000007, 0x0, 0x0 };
 #endif
 
 #if defined(FLASH_UF2) && FLASH_UF2
@@ -89,7 +86,7 @@ ATTR_PLACE_AT(".uf2_signature") const uint32_t uf2_signature = BOARD_UF2_SIGNATU
 void board_init_console(void)
 {
 #if !defined(CONFIG_NDEBUG_CONSOLE) || !CONFIG_NDEBUG_CONSOLE
-#if CONSOLE_TYPE_UART == BOARD_CONSOLE_TYPE
+#if BOARD_CONSOLE_TYPE == CONSOLE_TYPE_UART
     console_config_t cfg;
 
     /* uart needs to configure pin function before enabling clock, otherwise the level change of
@@ -102,7 +99,7 @@ void board_init_console(void)
     clock_add_to_group(BOARD_CONSOLE_CLK_NAME, 0);
 
     cfg.type = BOARD_CONSOLE_TYPE;
-    cfg.base = (uint32_t) BOARD_CONSOLE_BASE;
+    cfg.base = (uint32_t)BOARD_CONSOLE_BASE;
     cfg.src_freq_in_hz = clock_get_frequency(BOARD_CONSOLE_CLK_NAME);
     cfg.baudrate = BOARD_CONSOLE_BAUDRATE;
 
@@ -112,8 +109,8 @@ void board_init_console(void)
         }
     }
 #else
-    while (1) {
-    }
+    while (1)
+        ;
 #endif
 #endif
 }
@@ -123,13 +120,13 @@ void board_print_clock_freq(void)
     printf("==============================\n");
     printf(" %s clock summary\n", BOARD_NAME);
     printf("==============================\n");
-    printf("cpu0:\t\t %luHz\n", clock_get_frequency(clock_cpu0));
-    printf("axi:\t\t %luHz\n", clock_get_frequency(clock_axi));
-    printf("ahb:\t\t %luHz\n", clock_get_frequency(clock_ahb));
-    printf("mchtmr0:\t %luHz\n", clock_get_frequency(clock_mchtmr0));
-    printf("xpi0:\t\t %luHz\n", clock_get_frequency(clock_xpi0));
-    printf("xpi1:\t\t %luHz\n", clock_get_frequency(clock_xpi1));
-    printf("femc:\t\t %luHz\n", clock_get_frequency(clock_femc));
+    printf("cpu0:\t\t %dHz\n", clock_get_frequency(clock_cpu0));
+    printf("cpu1:\t\t %luHz\n", clock_get_frequency(clock_cpu1));
+    printf("axi:\t\t %dHz\n", clock_get_frequency(clock_axi));
+    printf("ahb:\t\t %dHz\n", clock_get_frequency(clock_ahb));
+    printf("mchtmr0:\t %dHz\n", clock_get_frequency(clock_mchtmr0));
+    printf("mchtmr1:\t %luHz\n", clock_get_frequency(clock_mchtmr1));
+    printf("xpi0:\t\t %dHz\n", clock_get_frequency(clock_xpi0));
     printf("==============================\n");
 }
 
@@ -142,7 +139,7 @@ void board_init_uart(UART_Type *ptr)
 
 void board_print_banner(void)
 {
-    const uint8_t banner[] = {"\n\
+    const uint8_t banner[] = { "\n\
 ----------------------------------------------------------------------\n\
 $$\\   $$\\ $$$$$$$\\  $$\\      $$\\ $$\\\n\
 $$ |  $$ |$$  __$$\\ $$$\\    $$$ |\\__|\n\
@@ -159,6 +156,16 @@ $$ |  $$ |$$ |      $$ | \\_/ $$ |$$ |\\$$$$$$$\\ $$ |      \\$$$$$$  |\n\
     printf("%s", banner);
 }
 
+uint8_t board_get_led_pwm_off_level(void)
+{
+    return BOARD_LED_OFF_LEVEL;
+}
+
+uint8_t board_get_led_gpio_off_level(void)
+{
+    return BOARD_LED_OFF_LEVEL;
+}
+
 void board_ungate_mchtmr_at_lp_mode(void)
 {
     /* Keep cpu clock on wfi, so that mchtmr irq can still work after wfi */
@@ -167,7 +174,6 @@ void board_ungate_mchtmr_at_lp_mode(void)
 
 void board_init(void)
 {
-    pcfg_dcdc_set_voltage(HPM_PCFG, 1100);
     board_init_clock();
     board_init_console();
     board_init_pmp();
@@ -177,20 +183,6 @@ void board_init(void)
 #if BOARD_SHOW_BANNER
     board_print_banner();
 #endif
-}
-
-void board_init_sdram_pins(void)
-{
-    init_sdram_pins();
-}
-
-uint32_t board_init_femc_clock(void)
-{
-    clock_add_to_group(clock_femc, 0);
-    /* Configure the SDRAM to 166MHz */
-    clock_set_source_divider(clock_femc, clk_src_pll0_clk1, 2U);
-
-    return clock_get_frequency(clock_femc);
 }
 
 void board_delay_us(uint32_t us)
@@ -242,12 +234,35 @@ void board_init_i2c(I2C_Type *ptr)
 
 uint32_t board_init_spi_clock(SPI_Type *ptr)
 {
-    if (ptr == HPM_SPI3) {
+    if (ptr == HPM_SPI1) {
+        /* SPI1 clock configure */
+        clock_add_to_group(clock_spi1, 0);
+        clock_set_source_divider(clock_spi1, clk_src_pll0_clk0, 5U); /* 80MHz */
+
+        return clock_get_frequency(clock_spi1);
+    } else if (ptr == HPM_SPI2) {
+        /* SPI2 clock configure */
+        clock_add_to_group(clock_spi2, 0);
+        clock_set_source_divider(clock_spi2, clk_src_pll0_clk0, 5U); /* 80MHz */
+
+        return clock_get_frequency(clock_spi2);
+    } else if (ptr == HPM_SPI3) {
         /* SPI3 clock configure */
         clock_add_to_group(clock_spi3, 0);
         clock_set_source_divider(clock_spi3, clk_src_pll0_clk0, 5U); /* 80MHz */
 
         return clock_get_frequency(clock_spi3);
+    }
+    return 0;
+}
+
+uint32_t board_init_lin_clock(LIN_Type *ptr)
+{
+    if (ptr == HPM_LIN0) {
+        clock_add_to_group(clock_lin0, 0);
+        clock_set_source_divider(clock_lin0, clk_src_pll0_clk0, 20U); /* 20MHz */
+
+        return clock_get_frequency(clock_lin0);
     }
     return 0;
 }
@@ -266,7 +281,7 @@ void board_init_spi_pins_with_gpio_as_cs(SPI_Type *ptr)
 {
     init_spi_pins_with_gpio_as_cs(ptr);
     gpio_set_pin_output_with_initial(BOARD_SPI_CS_GPIO_CTRL, GPIO_GET_PORT_INDEX(BOARD_SPI_CS_PIN),
-                                    GPIO_GET_PIN_INDEX(BOARD_SPI_CS_PIN), !BOARD_SPI_CS_ACTIVE_LEVEL);
+                                     GPIO_GET_PIN_INDEX(BOARD_SPI_CS_PIN), !BOARD_SPI_CS_ACTIVE_LEVEL);
 }
 
 void board_write_spi_cs(uint32_t pin, uint8_t state)
@@ -274,20 +289,43 @@ void board_write_spi_cs(uint32_t pin, uint8_t state)
     gpio_write_pin(BOARD_SPI_CS_GPIO_CTRL, GPIO_GET_PORT_INDEX(pin), GPIO_GET_PIN_INDEX(pin), state);
 }
 
-uint8_t board_get_led_gpio_off_level(void)
-{
-    return BOARD_LED_OFF_LEVEL;
-}
-
 void board_init_led_pins(void)
 {
-    init_led_pins();
-    gpio_set_pin_output_with_initial(BOARD_LED_GPIO_CTRL, BOARD_LED_GPIO_INDEX, BOARD_LED_GPIO_PIN, board_get_led_gpio_off_level());
+    init_led_pins_as_gpio();
+    gpio_set_pin_output_with_initial(BOARD_R_GPIO_CTRL, BOARD_R_GPIO_INDEX, BOARD_R_GPIO_PIN, board_get_led_gpio_off_level());
+    gpio_set_pin_output_with_initial(BOARD_G_GPIO_CTRL, BOARD_G_GPIO_INDEX, BOARD_G_GPIO_PIN, board_get_led_gpio_off_level());
+    gpio_set_pin_output_with_initial(BOARD_B_GPIO_CTRL, BOARD_B_GPIO_INDEX, BOARD_B_GPIO_PIN, board_get_led_gpio_off_level());
 }
 
 void board_led_toggle(void)
 {
+#ifdef BOARD_LED_TOGGLE_RGB
+    static uint8_t i;
+    switch (i) {
+    case 1:
+        gpio_write_pin(BOARD_R_GPIO_CTRL, BOARD_R_GPIO_INDEX, BOARD_R_GPIO_PIN, BOARD_LED_OFF_LEVEL);
+        gpio_write_pin(BOARD_G_GPIO_CTRL, BOARD_G_GPIO_INDEX, BOARD_G_GPIO_PIN, BOARD_LED_ON_LEVEL);
+        gpio_write_pin(BOARD_B_GPIO_CTRL, BOARD_B_GPIO_INDEX, BOARD_B_GPIO_PIN, BOARD_LED_OFF_LEVEL);
+        break;
+
+    case 2:
+        gpio_write_pin(BOARD_R_GPIO_CTRL, BOARD_R_GPIO_INDEX, BOARD_R_GPIO_PIN, BOARD_LED_OFF_LEVEL);
+        gpio_write_pin(BOARD_G_GPIO_CTRL, BOARD_G_GPIO_INDEX, BOARD_G_GPIO_PIN, BOARD_LED_OFF_LEVEL);
+        gpio_write_pin(BOARD_B_GPIO_CTRL, BOARD_B_GPIO_INDEX, BOARD_B_GPIO_PIN, BOARD_LED_ON_LEVEL);
+        break;
+
+    case 0:
+    default:
+        gpio_write_pin(BOARD_R_GPIO_CTRL, BOARD_R_GPIO_INDEX, BOARD_R_GPIO_PIN, BOARD_LED_ON_LEVEL);
+        gpio_write_pin(BOARD_G_GPIO_CTRL, BOARD_G_GPIO_INDEX, BOARD_G_GPIO_PIN, BOARD_LED_OFF_LEVEL);
+        gpio_write_pin(BOARD_B_GPIO_CTRL, BOARD_B_GPIO_INDEX, BOARD_B_GPIO_PIN, BOARD_LED_OFF_LEVEL);
+        break;
+    }
+    i++;
+    i = i % 3;
+#else
     gpio_toggle_pin(BOARD_LED_GPIO_CTRL, BOARD_LED_GPIO_INDEX, BOARD_LED_GPIO_PIN);
+#endif
 }
 
 void board_led_write(uint8_t state)
@@ -315,34 +353,47 @@ void board_usb_vbus_ctrl(uint8_t usb_index, uint8_t level)
 
 void board_init_pmp(void)
 {
+    uint32_t start_addr;
+    uint32_t end_addr;
+    uint32_t length;
+    pmp_entry_t pmp_entry[16];
+    uint8_t index = 0;
+
+    /* Init noncachable memory */
     extern uint32_t __noncacheable_start__[];
     extern uint32_t __noncacheable_end__[];
-
-    uint32_t start_addr = (uint32_t) __noncacheable_start__;
-    uint32_t end_addr = (uint32_t) __noncacheable_end__;
-    uint32_t length = end_addr - start_addr;
-
-    if (length == 0) {
-        return;
+    start_addr = (uint32_t)__noncacheable_start__;
+    end_addr = (uint32_t)__noncacheable_end__;
+    length = end_addr - start_addr;
+    if (length > 0) {
+        /* Ensure the address and the length are power of 2 aligned */
+        assert((length & (length - 1U)) == 0U);
+        assert((start_addr & (length - 1U)) == 0U);
+        pmp_entry[index].pmp_addr = PMP_NAPOT_ADDR(start_addr, length);
+        pmp_entry[index].pmp_cfg.val = PMP_CFG(READ_EN, WRITE_EN, EXECUTE_EN, ADDR_MATCH_NAPOT, REG_UNLOCK);
+        pmp_entry[index].pma_addr = PMA_NAPOT_ADDR(start_addr, length);
+        pmp_entry[index].pma_cfg.val = PMA_CFG(ADDR_MATCH_NAPOT, MEM_TYPE_MEM_NON_CACHE_BUF, AMO_EN);
+        index++;
     }
 
-    /* Ensure the address and the length are power of 2 aligned */
-    assert((length & (length - 1U)) == 0U);
-    assert((start_addr & (length - 1U)) == 0U);
+    /* Init share memory */
+    extern uint32_t __share_mem_start__[];
+    extern uint32_t __share_mem_end__[];
+    start_addr = (uint32_t)__share_mem_start__;
+    end_addr = (uint32_t)__share_mem_end__;
+    length = end_addr - start_addr;
+    if (length > 0) {
+        /* Ensure the address and the length are power of 2 aligned */
+        assert((length & (length - 1U)) == 0U);
+        assert((start_addr & (length - 1U)) == 0U);
+        pmp_entry[index].pmp_addr = PMP_NAPOT_ADDR(start_addr, length);
+        pmp_entry[index].pmp_cfg.val = PMP_CFG(READ_EN, WRITE_EN, EXECUTE_EN, ADDR_MATCH_NAPOT, REG_UNLOCK);
+        pmp_entry[index].pma_addr = PMA_NAPOT_ADDR(start_addr, length);
+        pmp_entry[index].pma_cfg.val = PMA_CFG(ADDR_MATCH_NAPOT, MEM_TYPE_MEM_NON_CACHE_BUF, AMO_EN);
+        index++;
+    }
 
-    pmp_entry_t pmp_entry[3] = {0};
-    pmp_entry[0].pmp_addr = PMP_NAPOT_ADDR(0x0000000, 0x80000000);
-    pmp_entry[0].pmp_cfg.val = PMP_CFG(READ_EN, WRITE_EN, EXECUTE_EN, ADDR_MATCH_NAPOT, REG_UNLOCK);
-
-
-    pmp_entry[1].pmp_addr = PMP_NAPOT_ADDR(0x80000000, 0x80000000);
-    pmp_entry[1].pmp_cfg.val = PMP_CFG(READ_EN, WRITE_EN, EXECUTE_EN, ADDR_MATCH_NAPOT, REG_UNLOCK);
-
-    pmp_entry[2].pmp_addr = PMP_NAPOT_ADDR(start_addr, length);
-    pmp_entry[2].pmp_cfg.val = PMP_CFG(READ_EN, WRITE_EN, EXECUTE_EN, ADDR_MATCH_NAPOT, REG_UNLOCK);
-    pmp_entry[2].pma_addr = PMA_NAPOT_ADDR(start_addr, length);
-    pmp_entry[2].pma_cfg.val = PMA_CFG(ADDR_MATCH_NAPOT, MEM_TYPE_MEM_NON_CACHE_BUF, AMO_EN);
-    pmp_config(&pmp_entry[0], ARRAY_SIZE(pmp_entry));
+    pmp_config(&pmp_entry[0], index);
 }
 
 void board_init_clock(void)
@@ -355,8 +406,6 @@ void board_init_clock(void)
         /* Select clock setting preset1 */
         sysctl_clock_set_preset(HPM_SYSCTL, 2);
     }
-
-
     /* Add most Clocks to group 0 */
     /* not open uart clock in this API, uart should configure pin function before opening clock */
     clock_add_to_group(clock_cpu0, 0);
@@ -365,9 +414,7 @@ void board_init_clock(void)
     clock_add_to_group(clock_axis, 0);
 
     clock_add_to_group(clock_mchtmr0, 0);
-    clock_add_to_group(clock_femc, 0);
     clock_add_to_group(clock_xpi0, 0);
-    clock_add_to_group(clock_xpi1, 0);
     clock_add_to_group(clock_gptmr0, 0);
     clock_add_to_group(clock_gptmr1, 0);
     clock_add_to_group(clock_gptmr2, 0);
@@ -376,18 +423,22 @@ void board_init_clock(void)
     clock_add_to_group(clock_i2c1, 0);
     clock_add_to_group(clock_i2c2, 0);
     clock_add_to_group(clock_i2c3, 0);
+    clock_add_to_group(clock_lin0, 0);
+    clock_add_to_group(clock_lin1, 0);
+    clock_add_to_group(clock_lin2, 0);
+    clock_add_to_group(clock_lin3, 0);
     clock_add_to_group(clock_spi0, 0);
     clock_add_to_group(clock_spi1, 0);
     clock_add_to_group(clock_spi2, 0);
     clock_add_to_group(clock_spi3, 0);
     clock_add_to_group(clock_can0, 0);
     clock_add_to_group(clock_can1, 0);
-    clock_add_to_group(clock_sdxc0, 0);
+    clock_add_to_group(clock_can2, 0);
+    clock_add_to_group(clock_can3, 0);
     clock_add_to_group(clock_ptpc, 0);
     clock_add_to_group(clock_ref0, 0);
     clock_add_to_group(clock_ref1, 0);
     clock_add_to_group(clock_watchdog0, 0);
-    clock_add_to_group(clock_eth0, 0);
     clock_add_to_group(clock_sdp, 0);
     clock_add_to_group(clock_xdma, 0);
     clock_add_to_group(clock_ram0, 0);
@@ -399,66 +450,74 @@ void board_init_clock(void)
     clock_add_to_group(clock_rng, 0);
     clock_add_to_group(clock_mot0, 0);
     clock_add_to_group(clock_mot1, 0);
+    clock_add_to_group(clock_mot2, 0);
+    clock_add_to_group(clock_mot3, 0);
     clock_add_to_group(clock_acmp, 0);
-    clock_add_to_group(clock_dao, 0);
     clock_add_to_group(clock_msyn, 0);
     clock_add_to_group(clock_lmm0, 0);
-    clock_add_to_group(clock_pdm, 0);
+    clock_add_to_group(clock_lmm1, 0);
 
     clock_add_to_group(clock_adc0, 0);
     clock_add_to_group(clock_adc1, 0);
     clock_add_to_group(clock_adc2, 0);
 
     clock_add_to_group(clock_dac0, 0);
+    clock_add_to_group(clock_dac1, 0);
 
-    clock_add_to_group(clock_i2s0, 0);
-    clock_add_to_group(clock_i2s1, 0);
-
-    clock_add_to_group(clock_ffa0, 0);
     clock_add_to_group(clock_tsns, 0);
+    clock_add_to_group(clock_crc0, 0);
+    clock_add_to_group(clock_sdm0, 0);
 
     /* Connect Group0 to CPU0 */
     clock_connect_group_to_cpu(0, 0);
-    /*
-     * Configure CPU0 to 480MHz
-     *
-     *  NOTE: The PLL2 is disabled by default, and it will be enabled automatically if
-     *        it is required by any nodes.
-     *  Here the PLl2 clock is enabled after switching CPU clock source to it
-     */
-    clock_set_source_divider(clock_cpu0, clk_src_pll1_clk0, 1);
-    /* Configure PLL1_CLK0 Post Divider to 1.2 */
-    pllctlv2_set_postdiv(HPM_PLLCTLV2, 1, 0, 1);
-    /* Configure PLL1 clock frequencey to 576MHz, the PLL1_CLK0 frequency  =- 576MHz / 1.2 = 480MHz */
-    pllctlv2_init_pll_with_freq(HPM_PLLCTLV2, 1, 576000000);
 
+    /* Add the CPU1 clock to Group1 */
+    clock_add_to_group(clock_mchtmr1, 1);
+
+    /* Connect Group1 to CPU1 */
+    clock_connect_group_to_cpu(1, 1);
+
+    /* Bump up DCDC voltage to 1275mv */
+    pcfg_dcdc_set_voltage(HPM_PCFG, 1275);
+
+    /* Configure CPU to 600MHz, AXI/AHB to 200MHz */
+    sysctl_config_cpu0_domain_clock(HPM_SYSCTL, clk_src_pll1_clk0, 1, 3, 3);
+    /* Connect CAN2/CAN3 to pll0clk0*/
+    clock_set_source_divider(clock_can2, clk_src_pll0_clk0, 1);
+    clock_set_source_divider(clock_can3, clk_src_pll0_clk0, 1);
+
+    /* Configure PLL1_CLK0 Post Divider to 1 */
+    pllctlv2_set_postdiv(HPM_PLLCTLV2, 1, 0, 0);
+    pllctlv2_init_pll_with_freq(HPM_PLLCTLV2, 1, 600000000);
     clock_update_core_clock();
 
     /* Configure AHB to 200MHz */
     clock_set_source_divider(clock_ahb, clk_src_pll1_clk1, 2);
 
-    clock_set_source_divider(clock_aud1, clk_src_pll2_clk0, 46); /* config clock_aud1 for 44100*n sample rate */
+    /* Configure mchtmr to 24MHz */
+    clock_set_source_divider(clock_mchtmr0, clk_src_osc24m, 1);
+    clock_set_source_divider(clock_mchtmr1, clk_src_osc24m, 1);
 }
 
 uint32_t board_init_adc12_clock(ADC16_Type *ptr)
 {
     uint32_t freq = 0;
-    switch ((uint32_t) ptr) {
+    switch ((uint32_t)ptr) {
     case HPM_ADC0_BASE:
         /* Configure the ADC clock to 200MHz */
-        clock_set_adc_source(clock_adc0, clk_adc_src_ana);
+        clock_set_adc_source(clock_adc0, clk_adc_src_ana0);
         clock_set_source_divider(clock_ana0, clk_src_pll1_clk1, 2U);
         freq = clock_get_frequency(clock_adc0);
         break;
     case HPM_ADC1_BASE:
         /* Configure the ADC clock to 200MHz */
-        clock_set_adc_source(clock_adc1, clk_adc_src_ana);
+        clock_set_adc_source(clock_adc1, clk_adc_src_ana0);
         clock_set_source_divider(clock_ana0, clk_src_pll1_clk1, 2U);
         freq = clock_get_frequency(clock_adc1);
         break;
     case HPM_ADC2_BASE:
         /* Configure the ADC clock to 200MHz */
-        clock_set_adc_source(clock_adc2, clk_adc_src_ana);
+        clock_set_adc_source(clock_adc2, clk_adc_src_ana0);
         clock_set_source_divider(clock_ana0, clk_src_pll1_clk1, 2U);
         freq = clock_get_frequency(clock_adc2);
         break;
@@ -470,26 +529,6 @@ uint32_t board_init_adc12_clock(ADC16_Type *ptr)
     return freq;
 }
 
-uint32_t board_init_dao_clock(void)
-{
-    return clock_get_frequency(clock_dao);
-}
-
-uint32_t board_init_pdm_clock(void)
-{
-    return clock_get_frequency(clock_pdm);
-}
-
-hpm_stat_t board_set_audio_pll_clock(uint32_t freq)
-{
-    return pllctlv2_init_pll_with_freq(HPM_PLLCTLV2, 2, freq);    /* pll2clk */
-}
-
-uint32_t board_init_i2s_clock(I2S_Type *ptr)
-{
-    return 0;
-}
-
 uint32_t board_init_adc16_clock(ADC16_Type *ptr)
 {
     return 0;
@@ -499,13 +538,13 @@ uint32_t board_init_dac_clock(DAC_Type *ptr, bool clk_src_ahb)
 {
     uint32_t freq = 0;
 
-    if (ptr == HPM_DAC) {
+    if (ptr == HPM_DAC0) {
         if (clk_src_ahb == true) {
-            /* Configure the DAC clock to 160MHz */
-            clock_set_dac_source(clock_dac0, clk_dac_src_ahb);
+            /* Configure the DAC clock to 133MHz */
+            clock_set_dac_source(clock_dac0, clk_dac_src_ahb0);
         } else {
             /* Configure the DAC clock to 166MHz */
-            clock_set_dac_source(clock_dac0, clk_dac_src_ana);
+            clock_set_dac_source(clock_dac0, clk_dac_src_ana3);
             clock_set_source_divider(clock_ana3, clk_src_pll0_clk1, 2);
         }
 
@@ -515,172 +554,34 @@ uint32_t board_init_dac_clock(DAC_Type *ptr, bool clk_src_ahb)
     return freq;
 }
 
-void board_init_can(CAN_Type *ptr)
+void board_init_can(MCAN_Type *ptr)
 {
     init_can_pins(ptr);
 }
 
-uint32_t board_init_can_clock(CAN_Type *ptr)
+uint32_t board_init_can_clock(MCAN_Type *ptr)
 {
     uint32_t freq = 0;
-    if (ptr == HPM_CAN0) {
-        /* Set the CAN0 peripheral clock to 80MHz */
+    if (ptr == HPM_MCAN0) {
+        /* Set the CAN0 peripheral clock to 8MHz */
         clock_set_source_divider(clock_can0, clk_src_pll0_clk0, 5);
         freq = clock_get_frequency(clock_can0);
-    } else if (ptr == HPM_CAN1) {
-        /* Set the CAN1 peripheral clock to 80MHz */
+    } else if (ptr == HPM_MCAN1) {
+        /* Set the CAN1 peripheral clock to 8MHz */
         clock_set_source_divider(clock_can1, clk_src_pll0_clk0, 5);
         freq = clock_get_frequency(clock_can1);
+    } else if (ptr == HPM_MCAN2) {
+        /* Set the CAN2 peripheral clock to 8MHz */
+        clock_set_source_divider(clock_can2, clk_src_pll0_clk0, 5);
+        freq = clock_get_frequency(clock_can2);
+    } else if (ptr == HPM_MCAN3) {
+        /* Set the CAN2 peripheral clock to 8MHz */
+        clock_set_source_divider(clock_can3, clk_src_pll0_clk0, 5);
+        freq = clock_get_frequency(clock_can3);
     } else {
         /* Invalid CAN instance */
     }
     return freq;
-}
-
-#ifdef INIT_EXT_RAM_FOR_DATA
-/*
- * this function will be called during startup to initialize external memory for data use
- */
-void _init_ext_ram(void)
-{
-    uint32_t femc_clk_in_hz;
-    board_init_sdram_pins();
-    femc_clk_in_hz = board_init_femc_clock();
-
-    femc_config_t config = {0};
-    femc_sdram_config_t sdram_config = {0};
-
-    femc_default_config(HPM_FEMC, &config);
-    config.dqs = FEMC_DQS_INTERNAL;
-    femc_init(HPM_FEMC, &config);
-
-    sdram_config.bank_num = FEMC_SDRAM_BANK_NUM_4;
-    sdram_config.prescaler = 0x3;
-    sdram_config.burst_len_in_byte = 8;
-    sdram_config.auto_refresh_count_in_one_burst = 1;
-    sdram_config.col_addr_bits = FEMC_SDRAM_COLUMN_ADDR_9_BITS;
-    sdram_config.cas_latency = FEMC_SDRAM_CAS_LATENCY_3;
-
-    sdram_config.precharge_to_act_in_ns = 18;   /* Trp */
-    sdram_config.act_to_rw_in_ns = 18;          /* Trcd */
-    sdram_config.refresh_recover_in_ns = 70;     /* Trfc/Trc */
-    sdram_config.write_recover_in_ns = 12;      /* Twr/Tdpl */
-    sdram_config.cke_off_in_ns = 42;             /* Trcd */
-    sdram_config.act_to_precharge_in_ns = 42;   /* Tras */
-
-    sdram_config.self_refresh_recover_in_ns = 66;   /* Txsr */
-    sdram_config.refresh_to_refresh_in_ns = 66;     /* Trfc/Trc */
-    sdram_config.act_to_act_in_ns = 12;             /* Trrd */
-    sdram_config.idle_timeout_in_ns = 6;
-    sdram_config.cs_mux_pin = FEMC_IO_MUX_NOT_USED;
-
-    sdram_config.cs = BOARD_SDRAM_CS;
-    sdram_config.base_address = BOARD_SDRAM_ADDRESS;
-    sdram_config.size_in_byte = BOARD_SDRAM_SIZE;
-    sdram_config.port_size = BOARD_SDRAM_PORT_SIZE;
-    sdram_config.refresh_count = BOARD_SDRAM_REFRESH_COUNT;
-    sdram_config.refresh_in_ms = BOARD_SDRAM_REFRESH_IN_MS;
-    sdram_config.data_width_in_byte = BOARD_SDRAM_DATA_WIDTH_IN_BYTE;
-    sdram_config.delay_cell_value = 29;
-
-    femc_config_sdram(HPM_FEMC, femc_clk_in_hz, &sdram_config);
-}
-#endif
-
-void board_init_sd_pins(SDXC_Type *ptr)
-{
-    init_sdxc_pins(ptr, false);
-}
-
-uint32_t board_sd_configure_clock(SDXC_Type *ptr, uint32_t freq)
-{
-    uint32_t actual_freq = 0;
-    do {
-        if (ptr != HPM_SDXC0) {
-            break;
-        }
-        clock_name_t sdxc_clk = clock_sdxc0;
-        sdxc_enable_sd_clock(ptr, false);
-        /* Configure the SDXC Frequency to 200MHz */
-        clock_set_source_divider(sdxc_clk, clk_src_pll0_clk0, 2);
-        sdxc_enable_freq_selection(ptr);
-
-        /* Configure the clock below 400KHz for the identification state */
-        if (freq <= 400000UL) {
-            sdxc_set_clock_divider(ptr, 600);
-        }
-            /* configure the clock to 24MHz for the SDR12/Default speed */
-        else if (freq <= 25000000UL) {
-            sdxc_set_clock_divider(ptr, 8);
-        }
-            /* Configure the clock to 50MHz for the SDR25/High speed/50MHz DDR/50MHz SDR */
-        else if (freq <= 50000000UL) {
-            sdxc_set_clock_divider(ptr, 4);
-        }
-            /* Configure the clock to 100MHz for the SDR50 */
-        else if (freq <= 100000000UL) {
-            sdxc_set_clock_divider(ptr, 2);
-        }
-            /* Configure the clock to 166MHz for SDR104/HS200/HS400  */
-        else if (freq <= 208000000UL) {
-            sdxc_set_clock_divider(ptr, 1);
-        }
-            /* For other unsupported clock ranges, configure the clock to 24MHz */
-        else {
-            sdxc_set_clock_divider(ptr, 8);
-        }
-        sdxc_enable_sd_clock(ptr, true);
-        actual_freq = clock_get_frequency(sdxc_clk) / sdxc_get_clock_divider(ptr);
-    } while (false);
-
-    return actual_freq;
-}
-
-void board_sd_switch_pins_to_1v8(SDXC_Type *ptr)
-{
-    /* This feature is not supported */
-}
-
-bool board_sd_detect_card(SDXC_Type *ptr)
-{
-    return sdxc_is_card_inserted(ptr);
-}
-
-hpm_stat_t board_init_enet_ptp_clock(ENET_Type *ptr)
-{
-    /* set clock source */
-    if (ptr == HPM_ENET0) {
-        /* make sure pll0_clk0 output clock at 400MHz to get a clock at 100MHz for ent0 ptp clock */
-        clock_set_source_divider(clock_ptp0, clk_src_pll0_clk0, 4); /* 100MHz */
-    } else {
-        return status_invalid_argument;
-    }
-
-    return status_success;
-}
-
-hpm_stat_t board_init_enet_rmii_reference_clock(ENET_Type *ptr, bool internal)
-{
-    /* Configure Enet clock to output reference clock */
-    if (ptr == HPM_ENET0) {
-        if (internal) {
-            /* set pll output frequency at 1GHz */
-            if (pllctlv2_init_pll_with_freq(HPM_PLLCTLV2, PLLCTLV2_PLL_PLL2, 1000000000UL) == status_success) {
-                /* set pll2_clk1 output frequence at 250MHz from PLL2 divided by 4 (1 + 15 / 5) */
-                pllctlv2_set_postdiv(HPM_PLLCTLV2, PLLCTLV2_PLL_PLL2, 1, 15);
-                /* set eth clock frequency at 50MHz for enet0 */
-                clock_set_source_divider(clock_eth0, clk_src_pll2_clk1, 5);
-            } else {
-                return status_fail;
-            }
-        }
-    } else {
-        return status_invalid_argument;
-    }
-
-    enet_rmii_enable_clock(ptr, internal);
-
-    return status_success;
 }
 
 void board_init_adc16_pins(void)
@@ -688,21 +589,51 @@ void board_init_adc16_pins(void)
     init_adc_pins();
 }
 
-hpm_stat_t board_init_enet_pins(ENET_Type *ptr)
+void board_init_rgb_pwm_pins(void)
 {
-    init_enet_pins(ptr);
-
-    return status_success;
+    init_led_pins_as_pwm();
 }
 
-hpm_stat_t board_reset_enet_phy(ENET_Type *ptr)
+void board_disable_output_rgb_led(uint8_t color)
 {
-    return status_success;
+    switch (color) {
+    case BOARD_RGB_RED:
+        pwm_disable_output(BOARD_RED_PWM, BOARD_RED_PWM_OUT);
+        break;
+    case BOARD_RGB_GREEN:
+        pwm_disable_output(BOARD_GREEN_PWM, BOARD_GREEN_PWM_OUT);
+        break;
+    case BOARD_RGB_BLUE:
+        pwm_disable_output(BOARD_BLUE_PWM, BOARD_BLUE_PWM_OUT);
+        break;
+    default:
+        while (1) {
+            ;
+        }
+    }
 }
 
+void board_enable_output_rgb_led(uint8_t color)
+{
+    switch (color) {
+    case BOARD_RGB_RED:
+        pwm_enable_output(BOARD_RED_PWM, BOARD_RED_PWM_OUT);
+        break;
+    case BOARD_RGB_GREEN:
+        pwm_enable_output(BOARD_GREEN_PWM, BOARD_GREEN_PWM_OUT);
+        break;
+    case BOARD_RGB_BLUE:
+        pwm_enable_output(BOARD_BLUE_PWM, BOARD_BLUE_PWM_OUT);
+        break;
+    default:
+        while (1) {
+            ;
+        }
+    }
+}
 void board_init_dac_pins(DAC_Type *ptr)
 {
-   init_dac_pins(ptr);
+    init_dac_pins(ptr);
 }
 
 uint32_t board_init_uart_clock(UART_Type *ptr)
@@ -724,36 +655,4 @@ uint32_t board_init_uart_clock(UART_Type *ptr)
         /* Not supported */
     }
     return freq;
-}
-
-uint8_t board_get_enet_dma_pbl(ENET_Type *ptr)
-{
-    return enet_pbl_16;
-}
-
-hpm_stat_t board_enable_enet_irq(ENET_Type *ptr)
-{
-    if (ptr == HPM_ENET0) {
-        intc_m_enable_irq(IRQn_ENET0);
-    } else {
-        return status_invalid_argument;
-    }
-
-    return status_success;
-}
-
-hpm_stat_t board_disable_enet_irq(ENET_Type *ptr)
-{
-    if (ptr == HPM_ENET0) {
-        intc_m_disable_irq(IRQn_ENET0);
-    }  else {
-        return status_invalid_argument;
-    }
-
-    return status_success;
-}
-
-void board_init_enet_pps_pins(ENET_Type *ptr)
-{
-    init_enet_pps_pins();
 }

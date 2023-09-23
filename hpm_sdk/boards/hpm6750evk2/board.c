@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 HPMicro
+ * Copyright (c) 2022-2023 HPMicro
  * SPDX-License-Identifier: BSD-3-Clause
  *
  */
@@ -24,7 +24,6 @@
 #include "hpm_sdk_version.h"
 
 static board_timer_cb timer_cb;
-static bool invert_led_level;
 
 /**
  * @brief FLASH configuration option definitions:
@@ -80,7 +79,7 @@ static bool invert_led_level;
  *      0 - 4MB / 1 - 8MB / 2 - 16MB
  */
 #if defined(FLASH_XIP) && FLASH_XIP
-__attribute__ ((section(".nor_cfg_option"))) const uint32_t option[4] = {0xfcf90001, 0x00000007, 0x1000, 0x0};
+__attribute__ ((section(".nor_cfg_option"))) const uint32_t option[4] = {0xfcf90001, 0x00000007, 0x0, 0x0};
 #endif
 
 #if defined(FLASH_UF2) && FLASH_UF2
@@ -124,22 +123,22 @@ void board_print_clock_freq(void)
     printf("==============================\n");
     printf(" %s clock summary\n", BOARD_NAME);
     printf("==============================\n");
-    printf("cpu0:\t\t %luHz\n", clock_get_frequency(clock_cpu0));
-    printf("cpu1:\t\t %luHz\n", clock_get_frequency(clock_cpu1));
-    printf("axi0:\t\t %luHz\n", clock_get_frequency(clock_axi0));
-    printf("axi1:\t\t %luHz\n", clock_get_frequency(clock_axi1));
-    printf("axi2:\t\t %luHz\n", clock_get_frequency(clock_axi2));
-    printf("ahb:\t\t %luHz\n", clock_get_frequency(clock_ahb));
-    printf("mchtmr0:\t %luHz\n", clock_get_frequency(clock_mchtmr0));
-    printf("mchtmr1:\t %luHz\n", clock_get_frequency(clock_mchtmr1));
-    printf("xpi0:\t\t %luHz\n", clock_get_frequency(clock_xpi0));
-    printf("xpi1:\t\t %luHz\n", clock_get_frequency(clock_xpi1));
-    printf("femc:\t\t %luHz\n", clock_get_frequency(clock_femc));
-    printf("display:\t %luHz\n", clock_get_frequency(clock_display));
-    printf("cam0:\t\t %luHz\n", clock_get_frequency(clock_camera0));
-    printf("cam1:\t\t %luHz\n", clock_get_frequency(clock_camera1));
-    printf("jpeg:\t\t %luHz\n", clock_get_frequency(clock_jpeg));
-    printf("pdma:\t\t %luHz\n", clock_get_frequency(clock_pdma));
+    printf("cpu0:\t\t %dHz\n", clock_get_frequency(clock_cpu0));
+    printf("cpu1:\t\t %dHz\n", clock_get_frequency(clock_cpu1));
+    printf("axi0:\t\t %dHz\n", clock_get_frequency(clock_axi0));
+    printf("axi1:\t\t %dHz\n", clock_get_frequency(clock_axi1));
+    printf("axi2:\t\t %dHz\n", clock_get_frequency(clock_axi2));
+    printf("ahb:\t\t %dHz\n", clock_get_frequency(clock_ahb));
+    printf("mchtmr0:\t %dHz\n", clock_get_frequency(clock_mchtmr0));
+    printf("mchtmr1:\t %dHz\n", clock_get_frequency(clock_mchtmr1));
+    printf("xpi0:\t\t %dHz\n", clock_get_frequency(clock_xpi0));
+    printf("xpi1:\t\t %dHz\n", clock_get_frequency(clock_xpi1));
+    printf("femc:\t\t %dHz\n", clock_get_frequency(clock_femc));
+    printf("display:\t %dHz\n", clock_get_frequency(clock_display));
+    printf("cam0:\t\t %dHz\n", clock_get_frequency(clock_camera0));
+    printf("cam1:\t\t %dHz\n", clock_get_frequency(clock_camera1));
+    printf("jpeg:\t\t %dHz\n", clock_get_frequency(clock_jpeg));
+    printf("pdma:\t\t %dHz\n", clock_get_frequency(clock_pdma));
     printf("==============================\n");
 }
 
@@ -171,10 +170,7 @@ $$ |  $$ |$$ |      $$ | \\_/ $$ |$$ |\\$$$$$$$\\ $$ |      \\$$$$$$  |\n\
 
 static void board_turnoff_rgb_led(void)
 {
-    uint8_t p11_stat;
-    uint8_t p12_stat;
-    uint8_t p13_stat;
-    uint32_t pad_ctl = IOC_PAD_PAD_CTL_PE_SET(1) | IOC_PAD_PAD_CTL_PS_SET(1);
+    uint32_t pad_ctl = IOC_PAD_PAD_CTL_PE_SET(1) | IOC_PAD_PAD_CTL_PE_SET(BOARD_LED_OFF_LEVEL);
     HPM_IOC->PAD[IOC_PAD_PB11].FUNC_CTL = IOC_PB11_FUNC_CTL_GPIO_B_11;
     HPM_IOC->PAD[IOC_PAD_PB12].FUNC_CTL = IOC_PB12_FUNC_CTL_GPIO_B_12;
     HPM_IOC->PAD[IOC_PAD_PB13].FUNC_CTL = IOC_PB13_FUNC_CTL_GPIO_B_13;
@@ -182,23 +178,6 @@ static void board_turnoff_rgb_led(void)
     HPM_IOC->PAD[IOC_PAD_PB11].PAD_CTL = pad_ctl;
     HPM_IOC->PAD[IOC_PAD_PB12].PAD_CTL = pad_ctl;
     HPM_IOC->PAD[IOC_PAD_PB13].PAD_CTL = pad_ctl;
-
-    p11_stat = gpio_read_pin(BOARD_G_GPIO_CTRL, GPIO_DI_GPIOB, 11);
-    p12_stat = gpio_read_pin(BOARD_G_GPIO_CTRL, GPIO_DI_GPIOB, 12);
-    p13_stat = gpio_read_pin(BOARD_G_GPIO_CTRL, GPIO_DI_GPIOB, 13);
-
-    invert_led_level = false;
-    /*
-     * check led gpio level
-     */
-    if ((p11_stat & p12_stat & p13_stat) == 0) {
-        /* Rev B */
-        invert_led_level = true;
-        pad_ctl = IOC_PAD_PAD_CTL_PE_SET(1) | IOC_PAD_PAD_CTL_PS_SET(0);
-        HPM_IOC->PAD[IOC_PAD_PB11].PAD_CTL = pad_ctl;
-        HPM_IOC->PAD[IOC_PAD_PB12].PAD_CTL = pad_ctl;
-        HPM_IOC->PAD[IOC_PAD_PB13].PAD_CTL = pad_ctl;
-    }
 }
 
 void board_ungate_mchtmr_at_lp_mode(void)
@@ -240,12 +219,15 @@ void board_power_cycle_lcd(void)
     gpio_set_pin_output(BOARD_LCD_BACKLIGHT_GPIO_BASE, BOARD_LCD_BACKLIGHT_GPIO_INDEX, BOARD_LCD_BACKLIGHT_GPIO_PIN);
     gpio_write_pin(BOARD_LCD_BACKLIGHT_GPIO_BASE, BOARD_LCD_BACKLIGHT_GPIO_INDEX, BOARD_LCD_BACKLIGHT_GPIO_PIN, 0);
 
+    gpio_set_pin_output(BOARD_LCD_POWER_EN_GPIO_BASE, BOARD_LCD_POWER_EN_GPIO_INDEX, BOARD_LCD_POWER_EN_GPIO_PIN);
+    gpio_write_pin(BOARD_LCD_POWER_EN_GPIO_BASE, BOARD_LCD_POWER_EN_GPIO_INDEX, BOARD_LCD_POWER_EN_GPIO_PIN, 0);
+    gpio_write_pin(BOARD_LCD_POWER_EN_GPIO_BASE, BOARD_LCD_POWER_EN_GPIO_INDEX, BOARD_LCD_POWER_EN_GPIO_PIN, 1);
     board_delay_ms(150);
     /* power recycle */
-    gpio_set_pin_output(BOARD_LCD_POWER_GPIO_BASE, BOARD_LCD_POWER_GPIO_INDEX, BOARD_LCD_POWER_GPIO_PIN);
-    gpio_write_pin(BOARD_LCD_POWER_GPIO_BASE, BOARD_LCD_POWER_GPIO_INDEX, BOARD_LCD_POWER_GPIO_PIN, 0);
+    gpio_set_pin_output(BOARD_LCD_RESET_GPIO_BASE, BOARD_LCD_RESET_GPIO_INDEX, BOARD_LCD_RESET_GPIO_PIN);
+    gpio_write_pin(BOARD_LCD_RESET_GPIO_BASE, BOARD_LCD_RESET_GPIO_INDEX, BOARD_LCD_RESET_GPIO_PIN, 0);
     board_delay_ms(150);
-    gpio_write_pin(BOARD_LCD_POWER_GPIO_BASE, BOARD_LCD_POWER_GPIO_INDEX, BOARD_LCD_POWER_GPIO_PIN, 1);
+    gpio_write_pin(BOARD_LCD_RESET_GPIO_BASE, BOARD_LCD_RESET_GPIO_INDEX, BOARD_LCD_RESET_GPIO_PIN, 1);
     board_delay_ms(150);
 
     /* turn on backlight */
@@ -374,7 +356,7 @@ void board_init_i2c(I2C_Type *ptr)
     freq = clock_get_frequency(BOARD_CAP_I2C_CLK_NAME);
     stat = i2c_init_master(BOARD_CAP_I2C_BASE, freq, &config);
     if (stat != status_success) {
-        printf("failed to initialize i2c 0x%lx\n", (uint32_t)BOARD_CAP_I2C_BASE);
+        printf("failed to initialize i2c 0x%x\n", (uint32_t)BOARD_CAP_I2C_BASE);
         while (1) {
         }
     }
@@ -424,22 +406,18 @@ void board_init_cap_touch(void)
     gpio_set_pin_output_with_initial(BOARD_CAP_INTR_GPIO, BOARD_CAP_INTR_GPIO_INDEX, BOARD_CAP_INTR_GPIO_PIN, 0);
 
     board_delay_ms(1);
-    gpio_write_pin(BOARD_CAP_INTR_GPIO, BOARD_CAP_INTR_GPIO_INDEX, BOARD_CAP_INTR_GPIO_PIN, 1);
-    board_delay_ms(10);
+    gpio_write_pin(BOARD_CAP_INTR_GPIO, BOARD_CAP_INTR_GPIO_INDEX, BOARD_CAP_INTR_GPIO_PIN, 0);
+    board_delay_ms(1);
     gpio_write_pin(BOARD_CAP_RST_GPIO, BOARD_CAP_RST_GPIO_INDEX, BOARD_CAP_RST_GPIO_PIN, 1);
+    board_delay_ms(6);
+    gpio_write_pin(BOARD_CAP_RST_GPIO, BOARD_CAP_INTR_GPIO_INDEX, BOARD_CAP_INTR_GPIO_PIN, 0);
 
-    gpio_set_pin_input(BOARD_CAP_INTR_GPIO, BOARD_CAP_INTR_GPIO_INDEX, BOARD_CAP_INTR_GPIO_PIN);
     board_init_i2c(BOARD_CAP_I2C_BASE);
 }
 
 void board_init_gpio_pins(void)
 {
-    uint8_t led_pin_pull_selsect;
-    HPM_IOC->PAD[IOC_PAD_PB12].FUNC_CTL = IOC_PB12_FUNC_CTL_GPIO_B_12;
-    HPM_IOC->PAD[IOC_PAD_PB12].PAD_CTL = IOC_PAD_PAD_CTL_PE_SET(1) | IOC_PAD_PAD_CTL_PS_SET(1);
-
-    led_pin_pull_selsect = gpio_read_pin(BOARD_G_GPIO_CTRL, GPIO_DI_GPIOB, 12);
-    init_gpio_pins(led_pin_pull_selsect);
+    init_gpio_pins();
 }
 
 void board_init_spi_pins(SPI_Type *ptr)
@@ -461,20 +439,12 @@ void board_write_spi_cs(uint32_t pin, uint8_t state)
 
 uint8_t board_get_led_pwm_off_level(void)
 {
-    if (invert_led_level) {
-        return BOARD_LED_ON_LEVEL;
-    } else {
-        return BOARD_LED_OFF_LEVEL;
-    }
+    return BOARD_LED_OFF_LEVEL;
 }
 
 uint8_t board_get_led_gpio_off_level(void)
 {
-    if (invert_led_level) {
-        return BOARD_LED_ON_LEVEL;
-    } else {
-        return BOARD_LED_OFF_LEVEL;
-    }
+    return BOARD_LED_OFF_LEVEL;
 }
 
 void board_init_led_pins(void)
@@ -489,7 +459,7 @@ void board_led_toggle(void)
 {
 #ifdef BOARD_LED_TOGGLE_RGB
     static uint8_t i;
-    gpio_write_port(BOARD_R_GPIO_CTRL, BOARD_R_GPIO_INDEX, invert_led_level ? ((1 << i) << BOARD_R_GPIO_PIN) : ((7 & ~(1 << i)) << BOARD_R_GPIO_PIN));
+    gpio_write_port(BOARD_R_GPIO_CTRL, BOARD_R_GPIO_INDEX, (7 & (1 << i)) << BOARD_R_GPIO_PIN);
     i++;
     i = i % 3;
 #else
@@ -714,8 +684,8 @@ uint32_t board_init_lcd_clock(void)
 {
     uint32_t freq;
     clock_add_to_group(clock_display, 0);
-    /* Configure LCDC clock to 29.7MHz */
-    clock_set_source_divider(clock_display, clock_source_pll4_clk0, 20U);
+    /* Configure LCDC clock to 59.4MHz */
+    clock_set_source_divider(clock_display, clock_source_pll4_clk0, 10U);
     freq = clock_get_frequency(clock_display);
     return freq;
 }
@@ -905,9 +875,20 @@ void _init_ext_ram(void)
 }
 #endif
 
+void board_power_on_sd(SDXC_Type *ptr)
+{
+    if (ptr == HPM_SDXC1) {
+        gpio_set_pin_output_with_initial(BOARD_APP_SDCARD_POWER_EN_GPIO_BASE, BOARD_APP_SDCARD_POWER_EN_GPIO_INDEX, BOARD_APP_SDCARD_POWER_EN_GPIO_PIN, 0);
+        board_delay_ms(10);
+        gpio_set_pin_output_with_initial(BOARD_APP_SDCARD_POWER_EN_GPIO_BASE, BOARD_APP_SDCARD_POWER_EN_GPIO_INDEX, BOARD_APP_SDCARD_POWER_EN_GPIO_PIN, 1);
+    }
+}
+
 void board_init_sd_pins(SDXC_Type *ptr)
 {
     init_sdxc_pins(ptr, false);
+
+    board_power_on_sd(ptr);
 }
 
 

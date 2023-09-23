@@ -12,7 +12,7 @@
 #endif
 
 #ifndef HPM_I2C_DRV_DEFAULT_RETRY_COUNT
-#define HPM_I2C_DRV_DEFAULT_RETRY_COUNT (5000U)
+#define HPM_I2C_DRV_DEFAULT_RETRY_COUNT (10000U)
 #endif
 
 #define period_in_100ps(freq) (10000000000UL / (freq))

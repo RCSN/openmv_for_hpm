@@ -2,15 +2,11 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 board:
-    name: hpm6300evk
-    soc: HPM6360
-    device: HPM6360xPAx
-    openocd-soc: hpm6360
+    name: hpm6200evk
+    soc: HPM6280
+    device: HPM6280xPAx
+    openocd-soc: hpm6280-dual-core
     openocd-probe: ft2232
-    on-board-ram:
-      type: sdram
-      size: 32M
-      width: 16bit
     on-board-flash:
       type: qspi-nor-flash
       size: 16M
@@ -18,15 +14,15 @@ board:
       - butn
       - rtc
       - wdg
+      - lin
+      - sdm
       - adc16
-      - sdcard
       - usb-otg
       - spi
       - uart
-      - can
+      - mcan
       - i2c
       - dual-i2c
-      - femc
       - gpio
       - gpio-led
       - gpio-key
@@ -34,18 +30,15 @@ board:
       - pwm
       - hall
       - qei
-      - ffa
       - motor-control
+      - multicore
       - tsns
       - dac
       - ptp
-      - uart_software_rx_idle
-      - uart_rx_timeout
-      - uart_software_lin
-      - sdxc
-      - drv_pllctlv2
-      - enet
-      - enet_pps_pinout
-      - enet_phy_on_board
-      - sw_gm_api
-      - hall-qei
+      - uart_hardware_rx_idle
+      - hrpwm
+      - pla
+      - pwm-rgb-led
+      - crc
+      - motor-phase-voltage
+      - bldc_smc

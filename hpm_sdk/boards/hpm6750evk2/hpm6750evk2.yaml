@@ -1,12 +1,12 @@
-# Copyright (c) 2021 HPMicro
+# Copyright (c) 2022 HPMicro
 # SPDX-License-Identifier: BSD-3-Clause
 
 board:
-    name: hpm6750evk
+    name: hpm6750evk2
     soc: HPM6750
     device: HPM6750xVMx
     openocd-soc: hpm6750-dual-core
-    openocd-probe: ft2232
+    openocd-probe: cmsis_dap
     on-board-ram:
       type: sdram
       size: 32M
@@ -41,7 +41,6 @@ board:
       - qei
       - motor-control
       - audio-codec
-      - sgtl5000
       - tflm
       - multicore
       - drv_pllctl
@@ -56,9 +55,8 @@ board:
       - adc12
       - adc16
       - adc_tempsns
-      - enet
-      - enet_pps_pinout
-      - enet_phy_on_board
       - sw_gm_api
+      - enet
+      - enet_phy_on_board
       - hall-qei
       - bldc_smc

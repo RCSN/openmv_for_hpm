@@ -21,8 +21,8 @@ void init_uart_pins(UART_Type *ptr)
         HPM_IOC->PAD[IOC_PAD_PY07].FUNC_CTL = IOC_PY07_FUNC_CTL_UART0_RXD;
         HPM_IOC->PAD[IOC_PAD_PY06].FUNC_CTL = IOC_PY06_FUNC_CTL_UART0_TXD;
         /* PY port IO needs to configure PIOC as well */
-        HPM_PIOC->PAD[IOC_PAD_PY07].FUNC_CTL = IOC_PY07_FUNC_CTL_SOC_PY_07;
-        HPM_PIOC->PAD[IOC_PAD_PY06].FUNC_CTL = IOC_PY06_FUNC_CTL_SOC_PY_06;
+        HPM_PIOC->PAD[IOC_PAD_PY07].FUNC_CTL = IOC_PY06_FUNC_CTL_SOC_PY_06;
+        HPM_PIOC->PAD[IOC_PAD_PY06].FUNC_CTL = IOC_PY07_FUNC_CTL_SOC_PY_07;
     } else if (ptr == HPM_UART2) {
         HPM_IOC->PAD[IOC_PAD_PE16].FUNC_CTL = IOC_PE16_FUNC_CTL_UART2_TXD;
         HPM_IOC->PAD[IOC_PAD_PE21].FUNC_CTL = IOC_PE21_FUNC_CTL_UART2_RXD;
@@ -90,6 +90,10 @@ void init_lcd_pins(LCDC_Type *ptr)
     HPM_IOC->PAD[IOC_PAD_PB10].FUNC_CTL = IOC_PB10_FUNC_CTL_GPIO_B_10;
     /* RST */
     HPM_IOC->PAD[IOC_PAD_PB16].FUNC_CTL = IOC_PB16_FUNC_CTL_GPIO_B_16;
+
+    HPM_IOC->PAD[IOC_PAD_PZ00].FUNC_CTL = IOC_PZ00_FUNC_CTL_GPIO_Z_00;
+    HPM_IOC->PAD[IOC_PAD_PZ00].PAD_CTL = IOC_PAD_PAD_CTL_PS_SET(1) | IOC_PAD_PAD_CTL_PE_SET(1);
+    HPM_BIOC->PAD[IOC_PAD_PZ00].FUNC_CTL = IOC_PZ00_FUNC_CTL_SOC_PZ_00;
 }
 
 void init_cap_pins(void)
@@ -258,10 +262,10 @@ void init_sram_pins(void)
     HPM_IOC->PAD[IOC_PAD_PC14].FUNC_CTL = IOC_PAD_FUNC_CTL_ALT_SELECT_SET(12);    /* #ADV */
 }
 
-void init_gpio_pins(uint8_t led_pull_select)
+void init_gpio_pins(void)
 {
     HPM_IOC->PAD[IOC_PAD_PB12].FUNC_CTL = IOC_PB12_FUNC_CTL_GPIO_B_12;
-    HPM_IOC->PAD[IOC_PAD_PB12].PAD_CTL = IOC_PAD_PAD_CTL_PE_SET(1) | IOC_PAD_PAD_CTL_PS_SET(led_pull_select);
+    HPM_IOC->PAD[IOC_PAD_PB12].PAD_CTL = IOC_PAD_PAD_CTL_PE_SET(1) | IOC_PAD_PAD_CTL_PS_SET(0);
 
 #ifdef USING_GPIO0_FOR_GPIOZ
     HPM_IOC->PAD[IOC_PAD_PZ02].FUNC_CTL = IOC_PZ02_FUNC_CTL_GPIO_Z_02;
@@ -308,11 +312,11 @@ void init_gptmr_pins(GPTMR_Type *ptr)
         HPM_IOC->PAD[IOC_PAD_PE25].FUNC_CTL = IOC_PE25_FUNC_CTL_GPTMR4_CAPT_1;
     }
     if (ptr == HPM_GPTMR5) {
-        /* TMR5 capture 2 */
+        /* TMR5 compare 2 */
         HPM_IOC->PAD[IOC_PAD_PD24].FUNC_CTL = IOC_PD24_FUNC_CTL_TRGM2_P_10;
         trgm_enable_io_output(HPM_TRGM2, 1 << 10);
 
-        /* TMR5 capture 3 */
+        /* TMR5 compare 3 */
         HPM_IOC->PAD[IOC_PAD_PD23].FUNC_CTL = IOC_PD23_FUNC_CTL_TRGM2_P_11;
         trgm_enable_io_output(HPM_TRGM2, 1 << 11);
 
@@ -530,6 +534,11 @@ void init_sdxc_pins(SDXC_Type *ptr, bool use_1v8)
 
     if (ptr == HPM_SDXC0) {
     } else if (ptr == HPM_SDXC1) {
+
+        /* Power */
+        HPM_IOC->PAD[IOC_PAD_PC20].FUNC_CTL = IOC_PC20_FUNC_CTL_GPIO_C_20;
+        HPM_IOC->PAD[IOC_PAD_PC20].PAD_CTL = IOC_PAD_PAD_CTL_DS_SET(7) | IOC_PAD_PAD_CTL_PE_SET(1) | IOC_PAD_PAD_CTL_PS_SET(1);
+
         /* CLK */
         HPM_IOC->PAD[IOC_PAD_PD22].FUNC_CTL = func_ctl;
         HPM_IOC->PAD[IOC_PAD_PD22].PAD_CTL = pad_ctl;

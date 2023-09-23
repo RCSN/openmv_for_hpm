@@ -23,8 +23,7 @@
 #define ADC12_IS_SIGNAL_TYPE_INVALID(TYPE)  (TYPE > (uint32_t)adc12_sample_signal_count)
 
 /** @brief Define ADC12 validity check for the channel number */
-#define ADC12_IS_CHANNEL_INVALID(PTR, CH) ((CH > ADC12_SOC_MAX_CH_NUM && CH != ADC12_SOC_TEMP_CH_NUM) || \
-                                           ((uint32_t)PTR == ADC12_SOC_INVALID_TEMP_BASE && CH == ADC12_SOC_TEMP_CH_NUM))
+#define ADC12_IS_CHANNEL_INVALID(CH) (CH > ADC12_SOC_MAX_CH_NUM)
 
 /** @brief Define ADC12 validity check for the trigger number */
 #define ADC12_IS_TRIG_CH_INVLAID(CH) (CH > ADC12_SOC_MAX_TRIG_CH_NUM)

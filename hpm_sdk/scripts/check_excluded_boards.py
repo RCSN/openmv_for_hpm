@@ -1,18 +1,18 @@
-# Copyright (c) 2023 HPMicro
+# Copyright (c) 2022 HPMicro
 # SPDX-License-Identifier: BSD-3-Clause
 
 import sys
 import yaml
 
-EXCLUDED_TARGETS="excluded_targets"
+EXCLUDED_boards="excluded_boards"
 
-def get_excluded_targets(input_yml):
+def get_excluded_boards(input_yml):
     excluded = []
     with open(input_yml, "r") as stream:
         try:
             info = yaml.safe_load(stream)
-            if not info is None and EXCLUDED_TARGETS in info.keys():
-                for t in info[EXCLUDED_TARGETS]:
+            if not info is None and EXCLUDED_boards in info.keys():
+                for t in info[EXCLUDED_boards]:
                     excluded.append(t.strip().lower())
         except yaml.YAMLError as e:
             pass
@@ -22,10 +22,10 @@ def get_excluded_targets(input_yml):
 
     return excluded
 
-def check_excluded_targets(input_yml, build_type):
-    exc_tar = get_excluded_targets(input_yml)
+def check_excluded_boards(input_yml, board_type):
+    exc_tar = get_excluded_boards(input_yml)
     if exc_tar is not None:
-        if build_type in exc_tar:
+        if board_type in exc_tar:
             sys.exit(1)
         else:
             sys.exit(0)
@@ -33,4 +33,4 @@ def check_excluded_targets(input_yml, build_type):
         sys.exit(0)
 
 if __name__ == "__main__":
-    get_excluded_targets(sys.argv[1])
+    get_excluded_boards(sys.argv[1])

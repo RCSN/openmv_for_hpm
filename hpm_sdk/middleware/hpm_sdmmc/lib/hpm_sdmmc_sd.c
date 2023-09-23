@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - 2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -302,8 +302,10 @@ static hpm_stat_t sd_all_send_cid(sd_card_t *card)
     if (status != status_success) {
         return status;
     }
-    card->cid.cid_words[0] = cmd->response[0];
-    card->cid.cid_words[1] = cmd->response[1];
+
+    for (uint32_t i = 0; i < 3; i++) {
+        card->cid.cid_words[i] = cmd->response[i];
+    }
 
     return status;
 }
@@ -328,7 +330,7 @@ static hpm_stat_t sd_send_rca(sd_card_t *card)
 static hpm_stat_t sd_error_recovery(sd_card_t *card)
 {
     sdmmchost_cmd_t *cmd = &card->host->cmd;
-    cmd->cmd_index = sdmmc_cmd_top_transmission;
+    cmd->cmd_index = sdmmc_cmd_stop_transmission;
     cmd->cmd_type = sdxc_cmd_type_abort_cmd;
     cmd->resp_type = sdmmc_resp_r1b;
 
@@ -371,12 +373,12 @@ static hpm_stat_t sd_probe_bus_voltage(sd_card_t *card)
     hpm_stat_t status = status_invalid_argument;
 
     do {
-        status = sdmmc_go_idle_state(card->host);
+        status = sdmmc_go_idle_state(card->host, 0);
         HPM_BREAK_IF(status != status_success);
 
         status = sd_send_if_cond(card);
         if (status == status_sdmmc_card_not_support) {
-            status = sdmmc_go_idle_state(card->host);
+            status = sdmmc_go_idle_state(card->host, 0);
             HPM_BREAK_IF(status != status_success);
         }
         sd_ocr_t ocr = {.ocr_word = 0};
@@ -461,7 +463,7 @@ static hpm_stat_t sd_send_scr(sd_card_t *card)
         return status;
     }
 
-    // Get SCR value
+    /* Get SCR value */
     sd_scr_t scr;
     scr.scr_word[0] = data->rx_data[0];
     scr.scr_word[1] = data->rx_data[1];
@@ -546,7 +548,7 @@ static hpm_stat_t sd_set_bus_timing(sd_card_t *card)
         return status;
     }
 
-    switch(card->current_timing) {
+    switch (card->current_timing) {
     case sd_timing_sdr12_default:
         sdmmchost_set_speed_mode(card->host, sdmmc_sd_speed_sdr12);
         break;
@@ -564,7 +566,7 @@ static hpm_stat_t sd_set_bus_timing(sd_card_t *card)
         break;
     }
 
-    sdmmchost_set_card_clock(card->host, clock_option);
+    sdmmchost_set_card_clock(card->host, clock_option, true);
     return status;
 }
 
@@ -600,7 +602,7 @@ static void sd_decode_status(sd_card_t *card, uint32_t *raw_status)
     if (sd_raw_status->au_size < 0xB) {
         card->status.au_size = (0x4000UL << sd_raw_status->au_size);
     } else {
-        switch(sd_raw_status->au_size) {
+        switch (sd_raw_status->au_size) {
         case 0xB:
             card->status.au_size = SIZE_1MB * 12;
             break;
@@ -714,11 +716,11 @@ hpm_stat_t sd_card_init(sd_card_t *card)
         HPM_BREAK_IF(status != status_success);
 
         sdmmchost_set_card_bus_width(card->host, sdxc_bus_width_1bit);
-        sdmmchost_set_card_clock(card->host, SDMMC_CLOCK_400KHZ);
+        sdmmchost_set_card_clock(card->host, SDMMC_CLOCK_400KHZ, true);
         status = sd_probe_bus_voltage(card);
         HPM_BREAK_IF(status != status_success);
 
-        sdmmchost_set_card_clock(card->host, SD_CLOCK_25MHZ);
+        sdmmchost_set_card_clock(card->host, SD_CLOCK_25MHZ, true);
 
         /* Send CMD2 */
         status = sd_all_send_cid(card);
@@ -996,19 +998,19 @@ hpm_stat_t sd_erase_blocks(sd_card_t *card, uint32_t start_block, uint32_t block
         sdmmchost_cmd_t *cmd = &card->host->cmd;
         memset(cmd, 0, sizeof(*cmd));
         uint32_t erase_timeout = sd_calculate_erase_timeout(card, start_block, block_count);
-        // Send erase start
+        /* Send erase start */
         cmd->cmd_index = sd_cmd_erase_start;
         cmd->cmd_argument = start_block;
         cmd->resp_type = sdmmc_resp_r1;
         status = sd_send_cmd(card, cmd);
         HPM_BREAK_IF(status != status_success);
-        // Send Erase end
+        /* Send Erase end */
         cmd->cmd_index = sd_cmd_erase_end;
         cmd->cmd_argument = start_block + block_count - 1U;
         status = sd_send_cmd(card, cmd);
         HPM_BREAK_IF(status != status_success);
 
-        // Send erase command
+        /* Send erase command */
         cmd->cmd_index = sdmmc_cmd_erase;
         cmd->cmd_argument = 0xFF;
         cmd->resp_type = sdmmc_resp_r1b;
@@ -1016,7 +1018,7 @@ hpm_stat_t sd_erase_blocks(sd_card_t *card, uint32_t start_block, uint32_t block
         status = sd_send_cmd(card, cmd);
         HPM_BREAK_IF(status != status_success);
 
-        // Wait until erase completed.
+        /* Wait until erase completed. */
         status = sd_polling_card_status_busy(card, erase_timeout);
 
     } while (false);

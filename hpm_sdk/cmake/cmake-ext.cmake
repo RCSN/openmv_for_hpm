@@ -1,5 +1,8 @@
-# Copyright 2021 hpmicro
+# Copyright (c) 2021-2022 HPMicro
 # SPDX-License-Identifier: BSD-3-Clause
+
+
+cmake_policy(SET CMP0079 NEW)
 
 function(sdk_src)
     foreach(file ${ARGN})
@@ -11,7 +14,7 @@ function(sdk_src)
         else()
             set(path ${CMAKE_CURRENT_SOURCE_DIR}/${file})
         endif()
-        target_sources(${HPM_SDK_LIB} PUBLIC ${path})
+        target_sources(${HPM_SDK_LIB} PRIVATE ${path})
     endforeach()
 endfunction()
 
@@ -64,10 +67,22 @@ function(sdk_compile_definitions)
     endforeach()
 endfunction()
 
+function(sdk_compile_definitions_ifdef feature)
+    if((${feature}) AND (NOT ${${feature}} EQUAL 0))
+        sdk_compile_definitions(${ARGN})
+    endif()
+endfunction()
+
 function(sdk_link_libraries)
     foreach(lib ${ARGN})
         target_link_libraries(${HPM_SDK_LIB_ITF} INTERFACE ${lib})
     endforeach()
+endfunction()
+
+function(sdk_link_libraries_ifdef feature)
+    if((${feature}) AND (NOT ${${feature}} EQUAL 0))
+        sdk_link_libraries(${ARGN})
+    endif()
 endfunction()
 
 function(sdk_ld_options)
@@ -76,60 +91,47 @@ function(sdk_ld_options)
     endforeach()
 endfunction()
 
-function(get_openocd_probe_name_of_board board openocd-probe)
-    execute_process(
-        COMMAND
-        ${PYTHON_EXECUTABLE}
-        ${HPM_SDK_BASE}/scripts/get_board_info.py
-        ${HPM_SDK_BASE}/boards/${board}/${board}.yaml
-        openocd-probe
-        RESULT_VARIABLE result
-        OUTPUT_VARIABLE openocd_probe
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-        )
-    set(${openocd-probe} ${openocd_probe} PARENT_SCOPE)
+function(sdk_ld_options_ifdef feature)
+    if((${feature}) AND (NOT ${${feature}} EQUAL 0))
+        sdk_ld_options(${ARGN})
+    endif()
 endfunction()
 
-function(get_openocd_soc_name_of_board board openocd-soc)
+function(get_board_info board_yaml info_type info_value)
     execute_process(
         COMMAND
         ${PYTHON_EXECUTABLE}
         ${HPM_SDK_BASE}/scripts/get_board_info.py
-        ${HPM_SDK_BASE}/boards/${board}/${board}.yaml
-        openocd-soc
+        ${board_yaml}
+        ${info_type}
         RESULT_VARIABLE result
-        OUTPUT_VARIABLE openocd_soc
+        OUTPUT_VARIABLE out
         OUTPUT_STRIP_TRAILING_WHITESPACE
         )
-    set(${openocd-soc} ${openocd_soc} PARENT_SCOPE)
+    if(${out} STREQUAL "not found")
+        set(out "0")
+    endif()
+    set(${info_value} ${out} PARENT_SCOPE)
 endfunction()
 
-function(get_soc_name_of_board board soc)
-    execute_process(
-        COMMAND
-        ${PYTHON_EXECUTABLE}
-        ${HPM_SDK_BASE}/scripts/get_board_info.py
-        ${HPM_SDK_BASE}/boards/${board}/${board}.yaml
-        soc
-        RESULT_VARIABLE result
-        OUTPUT_VARIABLE soc_name
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-        )
-    set(${soc} ${soc_name} PARENT_SCOPE)
+function(get_openocd_probe_name_of_board board_yaml out)
+    get_board_info(${board_yaml} openocd-probe r)
+    set(${out} ${r} PARENT_SCOPE)
 endfunction()
 
-function(get_device_name_of_board board device)
-    execute_process(
-        COMMAND
-        ${PYTHON_EXECUTABLE}
-        ${HPM_SDK_BASE}/scripts/get_board_info.py
-        ${HPM_SDK_BASE}/boards/${board}/${board}.yaml
-        device
-        RESULT_VARIABLE result
-        OUTPUT_VARIABLE device_name
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-        )
-    set(${device} ${device_name} PARENT_SCOPE)
+function(get_openocd_soc_name_of_board board_yaml out)
+    get_board_info(${board_yaml} openocd-soc r)
+    set(${out} ${r} PARENT_SCOPE)
+endfunction()
+
+function(get_soc_name_of_board board_yaml out)
+    get_board_info(${board_yaml} soc r)
+    set(${out} ${r} PARENT_SCOPE)
+endfunction()
+
+function(get_device_name_of_board board_yaml out)
+    get_board_info(${board_yaml} device r)
+    set(${out} ${r} PARENT_SCOPE)
 endfunction()
 
 function(get_compiler_version compiler version_text compiler_version)
@@ -173,8 +175,20 @@ function(sdk_inc_ifdef feature)
     endif()
 endfunction()
 
+function(sdk_inc_ifndef feature)
+    if((NOT DEFINED ${feature}) OR (${feature} EQUAL 0))
+        sdk_inc(${ARGN})
+    endif()
+endfunction()
+
 function(sdk_src_ifdef feature)
     if((${feature}) AND (NOT ${${feature}} EQUAL 0))
+        sdk_src(${ARGN})
+    endif()
+endfunction()
+
+function(sdk_src_ifndef feature)
+    if((NOT DEFINED ${feature}) OR (${feature} EQUAL 0))
         sdk_src(${ARGN})
     endif()
 endfunction()
@@ -204,16 +218,16 @@ function(sdk_app_src)
         else()
             set(path ${CMAKE_CURRENT_SOURCE_DIR}/${file})
         endif()
-        target_sources(app PUBLIC ${path})
+        target_sources(app PRIVATE ${path})
     endforeach()
 endfunction()
 
-function(check_board_capability board app_yaml result)
+function(check_board_capability board_yaml app_yaml result)
     execute_process(
         COMMAND
         ${PYTHON_EXECUTABLE}
         ${HPM_SDK_BASE}/scripts/check_board_cap.py
-        ${HPM_SDK_BASE}/boards/${board}/${board}.yaml
+        ${board_yaml}
         ${app_yaml}
         RESULT_VARIABLE r
         OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -221,32 +235,14 @@ function(check_board_capability board app_yaml result)
     set(${result} ${r} PARENT_SCOPE)
 endfunction()
 
-function(get_flash_size_of_board board size)
-    execute_process(
-        COMMAND
-        ${PYTHON_EXECUTABLE}
-        ${HPM_SDK_BASE}/scripts/get_board_info.py
-        ${HPM_SDK_BASE}/boards/${board}/${board}.yaml
-        flash_size
-        RESULT_VARIABLE result
-        OUTPUT_VARIABLE sz
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-        )
-    set(${size} ${sz} PARENT_SCOPE)
+function(get_flash_size_of_board board_yaml out)
+    get_board_info(${board_yaml} flash_size r)
+    set(${out} ${r} PARENT_SCOPE)
 endfunction()
 
-function(get_extram_size_of_board board size)
-    execute_process(
-        COMMAND
-        ${PYTHON_EXECUTABLE}
-        ${HPM_SDK_BASE}/scripts/get_board_info.py
-        ${HPM_SDK_BASE}/boards/${board}/${board}.yaml
-        extram_size
-        RESULT_VARIABLE result
-        OUTPUT_VARIABLE sz
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-        )
-    set(${size} ${sz} PARENT_SCOPE)
+function(get_extram_size_of_board board_yaml out)
+    get_board_info(${board_yaml} extram_size r)
+    set(${out} ${r} PARENT_SCOPE)
 endfunction()
 
 function(get_ses_debug_auto_start_gdb_server app_yaml start)
@@ -359,28 +355,48 @@ function(sdk_raise_fatal_error_if_valid_at_least_one)
     message(FATAL_ERROR "ERROR: at least one of ${ARGN} needs to set")
 endfunction()
 
-add_library(hpm_sdk_nds_lib_itf INTERFACE)
-
+# NDSGCC sections
 function(sdk_nds_compile_options)
     foreach(opt ${ARGN})
-        target_compile_options(hpm_sdk_nds_lib_itf INTERFACE ${opt})
+        target_compile_options(${HPM_SDK_NDSGCC_LIB_ITF} INTERFACE ${opt})
     endforeach()
 endfunction()
 
 function(sdk_nds_compile_definitions)
     foreach(def ${ARGN})
-        target_compile_definitions(hpm_sdk_nds_lib_itf INTERFACE ${def})
+        target_compile_definitions(${HPM_SDK_NDSGCC_LIB_ITF} INTERFACE ${def})
     endforeach()
 endfunction()
 
 function(sdk_nds_link_libraries)
     foreach(lib ${ARGN})
-        target_link_libraries(hpm_sdk_nds_lib_itf INTERFACE ${lib})
+        target_link_libraries(${HPM_SDK_NDSGCC_LIB_ITF} INTERFACE ${lib})
     endforeach()
 endfunction()
 
 function(sdk_nds_ld_options)
     foreach(opt ${ARGN})
-        target_link_libraries(hpm_sdk_nds_lib_itf INTERFACE ${opt})
+        target_link_libraries(${HPM_SDK_NDSGCC_LIB_ITF} INTERFACE ${opt})
     endforeach()
 endfunction()
+
+function(add_subdirectory_ifndef feature dir)
+    if(NOT DEFINED ${feature} OR "${${feature}}" EQUAL "0")
+        add_subdirectory(${dir})
+    endif()
+endfunction()
+
+function(sdk_gcc_src)
+    foreach(file ${ARGN})
+        if(IS_DIRECTORY ${file})
+            message(FATAL_ERROR "directory ${file} can't be added to sdk_lib_src")
+        endif()
+        if(IS_ABSOLUTE ${file})
+            set(path ${file})
+        else()
+            set(path ${CMAKE_CURRENT_SOURCE_DIR}/${file})
+        endif()
+        target_sources(${HPM_SDK_GCC_LIB} PRIVATE ${path})
+    endforeach()
+endfunction()
+

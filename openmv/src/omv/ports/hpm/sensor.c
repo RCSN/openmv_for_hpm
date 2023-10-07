@@ -29,6 +29,8 @@
 #include "board.h"
 #include "hpm_cam_drv.h"
 
+#include "dev_port_config.h"
+
 #define USE_CAM_IRQ   (0)
 #define TIME_SENSOR   (0)
 #if (TIME_SENSOR == 1)
@@ -310,7 +312,7 @@ int sensor_snapshot(sensor_t *sensor, image_t *image, uint32_t flags)
       {
           return SENSOR_ERROR_CAPTURE_TIMEOUT;
       }
-      if((HPM_CAM0->STA & CAM_STATUS_END_OF_FRAME) == CAM_STATUS_END_OF_FRAME)
+      if((HPM_CAM0->STA & cam_status_end_of_frame) == cam_status_end_of_frame)
       //if((HPM_CAM0->STA & CAM_STATUS_FB1_DMA_TRANSFER_DONE) == CAM_STATUS_FB1_DMA_TRANSFER_DONE)
       {
         //printf("sensor_snapshot : 0x%08x \r\n",HPM_CAM0->STA);

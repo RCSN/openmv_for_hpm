@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 hpmicro
+ * Copyright (c) 2022 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -9,7 +9,11 @@
 #define HPM_DMA_MANAGER_H
 
 #include "hpm_common.h"
+#ifdef CONFIG_HAS_HPMSDK_DMAV2
+#include "hpm_dmav2_drv.h"
+#else
 #include "hpm_dma_drv.h"
+#endif
 #include "hpm_soc_feature.h"
 
 
@@ -28,6 +32,15 @@ enum {
 
 /**
  * @brief DMA Channel Interrupt callback
+ *
+ * @param [in] DMA base address
+ * @param [in] channel DMA channel index
+ * @param [in/out] user_data User Data context
+ * @param [in] int_stat DMA interrupt status
+ *             bit0 - DMA_CHANNEL_STATUS_ONGOING
+ *             bit1 - DMA_CHANNEL_STATUS_ERROR
+ *             bit2 - DMA_CHANNEL_STATUS_ABORT
+ *             bit3 - DMA_CHANNEL_STATUS_TC
  */
 typedef void (*hpm_dma_channel_callback_t)(DMA_Type *base, uint32_t channel, void *user_data,  uint32_t int_stat);
 

@@ -1,10 +1,11 @@
-# Copyright 2021 hpmicro
+# Copyright (c) 2021 HPMicro
 # SPDX-License-Identifier: BSD-3-Clause
 
 
 sdk_inc(${TOOLCHAIN_HOME}/lib/gcc/${CROSS_COMPILE_TARGET}/${COMPILER_VERSION}/include)
 sdk_sys_inc(${TOOLCHAIN_HOME}/${CROSS_COMPILE_TARGET}/include/c++/${COMPILER_VERSION})
 sdk_compile_options("-Wall")
+sdk_compile_options("-Wundef")
 sdk_compile_options("-Wno-format")
 sdk_compile_options("-fomit-frame-pointer")
 sdk_compile_options("-fno-builtin")
@@ -25,7 +26,7 @@ if(RV_ARCH)
     sdk_compile_options("-march=${RV_ARCH}")
     sdk_ld_options("-march=${RV_ARCH}")
 endif()
-if(NOT HPM_SDK_NO_NANO_SPECS)
+if(NOT HPM_SDK_LD_NO_NANO_SPECS)
     sdk_ld_options("--specs=nano.specs")
     sdk_ld_options("-u _printf_float")
     sdk_ld_options("-u _scanf_float")
@@ -36,6 +37,6 @@ endif()
 function (generate_bin2c_array c_array_path)
     add_custom_command(
         TARGET ${APP_ELF_NAME}
-        COMMAND "python" $ENV{HPM_SDK_BASE}/scripts/bin2c.py ${APP_BIN_NAME} sec_core_img > ${c_array_path}
+        COMMAND ${PYTHON_EXECUTABLE} $ENV{HPM_SDK_BASE}/scripts/bin2c.py ${EXECUTABLE_OUTPUT_PATH}/${APP_BIN_NAME} sec_core_img > ${c_array_path}
     )
 endfunction ()

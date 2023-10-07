@@ -1,10 +1,10 @@
-# Copyright 2021 hpmicro
+# Copyright (c) 2021 HPMicro
 # SPDX-License-Identifier: BSD-3-Clause
 
 sdk_inc(inc)
 
 sdk_src_ifdef(CONFIG_HAS_HPMSDK_UART src/hpm_uart_drv.c)
-sdk_src_ifdef(CONFIG_HAS_HPMSDK_DRAM src/hpm_dram_drv.c)
+sdk_src_ifdef(CONFIG_HAS_HPMSDK_FEMC src/hpm_femc_drv.c)
 sdk_src_ifdef(CONFIG_HAS_HPMSDK_SDP src/hpm_sdp_drv.c)
 sdk_src_ifdef(CONFIG_HAS_HPMSDK_LCDC src/hpm_lcdc_drv.c)
 sdk_src_ifdef(CONFIG_HAS_HPMSDK_I2C src/hpm_i2c_drv.c)
@@ -39,3 +39,14 @@ sdk_src_ifdef(CONFIG_HAS_HPMSDK_MCHTMR src/hpm_mchtmr_drv.c)
 sdk_src_ifdef(CONFIG_HAS_HPMSDK_FFA src/hpm_ffa_drv.c)
 sdk_src_ifdef(CONFIG_HAS_HPMSDK_TSNS src/hpm_tsns_drv.c)
 sdk_src_ifdef(CONFIG_HAS_HPMSDK_DAC src/hpm_dac_drv.c)
+sdk_src_ifdef(CONFIG_HAS_HPMSDK_CRC src/hpm_crc_drv.c)
+sdk_src_ifdef(CONFIG_HAS_HPMSDK_PLA src/hpm_pla_drv.c)
+sdk_src_ifdef(CONFIG_HAS_HPMSDK_SDM src/hpm_sdm_drv.c)
+sdk_src_ifdef(CONFIG_HAS_HPMSDK_LIN src/hpm_lin_drv.c)
+sdk_src_ifdef(CONFIG_HAS_HPMSDK_LINV2 src/hpm_linv2_drv.c)
+sdk_src_ifdef(CONFIG_HAS_HPMSDK_MCAN src/hpm_mcan_drv.c)
+sdk_src_ifdef(CONFIG_HAS_HPMSDK_SEI src/hpm_sei_drv.c)
+sdk_src_ifdef(CONFIG_HAS_HPMSDK_QEO src/hpm_qeo_drv.c)
+sdk_src_ifdef(CONFIG_HAS_HPMSDK_RDC src/hpm_rdc_drv.c)
+sdk_src_ifdef(CONFIG_HAS_HPMSDK_MMC src/hpm_mmc_drv.c)
+sdk_src_ifdef(CONFIG_HAS_HPMSDK_DMAV2 src/hpm_dmav2_drv.c)

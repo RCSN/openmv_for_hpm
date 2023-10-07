@@ -1,4 +1,4 @@
-# Copyright 2021 hpmicro
+# Copyright (c) 2021 HPMicro
 # SPDX-License-Identifier: BSD-3-Clause
 
 board:
@@ -15,6 +15,9 @@ board:
       type: qspi-nor-flash
       size: 16M
     feature:
+      - butn
+      - rtc
+      - wdg
       - adc
       - sdcard
       - usb-otg
@@ -23,11 +26,11 @@ board:
       - vad
       - cam
       - lcd
-      - enet
       - spi
       - uart
       - can
       - i2c
+      - femc
       - gpio
       - gpio-led
       - gpio-key
@@ -38,15 +41,24 @@ board:
       - qei
       - motor-control
       - audio-codec
+      - sgtl5000
       - tflm
       - multicore
       - drv_pllctl
       - drv_sysctl
       - sdxc
       - i2s
-      - uart_dma_rx_idle
+      - uart_software_rx_idle
+      - uart_rx_timeout
+      - uart_software_lin
       - ptp
       - gpiom
       - adc12
       - adc16
-      - cdc_dual_ports
+      - adc_tempsns
+      - enet
+      - enet_pps_pinout
+      - enet_phy_on_board
+      - sw_gm_api
+      - hall-qei
+      - bldc_smc

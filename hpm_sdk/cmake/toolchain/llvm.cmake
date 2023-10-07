@@ -1,7 +1,8 @@
-# Copyright 2021 hpmicro
+# Copyright (c) 2021 HPMicro
 # SPDX-License-Identifier: BSD-3-Clause
 
 sdk_compile_options("-Wall")
+sdk_compile_options("-Wundef")
 sdk_compile_options("-Wno-format")
 sdk_compile_options("-fomit-frame-pointer")
 sdk_compile_options("-fno-builtin")
@@ -13,6 +14,6 @@ include(${HPM_SDK_BASE}/cmake/toolchain/lld.cmake)
 function (generate_bin2c_array c_array_path)
     add_custom_command(
         TARGET ${APP_ELF_NAME}
-        COMMAND "python" $ENV{HPM_SDK_BASE}/scripts/bin2c.py ${APP_BIN_NAME} sec_core_img > ${c_array_path}
+        COMMAND ${PYTHON_EXECUTABLE} $ENV{HPM_SDK_BASE}/scripts/bin2c.py ${APP_BIN_NAME} sec_core_img > ${c_array_path}
     )
 endfunction ()

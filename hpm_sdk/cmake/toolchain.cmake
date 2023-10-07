@@ -1,5 +1,43 @@
-# Copyright 2021 hpmicro
+# Copyright (c) 2021-2022 HPMicro
 # SPDX-License-Identifier: BSD-3-Clause
+
+function(get_compiler_version compiler version_text compiler_version)
+    if("${compiler}" STREQUAL "gcc")
+        execute_process(
+            COMMAND
+            ${PYTHON_EXECUTABLE}
+            ${HPM_SDK_BASE}/scripts/get_gcc_version.py
+            "${version_text}"
+            RESULT_VARIABLE result
+            OUTPUT_VARIABLE v
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+            )
+        set(${compiler_version} ${v} PARENT_SCOPE)
+    elseif("${compiler}" STREQUAL "clang")
+        execute_process(
+            COMMAND
+            ${PYTHON_EXECUTABLE}
+            ${HPM_SDK_BASE}/scripts/get_gcc_version.py
+            "${version_text}"
+            RESULT_VARIABLE result
+            OUTPUT_VARIABLE v
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+            )
+        set(${compiler_version} ${v} PARENT_SCOPE)
+
+    else()
+        message(FATAL_ERROR "Unsupported compiler ${compiler}")
+    endif()
+endfunction()
+
+set(HPM_SDK_NDSGCC_LIB_ITF hpm_sdk_ndsgcc_lib_itf)
+add_library(${HPM_SDK_NDSGCC_LIB_ITF} INTERFACE)
+
+set(HPM_SDK_GCC_LIB_ITF hpm_sdk_gcc_lib_itf)
+set(HPM_SDK_GCC_LIB hpm_sdk_gcc_lib)
+add_library(${HPM_SDK_GCC_LIB} STATIC "")
+target_link_libraries(${HPM_SDK_GCC_LIB} PUBLIC ${HPM_SDK_GCC_LIB_ITF} ${HPM_SDK_LIB_ITF})
+add_library(${HPM_SDK_GCC_LIB_ITF} INTERFACE)
 
 string(REGEX REPLACE "{\"\'}" "" GNURISCV_TOOLCHAIN_PATH $ENV{GNURISCV_TOOLCHAIN_PATH})
 
@@ -43,8 +81,6 @@ else()
   message(FATAL_ERROR "${TOOLCHAIN_VARIANT} is not supported")
 endif()
 
-
-
 set(CROSS_COMPILE ${TOOLCHAIN_HOME}/bin/${CROSS_COMPILE_TARGET}-)
 set(SYSROOT_DIR   ${TOOLCHAIN_HOME}/${SYSROOT_TARGET})
 
@@ -70,7 +106,7 @@ endif()
 execute_process(
   COMMAND ${CMAKE_C_COMPILER} --version
   RESULT_VARIABLE ret
-  OUTPUT_VARIABLE version_text 
+  OUTPUT_VARIABLE version_text
   ERROR_QUIET
   )
 if(ret)
@@ -81,10 +117,41 @@ if(ret)
 endif()
 
 get_compiler_version(${COMPILER} "${version_text}" ver)
-
 set(COMPILER_VERSION ${ver})
+
+execute_process(
+  COMMAND ${CMAKE_C_COMPILER} --verbose
+  RESULT_VARIABLE ret
+  ERROR_VARIABLE verbose_text
+  )
+STRING(REGEX REPLACE ".*--with-isa-spec=([A-Za-z0-9]+).*" "\\1" RESULT ${verbose_text})
+if(NOT "${RESULT}" STREQUAL "${verbose_text}")
+    LIST(GET RESULT 0 specs)
+    if(NOT ${specs} LESS 20191213)
+        if(NOT "${RV_ARCH}" MATCHES "_")
+            set(need_csr ON)
+            set(need_fencei ON)
+            STRING(FIND ${RV_ARCH} "g" exist)
+            if("${RV_ARCH}" MATCHES "g")
+                set(need_csr OFF)
+                set(need_fencei OFF)
+            elseif("${RV_ARCH}" MATCHES "[fd]")
+                set(need_csr OFF)
+            endif()
+            # append isa ext
+            if(need_csr AND NOT HPM_SDK_GCC_ISA_SPEC_NO_CSR)
+                set(RV_ARCH "${RV_ARCH}_zicsr")
+            endif()
+
+            if(need_fencei AND NOT HPM_SDK_GCC_ISA_SPEC_NO_FENCEI)
+                set(RV_ARCH "${RV_ARCH}_zifencei")
+            endif()
+        endif()
+    endif()
+endif()
 
 set(CXX ${C++})
 find_program(CMAKE_CXX_COMPILER ${CROSS_COMPILE}${CXX}   PATHS ${TOOLCHAIN_HOME} NO_DEFAULT_PATH)
 # include toolchain specific settings
 include(${HPM_SDK_BASE}/cmake/toolchain/${TOOLCHAIN_CMAKE})
+
